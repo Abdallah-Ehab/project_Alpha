@@ -27,8 +27,8 @@ class GameObjectManagerProvider extends ChangeNotifier {
     // Initialize the default GameObject inside the constructor
     gameObjects["empty"] = GameObject(
       name: "empty",
-      width: 100,
-      height: 100,
+      width: 1.0,
+      height: 1.0,
       animationTracks: {
         "idle": AnimationTrack(
           name: "idle",
@@ -141,9 +141,9 @@ class GameObjectManagerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeGlobalScale(double width, double height) {
-    _currentGameObject.width = width;
-    _currentGameObject.height = height;
+  void changeGlobalScale({double? width, double? height}) {
+    _currentGameObject.width = width ?? _currentGameObject.width;
+    _currentGameObject.height = height ?? _currentGameObject.height;
     notifyListeners();
   }
 
