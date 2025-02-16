@@ -37,8 +37,8 @@ class TweeningSlider extends StatelessWidget {
           },
           label: "Y-axis",
           divisions: 20,
-          min: -10,
-          max: 10,
+          min: -100,
+          max: 100,
         ),
         Slider(
           value: gameObjectProvider.selectedAnimationTrack
@@ -58,9 +58,9 @@ class TweeningSlider extends StatelessWidget {
              gameObjectProvider.changeLocalScale(frameProvider.activeFrameIndex,scale: value);
           },
           label: "Scale",
-          divisions: 20,
-          min: -10,
-          max: 10,
+          divisions: 10,
+          min: -1,
+          max: 1,
         ),
       ],
     );
