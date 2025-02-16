@@ -6,7 +6,6 @@ import 'package:scratch_clone/models/blockModels/block_model.dart';
 import 'package:scratch_clone/providers/blockProviders/block_state_provider.dart';
 import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
 import 'package:scratch_clone/widgets/blockWidgets/draggable_block.dart';
-import 'package:scratch_clone/widgets/blockWidgets/draggable_only_block.dart';
 
 class WorkSpace extends StatefulWidget {
   const WorkSpace({super.key});
@@ -25,13 +24,12 @@ class _WorkSpaceState extends State<WorkSpace> {
       color: Colors.blue,
       child: DragTarget<BlockModel>(
           builder: (context, candidateData, rejectedData) {
-      return Stack(
+        return Stack(
           children: renderNestedBlocks(context),
         );
       }, onWillAcceptWithDetails: (details) {
         return true;
-      }, 
-      onAcceptWithDetails: (details) {
+      }, onAcceptWithDetails: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
         final Offset localOffset = renderBox.globalToLocal(details.offset);
 
@@ -59,9 +57,19 @@ class _WorkSpaceState extends State<WorkSpace> {
               width: details.data.width,
               height: details.data.height,
             );
+          } else if (details.data is ConditionBlock) {
+            newBlock = ConditionBlock(
+                position: localOffset,
+                code: details.data.code,
+                color: details.data.color,
+                state: details.data.state,
+                blockType: details.data.blockType,
+                width: details.data.width,
+                height: details.data.height,
+                source: Source.workSpace);
           } else {
             newBlock = BlockModel(
-              position:localOffset,
+              position: localOffset,
               code: details.data.code,
               color: details.data.color,
               source: Source.workSpace,
@@ -91,9 +99,9 @@ class _WorkSpaceState extends State<WorkSpace> {
     return Positioned(
       top: block.position!.dy,
       left: block.position!.dx,
-      child: block.runtimeType == ConditionBlock ? DraggableOnlyBlock(blockModel: block,):  DraggableBlock(
-        blockModel: block,
-      ) ,
+      child: DraggableBlock(
+              blockModel: block,
+            ),
     );
   }
 

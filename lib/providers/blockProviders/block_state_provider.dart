@@ -8,6 +8,7 @@ import 'package:scratch_clone/models/blockModels/block_model.dart' as custom;
 class BlockStateProvider extends ChangeNotifier {
   late BlockModel _selectedBlock;
   late BlockModel _parentBlock;
+  final List<ConditionBlock> _conditionBlocks = [];
   final List<BlockModel> _storedBlocks = [
     IfStatementBlock(
       code: "if",
@@ -39,6 +40,12 @@ class BlockStateProvider extends ChangeNotifier {
     ConditionBlock( code: "code", color: Colors.purple, state: custom.ConnectionState.disconnected, blockType: BlockType.input, width: 10, height: 20,source: Source.storage)
   ];
   
+  List<ConditionBlock> get conditionBlocks => _conditionBlocks;
+
+  void addToListOfConditionBlocks(ConditionBlock block){
+    _conditionBlocks.add(block);
+    notifyListeners();
+  }
 
   List<BlockModel> get storedBlocks => _storedBlocks;
 
@@ -65,6 +72,7 @@ class BlockStateProvider extends ChangeNotifier {
 
 void connectInternalBlock(HasInternalBlock parent,BlockModel block){
   parent.connectInternalBlock(block);
+  log("${block.blockId} is connected internally to ${parent.toString()}");
   notifyListeners();
 }
 

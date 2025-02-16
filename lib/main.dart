@@ -6,6 +6,7 @@ import 'package:scratch_clone/providers/animationProviders/sketch_provider.dart'
 import 'package:scratch_clone/providers/blockProviders/block_state_provider.dart';
 import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
 import 'package:scratch_clone/screens/main_screen.dart';
+import 'package:scratch_clone/test_screen.dart';
 
 
 void main() {
