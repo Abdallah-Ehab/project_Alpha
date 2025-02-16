@@ -59,14 +59,14 @@ class _IfBlockWidgetState extends State<IfBlockWidget> {
               color: widget.blockModel.color, widthFactor: 1.2, heightFactor: 0.5),
         ),
          Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Material(
               color: Colors.transparent,
               child: Text(
                 "if",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white),
               ),
             ),
             ConditionBlockTargetWidget(blockModel: widget.blockModel)

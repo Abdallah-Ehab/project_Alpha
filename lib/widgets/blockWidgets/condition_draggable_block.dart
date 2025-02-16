@@ -44,58 +44,73 @@ class _ConditionDraggableBlockWidgetState
 
     String selectedOperator = "==";
 
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100), color: Colors.purple),
-      width: 100,
-      height: 30,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 30,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100), color: Colors.greenAccent),
+        width: 200,
+        height: 30,
+        
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+            SizedBox(
+              width: 30,
               child: TextField(
+
                 controller: _firstValueTextEditingController,
-                decoration: const InputDecoration(hintText: "first value"),
+                decoration: const InputDecoration(
+                  
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(50))
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "first value"),
                 onChanged: (value) {
                   setState(() {
+                    
                     widget.blockModel.firstValue = value;
                   });
                 },
               ),
             ),
-          ),
-          Material(
-            child: DropdownButton(
+            DropdownButton(
               value: selectedOperator,
               items: items,
               onChanged: (value) {
                 setState(() {
                   selectedOperator = value!;
+                  widget.blockModel.comaparisonOperator = value!;
                 });
               },
             ),
-          ),
-          SizedBox(
-            width: 30,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
+            SizedBox(
+              width: 30,
               child: TextField(
+              
                 controller: _secondValueTextEditingController,
                 decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(50))
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                     hintText: "second value",
                     hintStyle: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
+                        color: Colors.black, fontWeight: FontWeight.bold)),
                 onChanged: (value) {
                   setState(() {
                     widget.blockModel.secondValue = value;
                   });
                 },
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

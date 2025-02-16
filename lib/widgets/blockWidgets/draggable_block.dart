@@ -42,7 +42,9 @@ class DraggableBlock extends StatelessWidget {
           return draggableWidget;
         },
         onAcceptWithDetails: (details) {
-          
+          if(details.data is ConditionBlock){
+            return;
+          }
 
           var parentBlock = blockModel;
           var childBlock = details.data;
