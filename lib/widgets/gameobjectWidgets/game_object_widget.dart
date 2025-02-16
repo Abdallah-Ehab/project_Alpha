@@ -13,17 +13,17 @@ class GameObjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: gameObject.width,
-      height: gameObject.height,
-      child: CustomPaint(
-        painter: GameObjectRenderer(
-            widthFactor:MediaQuery.of(context).size.width,
+        width: gameObject.width,
+        height: gameObject.height,
+        child: CustomPaint(
+          painter: GameObjectRenderer(
+            widthFactor: MediaQuery.of(context).size.width,
             heightFactor: MediaQuery.of(context).size.height * 0.6,
             gameObject: gameObject,
-            trackName: "idle"
+            trackName: "idle",
+          ),
         ),
-      ),
-    );
+      );
   }
 
 
