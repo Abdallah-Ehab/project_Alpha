@@ -36,6 +36,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
             KeyframeModel(
               FrameByFrameKeyFrame(data: [
                 SketchModel(
+                  sketchMode: SketchMode.normal,
                   points: squarePoints,
                   color: Colors.black,
                   strokeWidth: 1.0,
@@ -262,6 +263,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
               KeyframeModel(
                 FrameByFrameKeyFrame(data: [
                   SketchModel(
+                    sketchMode: SketchMode.normal,
                     points: squarePoints,
                     color: Colors.black,
                     strokeWidth: 1.0,
@@ -325,6 +327,18 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   void changeCurrentGameObjectName(String name) {
     _currentGameObject.name = name;
+    notifyListeners();
+  }
+
+  void removePoints(Offset point, int sketchIndex, double strokeWidth) {
+    _currentGameObject
+        .animationTracks[_selectedAnimationTrack.name]!
+        .keyFrames[_currentGameObject.activeFrameIndex]
+        .sketches
+        .data[sketchIndex]
+        .points
+        .removeWhere((currentPoint) =>
+            (currentPoint - point).distance < 5 * strokeWidth);
     notifyListeners();
   }
 }
