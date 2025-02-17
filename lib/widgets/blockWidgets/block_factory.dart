@@ -145,6 +145,103 @@ class _PlayAnimationBlockWidgetState extends State<PlayAnimationBlockWidget> {
   }
 }
 
+class ChangePositionBlockWidget extends StatefulWidget {
+  final ChangePositionBlock blockModel;
+
+  const ChangePositionBlockWidget({super.key, required this.blockModel});
+
+  @override
+  State<ChangePositionBlockWidget> createState() => _ChangePositionBlockWidgetState();
+}
+
+class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
+  final TextEditingController _dxController = TextEditingController();
+  final TextEditingController _dyController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _dxController.text = widget.blockModel.dx?.toString() ?? "";
+    _dyController.text = widget.blockModel.dy?.toString() ?? "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: const Size(200, 100),
+          painter: BlockPainter(
+            color: widget.blockModel.color,
+            widthFactor: 1.0,
+            heightFactor: 0.5,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Change Position",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: TextField(
+                    controller: _dxController,
+                    decoration: const InputDecoration(
+                      labelText: "X",
+                      labelStyle: TextStyle(color: Colors.white),
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white),
+                    onChanged: (value) {
+                      widget.blockModel.dx = double.tryParse(value);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  width: 60,
+                  child: TextField(
+                    controller: _dyController,
+                    decoration: const InputDecoration(
+                      labelText: "Y",
+                      labelStyle: TextStyle(color: Colors.white),
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white),
+                    onChanged: (value) {
+                      widget.blockModel.dy = double.tryParse(value);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _dxController.dispose();
+    _dyController.dispose();
+    super.dispose();
+  }
+}
+
+
+
+
 class BlockPainter extends CustomPainter {
   final Color color;
   final double widthFactor; // Allow blocks to have different widths
