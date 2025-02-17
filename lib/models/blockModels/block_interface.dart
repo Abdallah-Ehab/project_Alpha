@@ -15,3 +15,7 @@ abstract class BlockInterface {
 abstract class HasInternalBlock<T extends BlockModel> {
   void connectInternalBlock(T? block);
 }
+
+abstract class LabelBlock{
+  void registerLabel(GameObjectManagerProvider gameObejctManagerProvider);
+}

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/models/animationModels/animation_track.dart';
+import 'package:scratch_clone/models/blockModels/block_interface.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart';
 import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
 
@@ -57,8 +58,17 @@ class GameObject {
         log("${result.errorMessage}");
         return result;
       }
+      if(result.result == false){
+        while(currentBlock?.child != null){
+          
+          if(currentBlock?.child is LabelBlock){
+            break;
+          }
+          currentBlock = currentBlock?.child;
+        }
+      }
       log("${result.result}");
-      currentBlock = currentBlock.child;
+      currentBlock = currentBlock?.child;
     }
     return Result.success(result: "$name code executed successfully");
   }

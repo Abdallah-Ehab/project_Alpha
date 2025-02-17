@@ -4,7 +4,7 @@ import 'package:scratch_clone/models/blockModels/block_model.dart';
 
 // ignore: must_be_immutable
 class ConditionDraggableBlockWidget extends StatefulWidget {
-  ConditionBlock blockModel;
+  ConditionBlock? blockModel;
   ConditionDraggableBlockWidget({super.key, required this.blockModel});
 
   @override
@@ -72,8 +72,10 @@ class _ConditionDraggableBlockWidgetState
                   hintText: "first value"),
                 onChanged: (value) {
                   setState(() {
-                    
-                    widget.blockModel.firstValue = value;
+                    if(widget.blockModel != null){
+                           widget.blockModel!.firstValue = value;
+                    }
+               
                   });
                 },
               ),
@@ -84,7 +86,9 @@ class _ConditionDraggableBlockWidgetState
               onChanged: (value) {
                 setState(() {
                   selectedOperator = value!;
-                  widget.blockModel.comaparisonOperator = value!;
+                  if(widget.blockModel != null){
+                           widget.blockModel!.comaparisonOperator = value;
+                    }
                 });
               },
             ),
@@ -104,7 +108,9 @@ class _ConditionDraggableBlockWidgetState
                         color: Colors.black, fontWeight: FontWeight.bold)),
                 onChanged: (value) {
                   setState(() {
-                    widget.blockModel.secondValue = value;
+                    if(widget.blockModel != null){
+                           widget.blockModel!.secondValue = value;
+                    }
                   });
                 },
               ),

@@ -121,7 +121,7 @@ class BlockModel implements BlockInterface {
 }
 
 class IfStatementBlock extends BlockModel
-    implements HasInternalBlock<ConditionBlock> {
+    implements HasInternalBlock<ConditionBlock>, LabelBlock {
   ConditionBlock? condition;
   IfStatementBlock(
       {this.condition,
@@ -207,6 +207,11 @@ class IfStatementBlock extends BlockModel
   @override
   Widget constructBlock() {
     return IfBlockWidget(blockModel: this);
+  }
+  
+  @override
+  void registerLabel(GameObjectManagerProvider gameObejctManagerProvider) {
+      
   }
 }
 
