@@ -13,6 +13,6 @@ class SketchModel {
     required this.points,
     required this.color,
     required this.strokeWidth,
-    required this.sketchMode
+    this.sketchMode = SketchMode.normal
   });
 }
