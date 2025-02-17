@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/models/animationModels/animation_track.dart';
 import 'package:scratch_clone/models/animationModels/key_frame_model.dart';
@@ -25,8 +27,8 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   GameObjectManagerProvider({required this.vsync}) {
     // Initialize the default GameObject inside the constructor
-    gameObjects["empty"] = GameObject(
-      name: "empty",
+    gameObjects["Ryu"] = GameObject(
+      name: "Ryu",
       width: 1.0,
       height: 1.0,
       animationTracks: {
@@ -69,7 +71,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
       ), // Pass vsync here
     );
 
-    _currentGameObject = gameObjects["empty"]!;
+    _currentGameObject = gameObjects["Ryu"]!;
     _selectedAnimationTrack = _currentGameObject.animationTracks["idle"]!;
   }
 
@@ -330,10 +332,13 @@ class GameObjectManagerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removePoints(Offset point, int sketchIndex, double strokeWidth) {
+  void removePoints(Offset point, int sketchIndex, double strokeWidth,int activeFrameIndex) {
+    log(_currentGameObject.name);
+    log("active key frame is ${_currentGameObject.activeFrameIndex}");
+    log("$sketchIndex");
     _currentGameObject
         .animationTracks[_selectedAnimationTrack.name]!
-        .keyFrames[_currentGameObject.activeFrameIndex]
+        .keyFrames[activeFrameIndex]
         .sketches
         .data[sketchIndex]
         .points

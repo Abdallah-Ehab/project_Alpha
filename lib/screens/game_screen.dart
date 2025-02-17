@@ -27,6 +27,7 @@ class _GameScreenState extends State<GameScreen> {
               height: 500,
               width: 500,
               child: Stack(
+                
                 children: [
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -38,13 +39,7 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                   ...gameManagerProvider.gameObjects.values.map((gameObject) {
-                     return Transform(
-      alignment: Alignment.center,
-      transform: Matrix4.identity()
-        ..translate(gameObject.position.dx, gameObject.position.dy)
-        ..rotateZ(gameObject.rotation)
-        ..scale(gameObject.width,gameObject.height),
-      child: GameObjectWidget(gameObject: gameObject));//Positioned(
+                     return  GameObjectWidget(gameObject: gameObject);//Positioned(
                     //     top: gameObject.position.dy,
                     //     left: gameObject.position.dx,
                     //     child: GestureDetector(
