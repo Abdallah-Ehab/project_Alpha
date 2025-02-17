@@ -133,24 +133,26 @@ class GameObjectRenderer extends CustomPainter {
         ..color = sketch.color
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
-        ..strokeWidth = sketch.strokeWidth;
+        ..strokeWidth = sketch.strokeWidth / 4;
 
       // Path path = Path();
       if (sketch.points.isNotEmpty) {
         // path.moveTo(sketch.points[0].dx, sketch.points[0].dy);
         for (int i = 0; i < sketch.points.length - 1; i++) {
-          // Used quadratic bezier curve instead of the draw line function that made the line look jagged credit to JideGuru on youtube
-          // if (i < sketch.points.length - 1) {
-          //   Offset midPoint = Offset(
-          //     (sketch.points[i].dx + sketch.points[i + 1].dx) / 2,
-          //     (sketch.points[i].dy + sketch.points[i + 1].dy) / 2,
-          //   );
-          //   path.quadraticBezierTo(sketch.points[i].dx, sketch.points[i].dy, midPoint.dx, midPoint.dy);
-          // }
           var currentPointX = sketch.points[i].dx / 4;
           var currentPointY = sketch.points[i].dy / 4;
           var nextPointX = sketch.points[i + 1].dx / 4;
           var nextPointY = sketch.points[i + 1].dy / 4;
+          // Used quadratic bezier curve instead of the draw line function that made the line look jagged credit to JideGuru on youtube
+          // eventually it didn't matter actually both ways work I will stick to drawing lines instead to decrease the number of computations needed
+          // if (i < sketch.points.length - 1) {
+          //   Offset midPoint = Offset(
+          //     (currentPointX + nextPointX) / 2,
+          //     (currentPointY + nextPointY) / 2,
+          //   );
+          //   path.quadraticBezierTo(sketch.points[i].dx, sketch.points[i].dy, midPoint.dx, midPoint.dy);
+          // }
+          
           canvas.drawLine(Offset(currentPointX, currentPointY),
               Offset(nextPointX, nextPointY), paint);
         }

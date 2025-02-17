@@ -170,10 +170,12 @@ class AnimationPainter extends CustomPainter {
 
     // Translate back so sketches are drawn at the correct position
     canvas.translate(-origin.dx, -origin.dy);
-
+    //  Path path = Path();
+     
     // Draw sketches
     for (SketchModel sketch
         in animationTrack.keyFrames[activeFrameIndex].sketches.data) {
+      // path.moveTo(sketch.points[0].dx, sketch.points[0].dy);
       Paint paint = Paint()
         ..color = sketch.color
         ..style = PaintingStyle.stroke
@@ -181,8 +183,16 @@ class AnimationPainter extends CustomPainter {
         ..strokeWidth = sketch.strokeWidth;
 
       for (int i = 0; i < sketch.points.length - 1; i++) {
+        // if (i < sketch.points.length - 1) {
+        //     Offset midPoint = Offset(
+        //       (sketch.points[i].dx + sketch.points[i+1].dx) / 2,
+        //       (sketch.points[i].dy + sketch.points[i+1].dy) / 2,
+        //     );
+        //     path.quadraticBezierTo(sketch.points[i].dx, sketch.points[i].dy, midPoint.dx, midPoint.dy);
+        //   }
         canvas.drawLine(sketch.points[i], sketch.points[i + 1], paint);
       }
+      // canvas.drawPath(path, paint);
     }
 
     canvas.restore();

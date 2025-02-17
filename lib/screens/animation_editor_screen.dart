@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/widgets/animationWidgets/animation_widget.dart';
+import 'package:scratch_clone/widgets/animationWidgets/color_picker_panel.dart';
 import 'package:scratch_clone/widgets/animationWidgets/eraser_button.dart';
 import 'package:scratch_clone/widgets/animationWidgets/paint_button.dart';
 import 'package:scratch_clone/widgets/animationWidgets/stroke_width_slider_widget.dart';
@@ -24,6 +25,7 @@ class AnimationEditorScreen extends StatelessWidget {
           children: [
             TweeningSlider(),
             StrokeWidthSliderWidget(),
+            ColorPickerPanel(),
             Row(
               children: [
                 PaintButton(),
@@ -41,9 +43,12 @@ class AnimationEditorScreen extends StatelessWidget {
           children: [
             Animationwidget(),
             TimeLineWidget(),
+            
+            
           ],
         ),
       ),
     );
+    
   }
 }
