@@ -12,7 +12,7 @@ import 'package:scratch_clone/models/blockModels/block_model.dart' as custom;
 class GameObjectManagerProvider extends ChangeNotifier {
   final TickerProvider vsync; // Store vsync reference
 
-  Map<String, GameObject> gameObjects = {};
+  Map<String, GameObject> _gameObjects = {};
 
   late GameObject _currentGameObject;
   late AnimationTrack _selectedAnimationTrack;
@@ -27,7 +27,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   GameObjectManagerProvider({required this.vsync}) {
     // Initialize the default GameObject inside the constructor
-    gameObjects["Ryu"] = GameObject(
+    _gameObjects["Ryu"] = GameObject(
       name: "Ryu",
       width: 1.0,
       height: 1.0,
@@ -71,12 +71,14 @@ class GameObjectManagerProvider extends ChangeNotifier {
       ), // Pass vsync here
     );
 
-    _currentGameObject = gameObjects["Ryu"]!;
+    _currentGameObject = _gameObjects["Ryu"]!;
     _selectedAnimationTrack = _currentGameObject.animationTracks["idle"]!;
   }
 
+  Map<String,GameObject> get gameObjects => _gameObjects;
+
   void addGameObject(String name, GameObject gameObject) {
-    gameObjects[name] = gameObject;
+    _gameObjects[name] = gameObject;
     notifyListeners();
   }
 
@@ -97,7 +99,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   AnimationTrack get selectedAnimationTrack => _selectedAnimationTrack;
   void setCurrentGameObjectByName(String name) {
-    _currentGameObject = gameObjects[name]!;
+    _currentGameObject = _gameObjects[name]!;
     notifyListeners();
   }
 
@@ -256,7 +258,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
     // Create a new GameObject with default properties
     GameObject newGameObject = GameObject(
-        name: "empty",
+        name: name,
         vsync: vsync,
         animationTracks: {
           "idle": AnimationTrack(
@@ -283,10 +285,10 @@ class GameObjectManagerProvider extends ChangeNotifier {
             duration: 0.0,
           ),
         },
-        position: const Offset(0, 0),
+        position: const Offset(150, 200),
         rotation: 0.0,
-        width: 200.0,
-        height: 200.0,
+        width: 1.0,
+        height: 1.0,
         activeFrameIndex: 0,
         animationPlaying: false,
         blocksHead: BlockModel(
@@ -300,8 +302,8 @@ class GameObjectManagerProvider extends ChangeNotifier {
           height: 90.0,
         ));
 
-    gameObjects[name] = newGameObject;
-
+    _gameObjects[name] = newGameObject;
+    _currentGameObject = newGameObject;  
     notifyListeners();
   }
 

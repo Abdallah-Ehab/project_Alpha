@@ -113,8 +113,9 @@ class AnimationPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (animationTrack.keyFrames.isEmpty ||
-        animationTrack.keyFrames[activeFrameIndex].sketches.data.isEmpty)
+        animationTrack.keyFrames[activeFrameIndex].sketches.data.isEmpty) {
       return;
+    }
 
     Paint backgroundPaint = Paint()
       ..color = Colors.grey.withOpacity(0.3); // Light grey for visibility

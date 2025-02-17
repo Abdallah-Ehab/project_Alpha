@@ -10,14 +10,16 @@ class GameObjectDropDownMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     var gameObjectProvider = Provider.of<GameObjectManagerProvider>(context);
     return DropdownButton(
+      value: gameObjectProvider.currentGameObject.name,
         items: gameObjectProvider.gameObjects.keys
             .map(
               (data) => DropdownMenuItem(
+                value: data,
                 child: Text(data),
               ),
             ).toList(),
         onChanged: (value) {
-          gameObjectProvider.setCurrentGameObjectByName(value);
+          gameObjectProvider.setCurrentGameObjectByName(value!);
         });
   }
 }
