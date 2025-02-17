@@ -18,7 +18,7 @@ class GameObjectTranslationSliders extends StatelessWidget {
           max: 400,
           divisions: 50,
           onChanged: (value) {
-            gameObejctManagerProvider.changeGlobalPosition(dx: value);
+            gameObejctManagerProvider.changeGlobalPosition(dx: value,gameObject: gameObejctManagerProvider.currentGameObject);
           },
           value: gameObejctManagerProvider.currentGameObject.position.dx,
         ),
@@ -31,7 +31,7 @@ class GameObjectTranslationSliders extends StatelessWidget {
             divisions: 50,
             value: gameObejctManagerProvider.currentGameObject.position.dy,
             onChanged: (value) {
-              gameObejctManagerProvider.changeGlobalPosition(dy: value);
+              gameObejctManagerProvider.changeGlobalPosition(dy: value,gameObject: gameObejctManagerProvider.currentGameObject);
             }),
         Slider(
           min: -pi,

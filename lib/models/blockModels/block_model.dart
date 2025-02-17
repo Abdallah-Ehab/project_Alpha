@@ -108,7 +108,7 @@ class BlockModel implements BlockInterface {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) +  Offset(0, 0.75 * height ),
+        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -193,7 +193,7 @@ class IfStatementBlock extends BlockModel
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0, 0.75 * height ),
+        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -208,11 +208,9 @@ class IfStatementBlock extends BlockModel
   Widget constructBlock() {
     return IfBlockWidget(blockModel: this);
   }
-  
+
   @override
-  void registerLabel(GameObjectManagerProvider gameObejctManagerProvider) {
-      
-  }
+  void registerLabel(GameObjectManagerProvider gameObejctManagerProvider) {}
 }
 
 class PlayAnimationBlock extends BlockModel {
@@ -280,7 +278,7 @@ class PlayAnimationBlock extends BlockModel {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0, 0.75 * height ),
+        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -358,6 +356,33 @@ class ConditionBlock extends BlockModel {
   Widget constructBlock() {
     return ConditionDraggableBlockWidget(blockModel: this);
   }
+}
+
+class ChangePositionBlock extends BlockModel {
+  double? dx;
+  double? dy;
+  ChangePositionBlock(
+      {required super.code,
+      required super.color,
+      required super.state,
+      required super.blockType,
+      required super.width,
+      required super.height,
+      required super.source,
+      super.child,
+      this.dx,
+      this.dy});
+
+    @override
+  Result<Offset> execute(
+      GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
+        if(dx == null && dy == null){
+          return Result.failure(errorMessage: "both the horisontal and vertical factors are null");
+        }
+    gameObjectProvider.changeGlobalPosition(dx:dx,dy:dy,gameObject: gameObject);
+    return Result.success(result: gameObject.position);
+  }
+  
 }
 
 class Result<T> {

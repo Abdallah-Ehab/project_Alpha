@@ -124,15 +124,15 @@ class GameObjectManagerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeGlobalPosition({double? dx, double? dy}) {
-    var currentdx = _currentGameObject.position.dx;
-    var currentdy = _currentGameObject.position.dy;
+  void changeGlobalPosition({double? dx, double? dy,required GameObject gameObject}) {
+    var currentdx = gameObject.position.dx;
+    var currentdy = gameObject.position.dy;
     if (dx == null && dy != null) {
-      _currentGameObject.position = Offset(currentdx, dy);
+      gameObject.position = Offset(currentdx, dy);
     } else if (dx != null && dy == null) {
-      _currentGameObject.position = Offset(dx, currentdy);
+      gameObject.position = Offset(dx, currentdy);
     } else if (dx != null && dy != null) {
-      _currentGameObject.position = Offset(dx, dy);
+      gameObject.position = Offset(dx, dy);
     } else {
       return;
     }
