@@ -41,28 +41,33 @@ class Animationwidget extends StatelessWidget {
                     points: [details.localPosition],
                     color: sketchProvider.currentColor,
                     strokeWidth: sketchProvider.currentStrokeWidth);
+                if (sketchProvider.currentSketch.sketchMode ==
+                    SketchMode.eraser) {
+                  return;
+                }
                 gameObjectProvider
                     .addCurrentSketchToCurrentFrameInSelectedAnimationTrack(
                         frameProvider.activeFrameIndex,
                         sketchProvider.currentSketch);
               },
               onPanUpdate: (details) {
-                log("${details.localPosition}");
-
+                var numberOfsketches = gameObjectProvider
+                    .currentGameObject
+                    .animationTracks[
+                        gameObjectProvider.selectedAnimationTrack.name]!
+                    .keyFrames[frameProvider.activeFrameIndex]
+                    .sketches
+                    .data
+                    .length;
                 if (sketchProvider.currentSketch.sketchMode ==
                     SketchMode.eraser) {
-                  for (int i = 0; i < gameObjectProvider
-                      .currentGameObject
-                      .animationTracks[
-                          gameObjectProvider.selectedAnimationTrack.name]!
-                      .keyFrames[frameProvider.activeFrameIndex]
-                      .sketches
-                      .data.length; i++) {
-
-                    gameObjectProvider.removePoints(details.localPosition,i,sketchProvider.currentStrokeWidth);
-                    log("Erasing near ${details.localPosition}");
+                  for (int i = 0; i < numberOfsketches; i++) {
+                    log("Before erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].sketches.data[i].points.length}");
+                    gameObjectProvider.removePoints(details.localPosition, i,
+                        sketchProvider.currentStrokeWidth,frameProvider.activeFrameIndex);
+                    log("After erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].sketches.data[i].points.length}");
+                    
                   }
-
                 } else {
                   sketchProvider.addPoint(details.localPosition);
                   gameObjectProvider.addPointToTheLastSketchInTheFrame(
