@@ -2,6 +2,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:scratch_clone/models/animationModels/animation_track.dart';
 import 'package:scratch_clone/models/blockModels/block_interface.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart';
@@ -19,7 +20,8 @@ class GameObject {
   bool animationPlaying;
   BlockModel? blocksHead;
   late List<BlockModel> workSpaceBlocks;
-
+  late GameObjectManagerProvider gameObjectManagerProvider;
+late Ticker ticker;
   GameObject({
     required this.name,
     required TickerProvider vsync,
@@ -33,6 +35,9 @@ class GameObject {
     required this.blocksHead,
   }) {
     animationController = AnimationController(vsync: vsync, duration: const Duration(seconds: 1));
+    ticker = vsync.createTicker((elapsedTime){
+      execute(elapsedTime);
+    });
     workSpaceBlocks = [blocksHead!];
   }
 
@@ -41,37 +46,54 @@ class GameObject {
   
   
   
-  
+  void stop(){
+    ticker.stop();
+  }
   
   
   
 
-  Result execute(GameObjectManagerProvider gameObjectProvider){
+  Result<String> execute(Duration elapsedTime) {
+ 
     BlockModel? currentBlock = blocksHead;
-    if (workSpaceBlocks.length > 1 || workSpaceBlocks.isEmpty){
+
+    if (workSpaceBlocks.length > 1 || workSpaceBlocks.isEmpty) {
+      log("please connect all the blocks");
       return Result.failure(errorMessage: "please connect all the blocks");
     }
-    while(currentBlock != null){
-      Result result = currentBlock.execute(gameObjectProvider,this);
-      
-      if(result.errorMessage != null){
+
+    while (currentBlock != null) {
+      Result result = currentBlock.execute(gameObjectManagerProvider, this);
+
+      if (result.errorMessage != null) {
         log("${result.errorMessage}");
-        return result;
+        stop();
+        return Result.failure(errorMessage: result.errorMessage);
       }
-      if(result.result == false){
-        while(currentBlock?.child != null){
-          
-          if(currentBlock?.child is LabelBlock){
+
+      if (result.result == false) {
+        while (currentBlock?.child != null) {
+          if (currentBlock?.child is LabelBlock) {
             break;
           }
           currentBlock = currentBlock?.child;
         }
       }
+
       log("${result.result}");
       currentBlock = currentBlock?.child;
     }
-    return Result.success(result: "$name code executed successfully");
-  }
+
+    // Instead of returning, let the loop continue if necessary.
+    return Result.success(result:"$name code executed successfully");
+ 
+}
+
+void play(GameObjectManagerProvider gameObjectManagerProvider){
+this.gameObjectManagerProvider = gameObjectManagerProvider;
+ticker.start();
+}
+
   
 }
 

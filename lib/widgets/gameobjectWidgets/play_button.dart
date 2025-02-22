@@ -24,7 +24,7 @@ class PlayButton extends StatelessWidget {
     var gameObejcts = gameObjectManagerProvider.gameObjects.values;
 
     for(var gameObject in gameObejcts){
-      gameObject.execute(gameObjectManagerProvider);
+      gameObject.play(gameObjectManagerProvider);
     }
   }
 }
