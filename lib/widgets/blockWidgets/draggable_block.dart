@@ -11,7 +11,9 @@ import 'package:scratch_clone/widgets/blockWidgets/block_factory.dart';
 
 class DraggableBlock extends StatelessWidget {
   final BlockModel blockModel;
-  const DraggableBlock({super.key, required this.blockModel});
+  final VoidCallback closeDrawer; // Accept function
+
+  const DraggableBlock({super.key, required this.blockModel, required this.closeDrawer});
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +28,15 @@ class DraggableBlock extends StatelessWidget {
       child: BlockFactory(blockModel: blockModel),
       onDragStarted: () {
         blockProvider.selectedBlock = blockModel;
+
+        // Close the drawer safely without using BuildContext in async gaps
+        closeDrawer();
+
         if (blockModel.state == custom.ConnectionState.connected) {
           blockProvider.disconnectBlock(blockProvider.selectedBlock);
           gameObjectManagerProvider.addBlockToWorkSpaceBlocks(blockProvider.selectedBlock);
         }
       },
-     
     );
 
     // Check if the block should be a DragTarget
@@ -42,7 +47,7 @@ class DraggableBlock extends StatelessWidget {
           return draggableWidget;
         },
         onAcceptWithDetails: (details) {
-          if(details.data is ConditionBlock){
+          if (details.data is ConditionBlock) {
             return;
           }
 
@@ -51,7 +56,6 @@ class DraggableBlock extends StatelessWidget {
           log("Block number ${childBlock.blockId} is dropped on block number ${parentBlock.blockId}");
           blockProvider.connectBlock(parentBlock, childBlock);
           gameObjectManagerProvider.removeBlockFromWorkSpaceBlocks(childBlock);
-         
         },
       );
     } else {

@@ -108,7 +108,7 @@ class BlockModel implements BlockInterface {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
+        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width,height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -193,7 +193,7 @@ class IfStatementBlock extends BlockModel
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
+        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width, height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -278,7 +278,7 @@ class PlayAnimationBlock extends BlockModel {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0, 0.75 * height),
+        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width, height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -381,6 +381,10 @@ class ChangePositionBlock extends BlockModel {
         }
     gameObjectProvider.changeGlobalPosition(dx:dx,dy:dy,gameObject: gameObject);
     return Result.success(result: gameObject.position);
+  }
+  @override
+  Widget constructBlock() {
+    return ChangePositionBlockWidget(blockModel: this);
   }
   
 }

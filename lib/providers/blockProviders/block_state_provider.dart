@@ -16,8 +16,8 @@ class BlockStateProvider extends ChangeNotifier {
       source: Source.storage,
       state: custom.ConnectionState.disconnected,
       blockType: BlockType.input,
-      width: 120.0,
-      height: 100.0,
+      width: 220.0,
+      height: 75.0,
     ),
     PlayAnimationBlock(
       code: "Play",
@@ -25,8 +25,8 @@ class BlockStateProvider extends ChangeNotifier {
       source: Source.storage,
       state: custom.ConnectionState.disconnected,
       blockType: BlockType.output,
-      width: 100.0,
-      height: 80.0,
+      width: 150.0,
+      height: 25.0,
     ),
     BlockModel(
       code: "Generic Block",
@@ -35,7 +35,7 @@ class BlockStateProvider extends ChangeNotifier {
       state: custom.ConnectionState.disconnected,
       blockType: BlockType.inputoutput,
       width: 100.0,
-      height: 90.0,
+      height: 25.0,
     ),
     ConditionBlock(
         code: "code",

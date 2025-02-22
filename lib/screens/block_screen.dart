@@ -11,35 +11,33 @@ class BlocksScreen extends StatefulWidget {
 }
 
 class _BlocksScreenState extends State<BlocksScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void closeDrawer() {
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      _scaffoldKey.currentState?.closeDrawer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey, // Assign key to control drawer
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ),
+      drawer: Drawer(
+        child: StoredBlocks(closeDrawer: closeDrawer), // Pass close function
+      ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: const Stack(
-          children: [
-            
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: StoredBlocks(),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: WorkSpace(),
-                ),
-              ],
-            ),
-          ],
-        ),
+        child: const WorkSpace(),
       ),
     );
   }
-
-  
 }
+
 
 class AnimatedSnackBarContent extends StatelessWidget {
   final String message;
