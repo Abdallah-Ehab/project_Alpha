@@ -100,6 +100,7 @@ class _WorkSpaceState extends State<WorkSpace> {
       top: block.position!.dy,
       left: block.position!.dx,
       child: DraggableBlock(
+              closeDrawer: (){},
               blockModel: block,
             ),
     );

@@ -112,15 +112,16 @@ class AnimationPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    Paint backgroundPaint = Paint()
+      ..color = Colors.grey.withOpacity(0.3); // Light grey for visibility
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
+        
     if (animationTrack.keyFrames.isEmpty ||
         animationTrack.keyFrames[activeFrameIndex].sketches.data.isEmpty) {
       return;
     }
 
-    Paint backgroundPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.3); // Light grey for visibility
-    canvas.drawRect(
-        Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
 
     int previousFrameIndex =
         ((fullKeyFrameIndices.length - 1) * progress).floor();

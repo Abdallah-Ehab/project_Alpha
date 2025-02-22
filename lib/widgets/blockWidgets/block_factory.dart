@@ -26,11 +26,12 @@ class GenericBlockWidget extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           CustomPaint(
-            size: const Size(200, 150),
-            painter: BlockPainter(color: blockModel.color, widthFactor: 0.9),
+            size:  Size(blockModel.width, blockModel.height),
+            painter: BlockPainter(color: blockModel.color, widthFactor:1.0,heightFactor: 1.0),
           ),
           const Material(
-              color: Colors.transparent, child: Text("generic block")),
+              color: Colors.transparent, child: Text("generic block")
+              ),
         ],
       );
   }
@@ -54,9 +55,9 @@ class _IfBlockWidgetState extends State<IfBlockWidget> {
       alignment: Alignment.center,
       children: [
         CustomPaint(
-          size: const Size(200, 100),
+          size:  Size(widget.blockModel.width, widget.blockModel.height),
           painter: BlockPainter(
-              color: widget.blockModel.color, widthFactor: 1.2, heightFactor: 0.5),
+              color: widget.blockModel.color, widthFactor: 1.0, heightFactor: 1.0),
         ),
          Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -99,11 +100,11 @@ class _PlayAnimationBlockWidgetState extends State<PlayAnimationBlockWidget> {
       alignment: Alignment.center,
       children: [
         CustomPaint(
-          size: const Size(200, 100),
+          size:  Size(widget.blockModel.width, widget.blockModel.height),
           painter: BlockPainter(
               color: widget.blockModel.color,
               widthFactor: 1,
-              heightFactor: 0.5),
+              heightFactor: 1.5),
         ),
         Row(
           children: [
@@ -171,11 +172,11 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
       alignment: Alignment.center,
       children: [
         CustomPaint(
-          size: const Size(200, 100),
+          size:  Size(widget.blockModel.width, widget.blockModel.height),
           painter: BlockPainter(
             color: widget.blockModel.color,
             widthFactor: 1.0,
-            heightFactor: 0.5,
+            heightFactor: 1.0,
           ),
         ),
         Column(
@@ -203,6 +204,7 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) {
+                      
                       widget.blockModel.dx = double.tryParse(value);
                     },
                   ),

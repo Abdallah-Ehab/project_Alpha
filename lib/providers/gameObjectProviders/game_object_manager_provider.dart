@@ -213,6 +213,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
         gameObject.animationTracks[trackName]!.keyFrames.isEmpty) {
       return;
     }
+    gameObject.animationPlaying = true;
 
     AnimationTrack track = gameObject.animationTracks[trackName]!;
     int durationInSeconds = (track.keyFrames.length / 12).ceil();
