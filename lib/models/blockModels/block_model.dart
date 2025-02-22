@@ -108,7 +108,8 @@ class BlockModel implements BlockInterface {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width,height),
+        position: (position ?? Offset.zero) +
+            Offset(0.5 * width - 0.5 * child.width, height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -193,7 +194,8 @@ class IfStatementBlock extends BlockModel
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width, height),
+        position: (position ?? Offset.zero) +
+            Offset(0.5 * width - 0.5 * child.width, height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -278,7 +280,8 @@ class PlayAnimationBlock extends BlockModel {
   @override
   void connectChild(BlockModel child) {
     this.child = child.copyWith(
-        position: (position ?? Offset.zero) + Offset(0.5*width - 0.5*child.width, height),
+        position: (position ?? Offset.zero) +
+            Offset(0.5 * width - 0.5 * child.width, height),
         parent: this,
         state: ConnectionState.connected,
         source: Source.workSpace);
@@ -371,22 +374,56 @@ class ChangePositionBlock extends BlockModel {
       required super.source,
       super.child,
       this.dx,
-      this.dy});
+      this.dy,
+      super.position});
 
-    @override
+  @override
+  ChangePositionBlock copyWith({
+    double? dx,
+    double? dy,
+    int? blockId, 
+    String? code,
+    Color? color,
+    Offset? position,
+    ConnectionState? state,
+    BlockType? blockType,
+    double? width,
+    double? height,
+    Source? source,
+    BlockModel? child,
+    BlockModel? parent,
+  }) {
+    return ChangePositionBlock(
+      dx: dx ?? this.dx,
+      dy: dy ?? this.dy,
+      code: code ?? this.code,
+      color: color ?? this.color,
+      state: state ?? this.state,
+      blockType: blockType ?? this.blockType,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      source: source ?? this.source,
+      child: child ?? this.child,
+      position: position ?? this.position,
+    );
+  }
+
+  @override
   Result<Offset> execute(
       GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
-        if(dx == null && dy == null){
-          return Result.failure(errorMessage: "both the horisontal and vertical factors are null");
-        }
-    gameObjectProvider.changeGlobalPosition(dx:dx,dy:dy,gameObject: gameObject);
+    if (dx == null && dy == null) {
+      return Result.failure(
+          errorMessage: "both the horisontal and vertical factors are null");
+    }
+    gameObjectProvider.addToTheCurrentPosition(
+        dx: dx, dy: dy, gameObject: gameObject);
     return Result.success(result: gameObject.position);
   }
+
   @override
   Widget constructBlock() {
     return ChangePositionBlockWidget(blockModel: this);
   }
-  
 }
 
 class Result<T> {

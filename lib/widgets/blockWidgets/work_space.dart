@@ -21,7 +21,7 @@ class _WorkSpaceState extends State<WorkSpace> {
     var gameObjectManagerProvider =
         Provider.of<GameObjectManagerProvider>(context);
     return Container(
-      color: Colors.blue,
+      color: Colors.grey,
       child: DragTarget<BlockModel>(
           builder: (context, candidateData, rejectedData) {
         return Stack(
@@ -68,7 +68,7 @@ class _WorkSpaceState extends State<WorkSpace> {
                 height: details.data.height,
                 source: Source.workSpace);
           } else {
-            newBlock = BlockModel(
+            newBlock = ChangePositionBlock(
               position: localOffset,
               code: details.data.code,
               color: details.data.color,

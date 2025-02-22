@@ -182,47 +182,60 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              "Change Position",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            const Material(
+              color: Colors.transparent,
+              child: Text(
+                "Change Position",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 60,
-                  child: TextField(
-                    controller: _dxController,
-                    decoration: const InputDecoration(
-                      labelText: "X",
-                      labelStyle: TextStyle(color: Colors.white),
+                  width: 30,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: TextField(
+                      controller: _dxController,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: "X",
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.black),
+                      onChanged: (value) {
+                        
+                        widget.blockModel.dx = double.tryParse(value);
+                      },
                     ),
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    onChanged: (value) {
-                      
-                      widget.blockModel.dx = double.tryParse(value);
-                    },
                   ),
                 ),
                 const SizedBox(width: 10),
                 SizedBox(
-                  width: 60,
-                  child: TextField(
-                    controller: _dyController,
-                    decoration: const InputDecoration(
-                      labelText: "Y",
-                      labelStyle: TextStyle(color: Colors.white),
+                  width: 30,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: TextField(
+                      controller: _dyController,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: "Y",
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.black),
+                      onChanged: (value) {
+                        widget.blockModel.dy = double.tryParse(value);
+                      },
                     ),
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    onChanged: (value) {
-                      widget.blockModel.dy = double.tryParse(value);
-                    },
                   ),
                 ),
               ],
