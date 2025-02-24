@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
-
+import 'package:scratch_clone/providers/gameObjectProviders/ticker_state_provider.dart';
 
 class PlayButton extends StatelessWidget {
-  const PlayButton({super.key});
   
+  const PlayButton({super.key});
+
   @override
   Widget build(BuildContext context) {
-
-    
     return IconButton(
-      onPressed: (){
-        onPlay(context);
-      },
+      onPressed: () => onPlay(context),
       icon: const Icon(Icons.play_arrow_rounded),
     );
   }
 
+  void onPlay(BuildContext context) {
+    var gameLoopTicker =
+        Provider.of<TickerStateProvider>(context, listen: false);
 
-  void onPlay(BuildContext context){
-    var gameObjectManagerProvider = Provider.of<GameObjectManagerProvider>(context,listen:false);
-    var gameObejcts = gameObjectManagerProvider.gameObjects.values;
-
-    for(var gameObject in gameObejcts){
-      gameObject.play(gameObjectManagerProvider);
+    if (!gameLoopTicker.isRunning) {
+      gameLoopTicker.start();
+    } else {
+      gameLoopTicker.stop();
     }
   }
 }
