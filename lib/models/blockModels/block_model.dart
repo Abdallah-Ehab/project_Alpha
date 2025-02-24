@@ -264,6 +264,9 @@ class PlayAnimationBlock extends BlockModel {
   @override
   Result execute(
       GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
+        if(gameObject.animationPlaying){
+          return Result.success(result: "animation is already playing");
+        }
     if (trackName == null) {
       return Result.failure(errorMessage: "no trackName specified");
     }

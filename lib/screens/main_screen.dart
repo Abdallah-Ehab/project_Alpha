@@ -6,13 +6,14 @@ import 'package:scratch_clone/screens/block_screen.dart';
 import 'package:scratch_clone/screens/game_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  
   const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = const [
@@ -29,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

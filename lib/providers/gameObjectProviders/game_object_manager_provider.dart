@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:scratch_clone/models/animationModels/animation_track.dart';
 import 'package:scratch_clone/models/animationModels/key_frame_model.dart';
 
@@ -11,8 +12,8 @@ import 'package:scratch_clone/models/blockModels/block_model.dart' as custom;
 
 class GameObjectManagerProvider extends ChangeNotifier {
   final TickerProvider vsync; // Store vsync reference
-
-  Map<String, GameObject> _gameObjects = {};
+  // final Ticker gameLoopTicker;
+  final Map<String, GameObject> _gameObjects = {};
 
   late GameObject _currentGameObject;
   late AnimationTrack _selectedAnimationTrack;
@@ -28,6 +29,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
   GameObjectManagerProvider({required this.vsync}) {
     // Initialize the default GameObject inside the constructor
     _gameObjects["Ryu"] = GameObject(
+      gameObjectManagerProvider: this,
       name: "Ryu",
       width: 1.0,
       height: 1.0,
@@ -275,6 +277,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
     // Create a new GameObject with default properties
     GameObject newGameObject = GameObject(
+      gameObjectManagerProvider: this,
         name: name,
         vsync: vsync,
         animationTracks: {

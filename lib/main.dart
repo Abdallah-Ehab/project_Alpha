@@ -5,6 +5,7 @@ import 'package:scratch_clone/providers/animationProviders/frame_provider.dart';
 import 'package:scratch_clone/providers/animationProviders/sketch_provider.dart';
 import 'package:scratch_clone/providers/blockProviders/block_state_provider.dart';
 import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
+import 'package:scratch_clone/providers/gameObjectProviders/ticker_state_provider.dart';
 import 'package:scratch_clone/screens/main_screen.dart';
 
 
@@ -21,6 +22,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> with TickerProviderStateMixin {
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,11 +33,17 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
         ChangeNotifierProvider(create: (context) => SketchProvider()),
         ChangeNotifierProvider(create: (context) => AnimationControllerProvider(this)),
       ],
-      child: const MaterialApp(
+      child:  MaterialApp(
         title: 'Scratch Clone',
         debugShowCheckedModeBanner: false,
-        home: MainScreen(),
+        home: ChangeNotifierProvider(create: (context){
+          GameObjectManagerProvider gameObjectManagerProvider = Provider.of<GameObjectManagerProvider>(context, listen: false);
+          return TickerStateProvider(vsync: this, gameObjectManagerProvider: gameObjectManagerProvider);},
+          child: const MainScreen(),
+        ),
       ),
     );
   }
 }
+
+
