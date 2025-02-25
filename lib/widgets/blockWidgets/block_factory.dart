@@ -209,6 +209,7 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
                         labelStyle: TextStyle(color: Colors.white),
                       ),
                       keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.black),
                       onChanged: (value) {
                         
@@ -231,6 +232,7 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
                         labelStyle: TextStyle(color: Colors.white),
                       ),
                       keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.black),
                       onChanged: (value) {
                         widget.blockModel.dy = double.tryParse(value);
@@ -254,6 +256,196 @@ class _ChangePositionBlockWidgetState extends State<ChangePositionBlockWidget> {
   }
 }
 
+
+class ChangeRotationBlockWidget extends StatefulWidget {
+  final ChangeRotationBlock blockModel;
+
+  const ChangeRotationBlockWidget({super.key, required this.blockModel});
+
+  @override
+  State<ChangeRotationBlockWidget> createState() => _ChangeRotationBlockWidget();
+}
+
+class _ChangeRotationBlockWidget extends State<ChangeRotationBlockWidget> {
+  final TextEditingController _rotationTextController = TextEditingController();
+ 
+
+  @override
+  void initState() {
+    super.initState();
+    _rotationTextController.text = "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size:  Size(widget.blockModel.width, widget.blockModel.height),
+          painter: BlockPainter(
+            color: widget.blockModel.color,
+            widthFactor: 1.0,
+            heightFactor: 1.0,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Material(
+              color: Colors.transparent,
+              child: Text(
+                "Change rotation",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 30,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: TextField(
+                      controller: _rotationTextController,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: "angle",
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.black),
+                      textAlign: TextAlign.center,
+                      onChanged: (value) {
+                        widget.blockModel.angle = double.tryParse(value);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+               
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _rotationTextController.dispose();
+    super.dispose();
+  }
+}
+
+class ChangeScaleBlockWidget extends StatefulWidget {
+  final ChangeScaleBlock blockModel;
+
+  const ChangeScaleBlockWidget({super.key, required this.blockModel});
+
+  @override
+  State<ChangeScaleBlockWidget> createState() => _ChangeScaleBlockWidget();
+}
+
+class _ChangeScaleBlockWidget extends State<ChangeScaleBlockWidget> {
+  final TextEditingController _scaleTextController = TextEditingController();
+ 
+
+  @override
+  void initState() {
+    super.initState();
+    _scaleTextController.text = "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size:  Size(widget.blockModel.width, widget.blockModel.height),
+          painter: BlockPainter(
+            color: widget.blockModel.color,
+            widthFactor: 1.0,
+            heightFactor: 1.0,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Material(
+              color: Colors.transparent,
+              child: Text(
+                "Change scale",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 30,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: TextField(
+                      controller: _scaleTextController,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: "scale",
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.black),
+                      textAlign: TextAlign.center,
+                      onChanged: (value) {
+                        widget.blockModel.scale = double.tryParse(value);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+               
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleTextController.dispose();
+    super.dispose();
+  }
+}
+
+class PrintBlockWidget extends StatefulWidget {
+  const PrintBlockWidget({super.key});
+
+  @override
+  State<PrintBlockWidget> createState() => _PrintBlockWidgetState();
+}
+
+class _PrintBlockWidgetState extends State<PrintBlockWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+
+    );
+  }
+}
 
 
 

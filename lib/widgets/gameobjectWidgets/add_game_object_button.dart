@@ -38,6 +38,7 @@ class _AddGameObjectButtonState extends State<AddGameObjectButton> {
             actions: [
               TextButton(onPressed: (){
                 gameObjectProvider.createNewGameObject(_gameObjectNameController.text);
+                Navigator.of(context).pop();
               }, child: const Text("apply")),
               TextButton(onPressed: (){
                 Navigator.of(context).pop();
