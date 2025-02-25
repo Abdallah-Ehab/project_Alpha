@@ -45,6 +45,15 @@ class BlockStateProvider extends ChangeNotifier {
         width: 10,
         height: 20,
         source: Source.storage),
+    ChangeRotationBlock(
+        code: "rotateObject",
+        color: Colors.blue,
+        state: custom.ConnectionState.disconnected,
+        blockType: BlockType.input,
+        width: 200,
+        height: 100,
+        source: Source.storage,
+        angle: 0),
     ChangePositionBlock(
       code: "MoveObject",
       color: Colors.blue,
@@ -55,7 +64,16 @@ class BlockStateProvider extends ChangeNotifier {
       source: Source.storage,
       dx: 0.0,
       dy: 0.0,
-    )
+    ),
+    ChangeScaleBlock(
+        code: "scaleObject",
+        color: Colors.blue,
+        state: custom.ConnectionState.disconnected,
+        blockType: BlockType.input,
+        width: 200,
+        height: 100,
+        source: Source.storage,
+        scale: 1)
   ];
 
   List<ConditionBlock> get conditionBlocks => _conditionBlocks;

@@ -77,7 +77,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
     _selectedAnimationTrack = _currentGameObject.animationTracks["idle"]!;
   }
 
-  Map<String,GameObject> get gameObjects => _gameObjects;
+  Map<String, GameObject> get gameObjects => _gameObjects;
 
   void addGameObject(String name, GameObject gameObject) {
     _gameObjects[name] = gameObject;
@@ -88,14 +88,6 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   set currentGameObject(GameObject gameObject) {
     _currentGameObject = gameObject;
-    notifyListeners();
-  }
-
-  void addAnimationTrackToCurrentGameObject({
-    required String name,
-    required AnimationTrack animationTrack,
-  }) {
-    _currentGameObject.animationTracks[name] = animationTrack;
     notifyListeners();
   }
 
@@ -122,11 +114,14 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
   void addCurrentSketchToCurrentFrameInSelectedAnimationTrack(
       int index, SketchModel currentSketch) {
-    _selectedAnimationTrack.keyFrames[index].sketches.data.add(currentSketch);
+    _currentGameObject.animationTracks[_selectedAnimationTrack.name]!
+        .keyFrames[index].sketches.data
+        .add(currentSketch);
     notifyListeners();
   }
 
-  void changeGlobalPosition({double? dx, double? dy,required GameObject gameObject}) {
+  void changeGlobalPosition(
+      {double? dx, double? dy, required GameObject gameObject}) {
     var currentdx = gameObject.position.dx;
     var currentdy = gameObject.position.dy;
     if (dx == null && dy != null) {
@@ -142,8 +137,9 @@ class GameObjectManagerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addToTheCurrentPosition({double? dx, double? dy,required GameObject gameObject}){
-     var currentdx = gameObject.position.dx;
+  void addToTheCurrentPosition(
+      {double? dx, double? dy, required GameObject gameObject}) {
+    var currentdx = gameObject.position.dx;
     var currentdy = gameObject.position.dy;
     if (dx == null && dy != null) {
       gameObject.position += Offset(currentdx, dy);
@@ -155,6 +151,18 @@ class GameObjectManagerProvider extends ChangeNotifier {
       return;
     }
 
+    notifyListeners();
+  }
+
+  void addToTheCurrentRotation({double? angle,required GameObject gameObject}){
+    if(angle == null) return;
+    gameObject.rotation += angle;
+    notifyListeners();
+  }
+  void addToCurrentScale({double ? scale,required GameObject gameObject}){
+    if(scale == null) return;
+    gameObject.width += scale;
+    gameObject.height += scale;
     notifyListeners();
   }
 
@@ -277,7 +285,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
 
     // Create a new GameObject with default properties
     GameObject newGameObject = GameObject(
-      gameObjectManagerProvider: this,
+        gameObjectManagerProvider: this,
         name: name,
         vsync: vsync,
         animationTracks: {
@@ -323,7 +331,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
         ));
 
     _gameObjects[name] = newGameObject;
-    _currentGameObject = newGameObject;  
+    _currentGameObject = newGameObject;
     notifyListeners();
   }
 
@@ -354,18 +362,31 @@ class GameObjectManagerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removePoints(Offset point, int sketchIndex, double strokeWidth,int activeFrameIndex) {
+  void removePoints(
+      Offset point, int sketchIndex, double strokeWidth, int activeFrameIndex) {
     log(_currentGameObject.name);
     log("active key frame is ${_currentGameObject.activeFrameIndex}");
     log("$sketchIndex");
-    _currentGameObject
-        .animationTracks[_selectedAnimationTrack.name]!
-        .keyFrames[activeFrameIndex]
-        .sketches
-        .data[sketchIndex]
-        .points
+    _currentGameObject.animationTracks[_selectedAnimationTrack.name]!
+        .keyFrames[activeFrameIndex].sketches.data[sketchIndex].points
         .removeWhere((currentPoint) =>
             (currentPoint - point).distance < 5 * strokeWidth);
+    notifyListeners();
+  }
+
+  void addNewAnimationTrack(String name) {
+    _currentGameObject.animationTracks[name] = AnimationTrack(
+      name: name,
+      keyFrames: [
+        KeyframeModel(
+            FrameByFrameKeyFrame(data: []),
+            0,
+            TweenKeyFrame(
+                position: const Offset(0, 0), scale: 1.0, rotation: 0.0),
+            KeyFrameType.fullKey)
+      ],
+      duration: 0.0,
+    );
     notifyListeners();
   }
 }

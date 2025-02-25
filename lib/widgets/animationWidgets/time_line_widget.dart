@@ -30,10 +30,12 @@ class TimeLineWidget extends StatefulWidget {
 class _TimeLineWidgetState extends State<TimeLineWidget> {
   late PageController _pageController;
   late TextEditingController _textController;
+  late TextEditingController _addAnimationTrackController;
   @override
   void initState() {
     _pageController = PageController();
     _textController = TextEditingController();
+    _addAnimationTrackController = TextEditingController();
     super.initState();
   }
 
@@ -42,6 +44,7 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
     super.dispose();
     _pageController.dispose();
     _textController.dispose();
+    _addAnimationTrackController.dispose();
   }
 
   @override
@@ -86,7 +89,30 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
                     playAnimation(context, animationTrack);
                   },
                   child: const Text("play"),
-                )
+                ),
+                IconButton(onPressed: (){
+                  showDialog(context: context, builder: (context){
+                    return AlertDialog(
+                      content: TextField(
+                        controller: _addAnimationTrackController,
+                        decoration: const InputDecoration(
+                          hintText: "enter the animation track name"
+                        ),
+                      ),
+
+                      actions: [
+                        TextButton(onPressed: (){
+                          if(_addAnimationTrackController.text.isEmpty) return;
+                          gameObjectProvider.addNewAnimationTrack(_addAnimationTrackController.text);
+                          Navigator.of(context).pop();
+                        }, child: const Text("apply")),
+                        TextButton(onPressed: (){
+                          Navigator.of(context).pop();
+                        },child: const Text("cancel"))
+                      ],
+                    );
+                  });
+                }, icon: const Icon(Icons.add_circle_rounded,color: Colors.black,))
               ],
             ),
             SizedBox(

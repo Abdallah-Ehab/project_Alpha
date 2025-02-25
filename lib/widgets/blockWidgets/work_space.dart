@@ -67,8 +67,30 @@ class _WorkSpaceState extends State<WorkSpace> {
                 width: details.data.width,
                 height: details.data.height,
                 source: Source.workSpace);
-          } else {
+          } else if(details.data is ChangePositionBlock) {
             newBlock = ChangePositionBlock(
+              position: localOffset,
+              code: details.data.code,
+              color: details.data.color,
+              source: Source.workSpace,
+              state: details.data.state,
+              blockType: details.data.blockType,
+              width: details.data.width,
+              height: details.data.height,
+            );
+          }else if(details.data is ChangeRotationBlock){
+              newBlock = ChangeScaleBlock(
+              position: localOffset,
+              code: details.data.code,
+              color: details.data.color,
+              source: Source.workSpace,
+              state: details.data.state,
+              blockType: details.data.blockType,
+              width: details.data.width,
+              height: details.data.height,
+            );
+          }else{
+              newBlock = ChangeScaleBlock(
               position: localOffset,
               code: details.data.code,
               color: details.data.color,

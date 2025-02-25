@@ -9,11 +9,12 @@ class AnimationTracksDropDownMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     var gameObjectProvider = Provider.of<GameObjectManagerProvider>(context);
     return DropdownButton(
+      value: "idle",
       items: gameObjectProvider.currentGameObject.animationTracks.keys
-          .map((data) => DropdownMenuItem(child: Text(data)))
+          .map((data) => DropdownMenuItem(value: data,child: Text(data),))
           .toList(),
       onChanged: (value) {
-        gameObjectProvider.setSelectedAnimationTrackByName(value);
+        gameObjectProvider.setSelectedAnimationTrackByName(value!);
       },
     );
   }

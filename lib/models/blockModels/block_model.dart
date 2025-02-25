@@ -364,6 +364,128 @@ class ConditionBlock extends BlockModel {
   }
 }
 
+class ChangeRotationBlock extends BlockModel {
+  double? angle;
+  ChangeRotationBlock(
+      {required super.code,
+      required super.color,
+      required super.state,
+      required super.blockType,
+      required super.width,
+      required super.height,
+      required super.source,
+      super.child,
+      this.angle,
+      super.position});
+
+  @override
+  ChangeRotationBlock copyWith({
+    double? angle,
+    int? blockId, 
+    String? code,
+    Color? color,
+    Offset? position,
+    ConnectionState? state,
+    BlockType? blockType,
+    double? width,
+    double? height,
+    Source? source,
+    BlockModel? child,
+    BlockModel? parent,
+  }) {
+    return ChangeRotationBlock(
+      angle: angle ?? this.angle,
+      code: code ?? this.code,
+      color: color ?? this.color,
+      state: state ?? this.state,
+      blockType: blockType ?? this.blockType,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      source: source ?? this.source,
+      child: child ?? this.child,
+      position: position ?? this.position,
+    );
+  }
+
+  @override
+  Result<double> execute(
+      GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
+    if (angle == null) {
+      return Result.failure(
+          errorMessage: "no rotation attribute was added");
+    }
+    gameObjectProvider.addToTheCurrentRotation(angle : angle, gameObject: gameObject);
+    return Result.success(result: gameObject.rotation);
+    }
+
+  @override
+  Widget constructBlock() {
+    return ChangeRotationBlockWidget(blockModel: this);
+  }
+}
+
+class ChangeScaleBlock extends BlockModel {
+  double? scale;
+  ChangeScaleBlock(
+      {required super.code,
+      required super.color,
+      required super.state,
+      required super.blockType,
+      required super.width,
+      required super.height,
+      required super.source,
+      super.child,
+       this.scale,
+      super.position});
+
+  @override
+  ChangeScaleBlock copyWith({
+    double? scale,
+    int? blockId, 
+    String? code,
+    Color? color,
+    Offset? position,
+    ConnectionState? state,
+    BlockType? blockType,
+    double? width,
+    double? height,
+    Source? source,
+    BlockModel? child,
+    BlockModel? parent,
+  }) {
+    return ChangeScaleBlock(
+      scale : scale ?? this.scale,
+      code: code ?? this.code,
+      color: color ?? this.color,
+      state: state ?? this.state,
+      blockType: blockType ?? this.blockType,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      source: source ?? this.source,
+      child: child ?? this.child,
+      position: position ?? this.position,
+    );
+  }
+
+  @override
+  Result<double> execute(
+      GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
+    if (scale == null) {
+      return Result.failure(
+          errorMessage: "no rotation attribute was added");
+    }
+    gameObjectProvider.addToCurrentScale(scale: scale,gameObject: gameObject);
+    return Result.success(result: gameObject.rotation);
+    }
+
+  @override
+  Widget constructBlock() {
+    return ChangeScaleBlockWidget(blockModel: this);
+  }
+}
+
+
+
 class ChangePositionBlock extends BlockModel {
   double? dx;
   double? dy;
@@ -428,6 +550,9 @@ class ChangePositionBlock extends BlockModel {
     return ChangePositionBlockWidget(blockModel: this);
   }
 }
+
+
+
 
 class Result<T> {
   T? result;

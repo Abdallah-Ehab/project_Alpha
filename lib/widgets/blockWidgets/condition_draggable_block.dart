@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart';
 
-
 // ignore: must_be_immutable
 class ConditionDraggableBlockWidget extends StatefulWidget {
   ConditionBlock? blockModel;
@@ -48,34 +47,30 @@ class _ConditionDraggableBlockWidgetState
       color: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100), color: Colors.greenAccent),
+            borderRadius: BorderRadius.circular(100),
+            color: Colors.greenAccent),
         width: 200,
         height: 30,
-        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
-
           children: [
             SizedBox(
-              width: 30,
+              width: 50,
               child: TextField(
-
                 controller: _firstValueTextEditingController,
+                textAlign: TextAlign.center,
                 decoration: const InputDecoration(
-                  
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50))
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "first value"),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "first value"),
                 onChanged: (value) {
                   setState(() {
-                    if(widget.blockModel != null){
-                           widget.blockModel!.firstValue = value;
+                    if (widget.blockModel != null) {
+                      widget.blockModel!.firstValue = value;
                     }
-               
                   });
                 },
               ),
@@ -86,30 +81,29 @@ class _ConditionDraggableBlockWidgetState
               onChanged: (value) {
                 setState(() {
                   selectedOperator = value!;
-                  if(widget.blockModel != null){
-                           widget.blockModel!.comaparisonOperator = value;
-                    }
+                  if (widget.blockModel != null) {
+                    widget.blockModel!.comaparisonOperator = value;
+                  }
                 });
               },
             ),
             SizedBox(
-              width: 30,
+              width: 50,
               child: TextField(
-              
                 controller: _secondValueTextEditingController,
+                textAlign: TextAlign.center,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50))
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    filled: true,
+                    fillColor: Colors.white,
                     hintText: "second value",
                     hintStyle: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold)),
                 onChanged: (value) {
                   setState(() {
-                    if(widget.blockModel != null){
-                           widget.blockModel!.secondValue = value;
+                    if (widget.blockModel != null) {
+                      widget.blockModel!.secondValue = value;
                     }
                   });
                 },
