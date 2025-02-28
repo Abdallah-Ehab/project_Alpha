@@ -30,7 +30,7 @@ class GenericBlockWidget extends StatelessWidget {
             painter: BlockPainter(color: blockModel.color, widthFactor:1.0,heightFactor: 1.0),
           ),
           const Material(
-              color: Colors.transparent, child: Text("generic block")
+              color: Colors.transparent, child: Text("start block")
               ),
         ],
       );

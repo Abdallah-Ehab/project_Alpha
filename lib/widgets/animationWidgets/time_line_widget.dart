@@ -62,15 +62,15 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const AnimationTracksDropDownMenu(),
-                ElevatedButton(
+                IconButton(
                   onPressed: () {
                     if (framesProvider.activeFrameIndex > 0) {
                       framesProvider.activeFrameIndex--;
                     }
                   },
-                  child: const Text("prev frame"),
+                  icon: const Icon(Icons.skip_previous),
                 ),
-                ElevatedButton(
+                IconButton(
                   onPressed: () {
                     if (framesProvider.activeFrameIndex <
                         gameObjectProvider
@@ -78,9 +78,9 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
                       framesProvider.activeFrameIndex++;
                     }
                   },
-                  child: const Text("next frame"),
+                  icon: const Icon(Icons.skip_next),
                 ),
-                ElevatedButton(
+                IconButton(
                   onPressed: () {
                     animationControllerProvider.isPlaying = !animationControllerProvider.isPlaying;
                     AnimationTrack animationTrack =
@@ -88,7 +88,7 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
       
                     playAnimation(context, animationTrack);
                   },
-                  child: const Text("play"),
+                  icon: const Icon(Icons.play_arrow),
                 ),
                 IconButton(onPressed: (){
                   showDialog(context: context, builder: (context){
