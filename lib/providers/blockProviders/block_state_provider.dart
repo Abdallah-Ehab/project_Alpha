@@ -73,7 +73,19 @@ class BlockStateProvider extends ChangeNotifier {
         width: 200,
         height: 100,
         source: Source.storage,
-        scale: 1)
+        scale: 1),
+    VariableBlock(
+      variableName: "x",
+      variableType: VariableType.integer,
+      variableValue: 0,
+        code: "scaleObject",
+        color: Colors.lightGreen,
+        state: custom.ConnectionState.disconnected,
+        blockType: BlockType.input,
+        width: 200,
+        height: 100,
+        source: Source.storage,
+        )
   ];
 
   List<ConditionBlock> get conditionBlocks => _conditionBlocks;

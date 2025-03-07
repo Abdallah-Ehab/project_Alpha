@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/constants/colors/colors.dart';
+import 'package:scratch_clone/widgets/animationWidgets/add_sprite_button.dart';
 import 'package:scratch_clone/widgets/animationWidgets/animation_widget.dart';
 import 'package:scratch_clone/widgets/animationWidgets/color_picker_panel.dart';
 import 'package:scratch_clone/widgets/animationWidgets/eraser_button.dart';
@@ -30,7 +31,7 @@ class _AnimationEditorScreenState extends State<AnimationEditorScreen> {
   void _closeDrawer() {
     setState(() {
       _isDrawerOpen = false;
-      widget.onDrawerToggle(false); 
+      widget.onDrawerToggle(false);
     });
   }
 
@@ -84,34 +85,39 @@ class _AnimationEditorScreenState extends State<AnimationEditorScreen> {
                   ),
                 ],
               ),
-              child:  Padding(
-                padding: EdgeInsets.all(12),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text(
+                      Text(
                         "Tools",
                         style: TextStyle(
-                          color: MyColors.pastelPeach, 
+                          color: MyColors.pastelPeach,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Divider(color: MyColors.pastelPeach.withOpacity(0.1), thickness: 1), 
-                      TweeningSlider(),
-                      Divider(color: MyColors.pastelPeach.withOpacity(0.1), thickness: 1),
-                      StrokeWidthSliderWidget(),
-                      ColorPickerPanel(),
-                      Row(
+                      Divider(
+                          color: MyColors.pastelPeach.withOpacity(0.1),
+                          thickness: 1),
+                      const TweeningSlider(),
+                      Divider(
+                          color: MyColors.pastelPeach.withOpacity(0.1),
+                          thickness: 1),
+                      const StrokeWidthSliderWidget(),
+                      const ColorPickerPanel(),
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const PaintButton(),
-                          const SizedBox(width: 12),
-                          const EraserButton(),
+                          PaintButton(),
+                          SizedBox(width: 12),
+                          EraserButton(),
                         ],
                       ),
+                      const AddSpriteButton(),
                     ],
                   ),
                 ),

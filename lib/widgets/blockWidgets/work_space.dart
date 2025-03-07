@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart';
+import 'package:scratch_clone/models/blockModels/block_prototype.dart';
 import 'package:scratch_clone/providers/blockProviders/block_state_provider.dart';
 import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
 import 'package:scratch_clone/widgets/blockWidgets/draggable_block.dart';
@@ -35,75 +36,11 @@ class _WorkSpaceState extends State<WorkSpace> {
 
         if (details.data.source == Source.storage) {
           BlockModel newBlock;
-          if (details.data is IfStatementBlock) {
-            newBlock = IfStatementBlock(
-              position: localOffset,
-              code: details.data.code,
-              color: details.data.color,
-              source: Source.workSpace,
-              state: details.data.state,
-              blockType: details.data.blockType,
-              width: details.data.width,
-              height: details.data.height,
-            );
-          } else if (details.data is PlayAnimationBlock) {
-            newBlock = PlayAnimationBlock(
-              position: localOffset,
-              code: details.data.code,
-              color: details.data.color,
-              source: Source.workSpace,
-              state: details.data.state,
-              blockType: details.data.blockType,
-              width: details.data.width,
-              height: details.data.height,
-            );
-          } else if (details.data is ConditionBlock) {
-            newBlock = ConditionBlock(
-                position: localOffset,
-                code: details.data.code,
-                color: details.data.color,
-                state: details.data.state,
-                blockType: details.data.blockType,
-                width: details.data.width,
-                height: details.data.height,
-                source: Source.workSpace);
-          } else if(details.data is ChangePositionBlock) {
-            newBlock = ChangePositionBlock(
-              position: localOffset,
-              code: details.data.code,
-              color: details.data.color,
-              source: Source.workSpace,
-              state: details.data.state,
-              blockType: details.data.blockType,
-              width: details.data.width,
-              height: details.data.height,
-            );
-          }else if(details.data is ChangeRotationBlock){
-              newBlock = ChangeScaleBlock(
-              position: localOffset,
-              code: details.data.code,
-              color: details.data.color,
-              source: Source.workSpace,
-              state: details.data.state,
-              blockType: details.data.blockType,
-              width: details.data.width,
-              height: details.data.height,
-            );
-          }else{
-              newBlock = ChangeScaleBlock(
-              position: localOffset,
-              code: details.data.code,
-              color: details.data.color,
-              source: Source.workSpace,
-              state: details.data.state,
-              blockType: details.data.blockType,
-              width: details.data.width,
-              height: details.data.height,
-            );
+          newBlock = BlockPrototype.createBlock(details.data, localOffset);
+          gameObjectManagerProvider.addBlockToWorkSpaceBlocks(newBlock);
           }
 
-          gameObjectManagerProvider.addBlockToWorkSpaceBlocks(newBlock);
-        } else {
+         else {
           var workSpaceBlocks =
               gameObjectManagerProvider.currentGameObject.workSpaceBlocks;
           var index = workSpaceBlocks

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+
 import 'package:scratch_clone/models/animationModels/animation_track.dart';
 import 'package:scratch_clone/models/animationModels/key_frame_model.dart';
 
@@ -9,6 +9,8 @@ import 'package:scratch_clone/models/animationModels/sketch_model.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart';
 import 'package:scratch_clone/models/gameObjectModels/game_object.dart';
 import 'package:scratch_clone/models/blockModels/block_model.dart' as custom;
+
+import 'dart:ui' as ui;
 
 class GameObjectManagerProvider extends ChangeNotifier {
   final TickerProvider vsync; // Store vsync reference
@@ -115,7 +117,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
   void addCurrentSketchToCurrentFrameInSelectedAnimationTrack(
       int index, SketchModel currentSketch) {
     _currentGameObject.animationTracks[_selectedAnimationTrack.name]!
-        .keyFrames[index].sketches.data
+        .keyFrames[index].frameByFrameKeyFrame.data
         .add(currentSketch);
     notifyListeners();
   }
@@ -221,45 +223,53 @@ class GameObjectManagerProvider extends ChangeNotifier {
   void addPointToTheLastSketchInTheFrame(
       int activeFrameIndex, Offset localPosition) {
     int lastIndex = _selectedAnimationTrack
-            .keyFrames[activeFrameIndex].sketches.data.length -
+            .keyFrames[activeFrameIndex].frameByFrameKeyFrame.data.length -
         1;
 
     if (lastIndex >= 0) {
       _selectedAnimationTrack
-          .keyFrames[activeFrameIndex].sketches.data[lastIndex].points
+          .keyFrames[activeFrameIndex].frameByFrameKeyFrame.data[lastIndex].points
           .add(localPosition);
 
       notifyListeners();
     }
   }
 
-  void playAnimation(
-      {required String trackName, required GameObject gameObject}) {
-    if (!gameObject.animationTracks.containsKey(trackName) ||
-        gameObject.animationTracks[trackName]!.keyFrames.isEmpty) {
-      return;
-    }
-    gameObject.animationPlaying = true;
-
-    AnimationTrack track = gameObject.animationTracks[trackName]!;
-    int durationInSeconds = (track.keyFrames.length / 12).ceil();
-    gameObject.animationController.duration =
-        Duration(seconds: durationInSeconds);
-
-    gameObject.animationController.reset();
-    gameObject.animationController.forward();
-
-    // Remove previous listeners to avoid duplicates
-    gameObject.animationController.removeStatusListener(
-        (status) => _animationStatusListener(status, gameObject));
-    gameObject.animationController.addStatusListener(
-        (status) => _animationStatusListener(status, gameObject));
-
-    gameObject.animationController.removeListener(
-        () => _frameUpdateListener(track: track, gameObject: gameObject));
-    gameObject.animationController.addListener(
-        () => _frameUpdateListener(track: track, gameObject: gameObject));
+  void playAnimation({required String trackName, required GameObject gameObject}) {
+  // If the same animation is already playing, do nothing
+  if (gameObject.currentAnimationTrack == trackName && gameObject.animationPlaying) {
+    return; 
   }
+
+  if (!gameObject.animationTracks.containsKey(trackName) ||
+      (gameObject.animationTracks[trackName]!.keyFrames.isEmpty)) {
+    return;
+  }
+  // If a different animation is played, interrupt the previous one
+  gameObject.currentAnimationTrack = trackName;
+  gameObject.animationPlaying = true;
+
+  log("$trackName is playing right now");
+  _selectedAnimationTrack = gameObject.animationTracks[trackName]!;
+  int durationInSeconds = (_selectedAnimationTrack.keyFrames.length / 12).ceil();
+  gameObject.animationController.duration = Duration(seconds: durationInSeconds);
+
+  // Stop any currently running animation
+  gameObject.animationController.reset();
+  gameObject.animationController.forward();
+
+  // Ensure we clear previous listeners to avoid duplication
+  gameObject.animationController.removeStatusListener(
+      (status) => _animationStatusListener(status, gameObject));
+  gameObject.animationController.addStatusListener(
+      (status) => _animationStatusListener(status, gameObject));
+
+  gameObject.animationController.removeListener(
+      () => _frameUpdateListener(track: _selectedAnimationTrack, gameObject: gameObject));
+  gameObject.animationController.addListener(
+      () => _frameUpdateListener(track: _selectedAnimationTrack, gameObject: gameObject));
+}
+
 
   void _frameUpdateListener(
       {required AnimationTrack track, required GameObject gameObject}) {
@@ -275,7 +285,6 @@ class GameObjectManagerProvider extends ChangeNotifier {
   void _animationStatusListener(AnimationStatus status, GameObject gameObject) {
     if (status == AnimationStatus.completed) {
       gameObject.animationPlaying = false;
-      gameObject.activeFrameIndex = 0;
       notifyListeners();
     }
   }
@@ -368,7 +377,7 @@ class GameObjectManagerProvider extends ChangeNotifier {
     log("active key frame is ${_currentGameObject.activeFrameIndex}");
     log("$sketchIndex");
     _currentGameObject.animationTracks[_selectedAnimationTrack.name]!
-        .keyFrames[activeFrameIndex].sketches.data[sketchIndex].points
+        .keyFrames[activeFrameIndex].frameByFrameKeyFrame.data[sketchIndex].points
         .removeWhere((currentPoint) =>
             (currentPoint - point).distance < 5 * strokeWidth);
     notifyListeners();
@@ -389,4 +398,15 @@ class GameObjectManagerProvider extends ChangeNotifier {
     );
     notifyListeners();
   }
+void addImagestoCurrentFrame({required int index, ui.Image? image}){
+  _currentGameObject.animationTracks[_selectedAnimationTrack.name]!.keyFrames[index].frameByFrameKeyFrame.image = image;
+  notifyListeners();
 }
+
+
+void addVariableValue({String variableName = "", dynamic value}){
+  _currentGameObject.variables[variableName] = value;
+  notifyListeners();
+}
+}
+
