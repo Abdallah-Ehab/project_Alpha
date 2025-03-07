@@ -107,6 +107,13 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
                         .currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames.length +
                     1,
                 scrollDirection: Axis.horizontal,
+                onPageChanged: (value) {
+                  if (value <=
+                      gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames.length -
+                          1) {
+                    framesProvider.activeFrameIndex = value;
+                  }
+                },
                 itemBuilder: (context, index) {
                   var track = gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!;
                   return _buildFrameTile(context, index, track, framesProvider, gameObjectProvider);
@@ -178,35 +185,117 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
   }
 
   Widget _buildFrameTile(BuildContext context, int index, AnimationTrack track, FramesProvider framesProvider, GameObjectManagerProvider gameObjectProvider) {
-    bool isFullKey = index < track.keyFrames.length && track.keyFrames[index].frameType == KeyFrameType.fullKey;
 
-    return GestureDetector(
-      onTap: () {
-        framesProvider.activeFrameIndex = index;
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        width: 50,
-        height: 100,
-        decoration: BoxDecoration(
-          color: isFullKey ? Colors.blue : Colors.grey,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 4,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            "$index",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    );
+    if (index < gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames.length) {
+                    if (gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[index].frameType ==
+                        KeyFrameType.fullKey) {
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        width: 50,
+                        height: 100,
+                        color: Colors.blue,
+                        child: Center(child: Text("$index")),
+                      );
+                    }
+                  }
+                  return GestureDetector(
+                    onTap: () {
+                      if(index > gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames.length - 1){
+                        gameObjectProvider.addFrameToAnimationTrack(KeyframeModel(
+                              FrameByFrameKeyFrame(data: []),
+                              index,
+                              TweenKeyFrame(
+                                  position: const Offset(0, 0),
+                                  scale: 1.0,
+                                  rotation: 0.0),
+                              KeyFrameType.fullKey));
+                              framesProvider.activeFrameIndex = index;
+                          
+                      }else{
+                        gameObjectProvider.addInbetweenFrameToAnimationTrack(index,KeyframeModel(
+                              FrameByFrameKeyFrame(data: []),
+                              index,
+                              TweenKeyFrame(
+                                  position: const Offset(0, 0),
+                                  scale: 1.0,
+                                  rotation: 0.0),
+                              KeyFrameType.fullKey));
+                      }
+                      gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.addToFullKeyFrameIndices(index);
+                    },
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text(
+                                "choose the number of frames to insert"),
+                            content: TextField(
+                              controller: _textController,
+                              decoration:
+                                  const InputDecoration(hintText: "no of frames"),
+                              keyboardType: TextInputType.number,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  List<SketchModel> temp = gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[framesProvider.activeFrameIndex].frameByFrameKeyFrame.data;
+                                  int numberOfinsertedFrames =
+                                      int.parse(_textController.text);
+                                  for (int i = 0;
+                                      i < numberOfinsertedFrames;
+                                      i++) {
+                                    gameObjectProvider.addFrameToAnimationTrack(
+                                        KeyframeModel(
+                                            FrameByFrameKeyFrame(data: temp),
+                                            index,
+                                            TweenKeyFrame(
+                                                position: const Offset(0, 0),
+                                                scale: 1.0,
+                                                rotation: 0.0),
+                                            KeyFrameType.blankKey));
+                                  }
+                                  
+                                  gameObjectProvider.addFrameToAnimationTrack(
+                                      KeyframeModel(
+                                          FrameByFrameKeyFrame(data: []),
+                                          index,
+                                          TweenKeyFrame(
+                                              position: const Offset(0, 0),
+                                              scale: 1.0,
+                                              rotation: 0.0),
+                                          KeyFrameType.fullKey));
+                                  framesProvider.activeFrameIndex +=
+                                      numberOfinsertedFrames+1;
+                                  gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[framesProvider.activeFrameIndex].frameByFrameKeyFrame.data = temp;
+                                  gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.addToFullKeyFrameIndices(index);
+                                },
+                                child: const Text("insert"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("cancel"),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey,
+                      child: const Center(
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
   }
 
   Widget _buildAddAnimationTrackDialog(BuildContext context, GameObjectManagerProvider gameObjectProvider) {

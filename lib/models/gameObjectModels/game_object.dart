@@ -15,9 +15,11 @@ class GameObject {
   int activeFrameIndex;
   late AnimationController animationController;
   bool animationPlaying;
+  String? currentAnimationTrack;
   BlockModel? blocksHead;
   late List<BlockModel> workSpaceBlocks;
   GameObjectManagerProvider gameObjectManagerProvider;
+  Map<String,dynamic> variables = {};
 
   GameObject(
       {required this.name,

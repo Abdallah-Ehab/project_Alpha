@@ -264,15 +264,13 @@ class PlayAnimationBlock extends BlockModel {
   @override
   Result execute(
       GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
-        if(gameObject.animationPlaying){
-          return Result.success(result: "animation is already playing");
-        }
     if (trackName == null) {
       return Result.failure(errorMessage: "no trackName specified");
     }
-    gameObjectProvider.playAnimation(
-        trackName: trackName!, gameObject: gameObject);
-    return Result.success(result: "animation played succesffully");
+      if (!gameObject.animationPlaying || gameObject.currentAnimationTrack != trackName) {
+    gameObjectProvider.playAnimation(trackName: trackName!, gameObject: gameObject);
+  }
+    return Result.success(result: "animation is playing");
   }
 
   @override
@@ -550,6 +548,80 @@ class ChangePositionBlock extends BlockModel {
     return ChangePositionBlockWidget(blockModel: this);
   }
 }
+
+
+enum VariableType { integer, doubleType, string, boolean }
+
+class VariableBlock extends BlockModel {
+  String variableName;
+  dynamic variableValue;
+  VariableType variableType;
+
+  VariableBlock({
+    required this.variableName,
+    required this.variableValue,
+    required this.variableType,
+    required super.code,
+    required super.color,
+    required super.state,
+    required super.blockType,
+    required super.width,
+    required super.height,
+    required super.source,
+    super.child,
+    super.position,
+  });
+
+  @override
+  VariableBlock copyWith({
+    String? variableName,
+    dynamic variableValue,
+    VariableType? variableType,
+    int? blockId,
+    String? code,
+    Color? color,
+    Offset? position,
+    ConnectionState? state,
+    BlockType? blockType,
+    double? width,
+    double? height,
+    Source? source,
+    BlockModel? child,
+    BlockModel? parent,
+  }) {
+    return VariableBlock(
+      variableName: variableName ?? this.variableName,
+      variableValue: variableValue ?? this.variableValue,
+      variableType: variableType ?? this.variableType,
+      code: code ?? this.code,
+      color: color ?? this.color,
+      state: state ?? this.state,
+      blockType: blockType ?? this.blockType,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      source: source ?? this.source,
+      child: child ?? this.child,
+      position: position ?? this.position,
+    );
+  }
+
+  @override
+  Result<dynamic> execute(
+      GameObjectManagerProvider gameObjectProvider, GameObject gameObject) {
+    if (variableName.isEmpty) {
+      return Result.failure(errorMessage: "Variable name is missing");
+    }
+    gameObjectProvider.addVariableValue(
+        variableName: variableName, value: variableValue);
+    return Result.success(result: gameObject.variables[variableName]);
+  }
+
+  @override
+  Widget constructBlock() {
+    return VariableBlockWidget(blockModel: this);
+  }
+}
+
 
 
 

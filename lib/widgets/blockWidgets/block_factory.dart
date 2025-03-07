@@ -448,6 +448,151 @@ class _PrintBlockWidgetState extends State<PrintBlockWidget> {
 }
 
 
+class VariableBlockWidget extends StatefulWidget {
+  final VariableBlock blockModel;
+
+  const VariableBlockWidget({super.key, required this.blockModel});
+
+  @override
+  State<VariableBlockWidget> createState() => _VariableBlockWidgetState();
+}
+
+class _VariableBlockWidgetState extends State<VariableBlockWidget> {
+  late TextEditingController _nameController;
+  late TextEditingController _valueController;
+  VariableType _selectedType = VariableType.integer;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.blockModel.variableName);
+    _valueController = TextEditingController(text: widget.blockModel.variableValue.toString());
+    _selectedType = widget.blockModel.variableType;
+  }
+
+  void _validateAndSetValue(String value) {
+    dynamic parsedValue;
+    switch (_selectedType) {
+      case VariableType.integer:
+        parsedValue = int.tryParse(value);
+        break;
+      case VariableType.doubleType:
+        parsedValue = double.tryParse(value);
+        break;
+      case VariableType.string:
+        parsedValue = value;
+        break;
+      case VariableType.boolean:
+        parsedValue = (value.toLowerCase() == 'true');
+        break;
+    }
+    if (parsedValue == null && _selectedType != VariableType.string) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invalid value for type ${_selectedType.name}")),
+      );
+    } else {
+      setState(() {
+        widget.blockModel.variableValue = parsedValue;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var gameObjectManagerProvider = Provider.of<GameObjectManagerProvider>(context);
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: Size(widget.blockModel.width, widget.blockModel.height),
+          painter: BlockPainter(
+            color: widget.blockModel.color,
+            widthFactor: 1.0,
+            heightFactor: 1.0,
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 60,
+              child: Material(
+                color: Colors.transparent,
+                child: TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Name",
+                    labelStyle: TextStyle(color: Colors.black),
+                  ),
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: (value) {
+                    widget.blockModel.variableName = value;
+                    gameObjectManagerProvider.addVariableValue(
+                        variableName: value, value: widget.blockModel.variableValue);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            DropdownButton<VariableType>(
+              value: _selectedType,
+              onChanged: (newType) {
+                if (newType != null) {
+                  setState(() {
+                    _selectedType = newType;
+                    widget.blockModel.variableType = newType;
+                    _validateAndSetValue(_valueController.text);
+                  });
+                }
+              },
+              items: VariableType.values
+                  .map((type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(type.name),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
+              width: 60,
+              child: Material(
+                color: Colors.transparent,
+                child: TextField(
+                  controller: _valueController,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Value",
+                    labelStyle: TextStyle(color: Colors.black),
+                  ),
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: _validateAndSetValue,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _valueController.dispose();
+    super.dispose();
+  }
+}
+
+
+
+
 
 class BlockPainter extends CustomPainter {
   final Color color;

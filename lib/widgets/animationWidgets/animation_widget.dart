@@ -58,16 +58,16 @@ class Animationwidget extends StatelessWidget {
                       .animationTracks[
                           gameObjectProvider.selectedAnimationTrack.name]!
                       .keyFrames[frameProvider.activeFrameIndex]
-                      .sketches
+                      .frameByFrameKeyFrame
                       .data
                       .length;
                   if (sketchProvider.currentSketch.sketchMode ==
                       SketchMode.eraser) {
                     for (int i = 0; i < numberOfsketches; i++) {
-                      log("Before erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].sketches.data[i].points.length}");
+                      log("Before erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].frameByFrameKeyFrame.data[i].points.length}");
                       gameObjectProvider.removePoints(details.localPosition, i,
                           sketchProvider.currentStrokeWidth,frameProvider.activeFrameIndex);
-                      log("After erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].sketches.data[i].points.length}");
+                      log("After erasing from frame ${frameProvider.activeFrameIndex}: ${gameObjectProvider.currentGameObject.animationTracks[gameObjectProvider.selectedAnimationTrack.name]!.keyFrames[frameProvider.activeFrameIndex].frameByFrameKeyFrame.data[i].points.length}");
                       
                     }
                   } else {
@@ -121,9 +121,10 @@ class AnimationPainter extends CustomPainter {
         Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
         
     if (animationTrack.keyFrames.isEmpty ||
-        animationTrack.keyFrames[activeFrameIndex].sketches.data.isEmpty) {
+        (animationTrack.keyFrames[activeFrameIndex].frameByFrameKeyFrame.data.isEmpty && animationTrack.keyFrames[activeFrameIndex].frameByFrameKeyFrame.image == null)) {
       return;
     }
+    
 
 
     int previousFrameIndex =
@@ -175,10 +176,13 @@ class AnimationPainter extends CustomPainter {
     // Translate back so sketches are drawn at the correct position
     canvas.translate(-origin.dx, -origin.dy);
     //  Path path = Path();
-     
+     if(animationTrack.keyFrames[activeFrameIndex].frameByFrameKeyFrame.image != null){
+      var currentImage = animationTrack.keyFrames[activeFrameIndex].frameByFrameKeyFrame.image!;
+      paintImage(canvas: canvas, rect: Rect.fromLTRB(0, 0, size.width, size.height), image: currentImage);
+    }
     // Draw sketches
     for (SketchModel sketch
-        in animationTrack.keyFrames[activeFrameIndex].sketches.data) {
+        in animationTrack.keyFrames[activeFrameIndex].frameByFrameKeyFrame.data) {
       // path.moveTo(sketch.points[0].dx, sketch.points[0].dy);
       Paint paint = Paint()
         ..color = sketch.color

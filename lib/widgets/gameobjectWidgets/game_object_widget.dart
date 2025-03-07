@@ -9,12 +9,13 @@ import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_
 // ignore: must_be_immutable
 class GameObjectWidget extends StatelessWidget {
   GameObject gameObject;
-  
+
   GameObjectWidget({super.key, required this.gameObject});
 
   @override
   Widget build(BuildContext context) {
-    var gameObjectManagerProvider = Provider.of<GameObjectManagerProvider>(context);
+    var gameObjectManagerProvider =
+        Provider.of<GameObjectManagerProvider>(context);
     return Transform(
       alignment: Alignment.center,
       transform: Matrix4.identity()
@@ -53,8 +54,13 @@ class GameObjectRenderer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var currentAnimationTrack = gameObject.animationTracks[trackName];
     if (currentAnimationTrack!.keyFrames.isEmpty ||
-        currentAnimationTrack.keyFrames[gameObject.activeFrameIndex].sketches
-            .data.isEmpty) return;
+        (currentAnimationTrack.keyFrames[gameObject.activeFrameIndex]
+                .frameByFrameKeyFrame.data.isEmpty &&
+            currentAnimationTrack.keyFrames[gameObject.activeFrameIndex]
+                    .frameByFrameKeyFrame.image ==
+                null)) {
+      return;
+    }
 
     Paint backgroundPaint = Paint()
       ..color = Colors.grey.withOpacity(0.3); // Light grey for visibility
@@ -126,9 +132,19 @@ class GameObjectRenderer extends CustomPainter {
 
     canvas.translate(-origin.dx, -origin.dy);
 
+    if (currentAnimationTrack.keyFrames[gameObject.activeFrameIndex]
+            .frameByFrameKeyFrame.image !=
+        null) {
+      var currentImage = currentAnimationTrack
+          .keyFrames[gameObject.activeFrameIndex].frameByFrameKeyFrame.image!;
+      paintImage(
+          canvas: canvas,
+          rect: Rect.fromLTRB(0, 0, size.width, size.height),
+          image: currentImage);
+    }
     // Draw sketches using a Path for smoother curves
     for (SketchModel sketch in currentAnimationTrack
-        .keyFrames[gameObject.activeFrameIndex].sketches.data) {
+        .keyFrames[gameObject.activeFrameIndex].frameByFrameKeyFrame.data) {
       Paint paint = Paint()
         ..color = sketch.color
         ..style = PaintingStyle.stroke
@@ -152,7 +168,7 @@ class GameObjectRenderer extends CustomPainter {
           //   );
           //   path.quadraticBezierTo(sketch.points[i].dx, sketch.points[i].dy, midPoint.dx, midPoint.dy);
           // }
-          
+
           canvas.drawLine(Offset(currentPointX, currentPointY),
               Offset(nextPointX, nextPointY), paint);
         }
