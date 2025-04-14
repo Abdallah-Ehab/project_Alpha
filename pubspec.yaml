@@ -40,6 +40,7 @@ dependencies:
   provider: ^6.1.2
   flutter_colorpicker: ^1.1.0
   image_picker: ^1.1.2
+  image: ^4.5.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -63,9 +64,11 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/goku/walk/
+    - assets/goku/idle/
+    - assets/vegeta/idle/
+    - assets/vegeta/walk/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
