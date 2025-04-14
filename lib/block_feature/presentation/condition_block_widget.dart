@@ -37,7 +37,7 @@ class ConditionBlockWidget extends StatelessWidget {
                     hintStyle: TextStyle(color: Colors.white70),
                   ),
                   controller: TextEditingController(
-                      text: blockModel.firstOperand.toString() ?? "x"),
+                      text: blockModel.firstOperand.toString() == "null" ? "x" : blockModel.firstOperand.toString()),
                   onChanged: (value) {
                     blockModel.setFirstOperandAsString(value);
                   },

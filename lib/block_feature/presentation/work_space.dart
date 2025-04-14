@@ -33,25 +33,36 @@ class WorkSpace extends StatelessWidget {
                       width: double.infinity,
                       height: double.infinity,
                       color: Colors.blue.shade100,
-                      child: Stack(
-                        children: blockComponent.workSpaceBlocks.map((block) {
-                          return ChangeNotifierProvider.value(
-                            value: block,
-                            child: Consumer<BlockModel>(
-                              builder: (context, block, child) {
-                                return Positioned(
-                                  top: block.position.dy,
-                                  left: block.position.dx,
-                                  child: DraggableBlock(blockModel: block),
-                                );
-                              },
-                            ),
-                          );
-                        }).toList(),
+                      child: InteractiveViewer(
+                        constrained: false,
+                        boundaryMargin: const EdgeInsets.all(double.infinity),
+                        minScale: 0.1,
+                        maxScale: 5.0,
+                        child: Container(
+                          width: 2000,
+                          height: 2000,
+                          color: Colors.blue.shade100,
+                          child: Stack(
+                            children:
+                                blockComponent.workSpaceBlocks.map((block) {
+                              return ChangeNotifierProvider.value(
+                                value: block,
+                                child: Consumer<BlockModel>(
+                                  builder: (context, block, child) {
+                                    return Positioned(
+                                      top: block.position.dy,
+                                      left: block.position.dx,
+                                      child: DraggableBlock(blockModel: block),
+                                    );
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
-                    onAcceptWithDetails: 
-                    (details) {
+                    onAcceptWithDetails: (details) {
                       final block = details.data;
                       final blockComponent =
                           activeEntity.getComponent<BlockComponent>();

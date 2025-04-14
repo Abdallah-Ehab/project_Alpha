@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/component/component.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 class Entity with ChangeNotifier {
   String name;
@@ -26,9 +27,9 @@ class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void update(Duration dt) {
+  void update(Duration dt,EntityManager entityManager) {
     components.forEach((type, component) {
-      component.update(dt, activeEntity: this);
+      component.update(dt, activeEntity: this,entityManager:entityManager);
     });
   }
 

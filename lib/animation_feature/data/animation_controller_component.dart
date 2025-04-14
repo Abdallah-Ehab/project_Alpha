@@ -3,6 +3,7 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 class AnimationControllerComponent extends Component {
   int _currentFrame = 0;
@@ -10,8 +11,8 @@ class AnimationControllerComponent extends Component {
   Duration lastUpdate = Duration.zero;
   String _currentAnimationTrackName = "idle";
   List<Transition> transitions = [
-    Transition(Condition(entityVariable: "x", secondOperand: 1, operator: ">"),
-        "walk")
+    Transition(startTrackName: "idle",condition: Condition(entityVariable: "x", secondOperand: 1, operator: ">"),
+        targetTrackName: "walk")
   ];
   Map<String, AnimationTrack> animationTracks = {
     "idle": AnimationTrack("idle", [KeyFrame(sketches: [])])
@@ -55,7 +56,7 @@ class AnimationControllerComponent extends Component {
   }
 
   @override
-  void update(Duration dt, {required Entity activeEntity}) {
+  void update(Duration dt, {required Entity activeEntity, required EntityManager entityManager}) {
     for (Transition transition in transitions) {
       transition.execute(activeEntity, this);
     }
@@ -70,15 +71,18 @@ class AnimationControllerComponent extends Component {
 }
 
 class Transition {
+  String startTrackName;
   Condition condition;
   String targetTrackName;
-  Transition(this.condition, this.targetTrackName);
+  Transition({required this.startTrackName,required this.condition,required this.targetTrackName});
 
   void execute(Entity entity, AnimationControllerComponent animComponent) {
     if (condition.execute(entity)) {
+      if (animComponent._currentAnimationTrackName == startTrackName) {
       animComponent.setTrack(targetTrackName);
     }
   }
+}
 }
 
 class Condition {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scratch_clone/block_feature/data/block_model.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 
 class BlockComponent extends Component {
@@ -34,11 +35,11 @@ class BlockComponent extends Component {
   }
 
   @override
-  void update(Duration dt, {required Entity activeEntity}) {
+  void update(Duration dt, {required Entity activeEntity,required EntityManager entityManager}) {
     var current = blockHead;
     
     while (current != null) {
-      current.execute(activeEntity);
+      current.execute(activeEntity,entityManager);
       current = current.child;
     }
     notifyListeners();
