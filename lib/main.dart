@@ -1,49 +1,29 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scratch_clone/providers/animationProviders/animation_controller_provider.dart';
-import 'package:scratch_clone/providers/animationProviders/frame_provider.dart';
-import 'package:scratch_clone/providers/animationProviders/sketch_provider.dart';
-import 'package:scratch_clone/providers/blockProviders/block_state_provider.dart';
-import 'package:scratch_clone/providers/gameObjectProviders/game_object_manager_provider.dart';
-import 'package:scratch_clone/providers/gameObjectProviders/ticker_state_provider.dart';
-import 'package:scratch_clone/screens/main_screen.dart';
-
-
+import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/game_scene/add_components.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const TestApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  MyAppState createState() => MyAppState();
-}
-
-class MyAppState extends State<MyApp> with TickerProviderStateMixin {
+class TestApp extends StatelessWidget {
+  const TestApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => BlockStateProvider()),
-        ChangeNotifierProvider(create: (context) => FramesProvider()),
-        ChangeNotifierProvider(create: (context) => GameObjectManagerProvider(vsync: this)),
-        ChangeNotifierProvider(create: (context) => SketchProvider()),
-        ChangeNotifierProvider(create: (context) => AnimationControllerProvider(this)),
+        ChangeNotifierProvider(create: (_) => EntityManager()),
+        ChangeNotifierProvider(create: (context){
+          final entityManager = Provider.of<EntityManager>(context, listen: false);
+          return entityManager.activeEntity;
+        })
       ],
-      child:  MaterialApp(
-        title: 'Scratch Clone',
-        debugShowCheckedModeBanner: false,
-        home: ChangeNotifierProvider(create: (context){
-          GameObjectManagerProvider gameObjectManagerProvider = Provider.of<GameObjectManagerProvider>(context, listen: false);
-          return TickerStateProvider(vsync: this, gameObjectManagerProvider: gameObjectManagerProvider);},
-          child: const MainScreen(),
-        ),
+      child: const MaterialApp(
+        home: AddComponents(),
       ),
     );
   }
 }
-
-
