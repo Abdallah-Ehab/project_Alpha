@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/block_feature/data/block_model.dart';
 import 'package:scratch_clone/block_feature/presentation/play_animation_block_widget.dart';
@@ -52,13 +54,20 @@ class MoveBlockWidget extends StatelessWidget {
                 child: TextField(
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(signed: true),
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
                     border: InputBorder.none,
                   ),
                   controller: TextEditingController(text: blockModel.x.toString()),
-                  onChanged: (value) {
+                  // onChanged: (value) {
+                  //   double? newx = double.tryParse(value);
+                  //   log(newx.toString());
+                  //   blockModel.setXvalue(double.tryParse(value) ?? 0);
+                  // },
+                  onSubmitted: (value) {
+                    double? newx = double.tryParse(value);
+                    log(newx.toString());
                     blockModel.setXvalue(double.tryParse(value) ?? 0);
                   },
                 ),
@@ -88,13 +97,19 @@ class MoveBlockWidget extends StatelessWidget {
                 child: TextField(
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(signed: true),
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
                     border: InputBorder.none,
                   ),
+                
                   controller: TextEditingController(text: blockModel.y.toString()),
                   onChanged: (value) {
+                    blockModel.setYvalue(double.tryParse(value) ?? 0);
+                  },
+                  onSubmitted: (value) {
+                    double? newy = double.tryParse(value);
+                    log(newy.toString());
                     blockModel.setYvalue(double.tryParse(value) ?? 0);
                   },
                 ),

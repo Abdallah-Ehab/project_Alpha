@@ -11,9 +11,8 @@ class BlockTestScreen extends StatelessWidget {
 
   // Default blocks in the drawer
   static final List<BlockModel> storedBlocks = [
-    IfBlock(position: Offset.zero, color: Colors.green, width: 150, height: 50),
-    PlayAnimationBlock(position: Offset.zero, color: Colors.red, width: 150, height: 50, trackName: "jump"),
-    MoveBlock(position: Offset.zero, color: Colors.purple, width: 200, height: 50, x: 10, y: 10),
+    IfBlock(position: Offset.zero, color: Colors.green, width: 150, height: 75),
+    MoveBlock(position: Offset.zero, color: Colors.purple, width: 225, height: 50,x:-1.0,y:-19.9),
     ConditionBlock(position: Offset.zero, color: Colors.orange, width: 150, height: 50),
     DeclareVarableBlock(value: 0.0, position: Offset.zero, color: Colors.deepOrange, width: 250, height: 50),
     VariableReferenceBlock(position: Offset.zero, color: Colors.deepPurple, width: 200, height: 50),  
@@ -67,13 +66,14 @@ class BlockTestScreen extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.blue),
               child: Text('Available Blocks', style: TextStyle(color: Colors.white, fontSize: 24)),
             ),
-            ...storedBlocks.map((block) => ListTile(
-                  title: Text(block.runtimeType.toString()),
-                  trailing: SizedBox(
+            ...storedBlocks.map((block) => 
+            Container(
+                    margin: const EdgeInsets.all(8.0),
+                    color: Colors.grey,
                     height: block.height,
                     width: block.width,
                     child: DraggableBlock(blockModel: block)),
-                )),
+                ),
           ],
         ),
       ),

@@ -13,6 +13,7 @@ import 'package:scratch_clone/block_feature/presentation/play_animation_block_wi
 import 'package:scratch_clone/block_feature/presentation/variable_reference_block_widget.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -73,7 +74,7 @@ abstract class BlockModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Result execute([Entity? activeEntity]);
+  Result execute([Entity? activeEntity,EntityManager? entityManager]);
 
   Widget buildBlock();
 
@@ -119,7 +120,7 @@ class StartBlock extends BlockModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity]) {
+  Result<String> execute([Entity? activeEntity,EntityManager? entityManager]) {
     return Result.success(result: "I'm just a cute starting block");
   }
 
@@ -166,7 +167,7 @@ class IfBlock extends BlockModel {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,EntityManager? entityManager]) {
     for (var condition in conditions) {
       Result conditionResult = condition.execute(activeEntity);
       if (conditionResult.errorMessage != null) {
@@ -261,7 +262,7 @@ class PlayAnimationBlock extends BlockModel {
   
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
     if (hasExecuted) {
       log("block playanimation has already been executed");
       return Result.failure(errorMessage: "Block has already executed");
@@ -348,7 +349,7 @@ class ConditionBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
     double? op1;
     double? op2;
     if (firstOperand == null ||
@@ -466,7 +467,7 @@ class MoveBlock extends BlockModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity]) {
+  Result<String> execute([Entity? activeEntity,EntityManager? entityManager]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "Active entity not provided");
     }
@@ -548,7 +549,7 @@ class DeclareVarableBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
     if (activeEntity!.variables.containsKey(variableName)) {
       return Result.failure(
           errorMessage:
@@ -608,7 +609,7 @@ class VariableReferenceBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
     if (activeEntity == null) {
       return Result.failure(
           errorMessage: "No active entity to get variable from");

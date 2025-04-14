@@ -10,45 +10,53 @@ class DraggableBlock extends StatelessWidget {
   final BlockModel blockModel;
   final void Function()? removeStatement;
   final void Function()? removeCondition;
-  const DraggableBlock({super.key, required this.blockModel,this.removeStatement,this.removeCondition});
+  const DraggableBlock(
+      {super.key,
+      required this.blockModel,
+      this.removeStatement,
+      this.removeCondition});
 
   @override
   Widget build(BuildContext context) {
     return blockModel.isDragTarget
         ? DragTarget<BlockModel>(
-            builder: (context, accepted, denied) {
+            builder: (context, candidateData, denied) {
               return Draggable(
-                  data: blockModel,
-                  feedback: Transform.scale(
-                    scale: 1.09,
-                    child: BlockFactory(blockModel: blockModel),
+                data: blockModel,
+                feedback: Transform.scale(
+                  scale: 1.09,
+                  child: BlockFactory(blockModel: blockModel),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: candidateData.isNotEmpty ? Colors.red : null,
                   ),
                   child: BlockFactory(blockModel: blockModel),
-                  onDragStarted: () {
-                    if(blockModel.isStatement && removeStatement != null){
-                      removeStatement!();
-                    }
-                    if(blockModel is ConditionBlock && removeCondition != null){
-                      removeCondition!();
-                    }
-                  if(blockModel.isConnected){
+                ),
+                onDragStarted: () {
+                  if (blockModel.isStatement && removeStatement != null) {
+                    removeStatement!();
+                  }
+                  if (blockModel is ConditionBlock && removeCondition != null) {
+                    removeCondition!();
+                  }
+                  if (blockModel.isConnected) {
                     blockModel.disconnectBlock();
                     log("block $blockModel was disconnected");
                     blockModel.hasExecuted = false;
                   }
-                  if(Scaffold.of(context).isDrawerOpen) {
+                  if (Scaffold.of(context).isDrawerOpen) {
                     Scaffold.of(context).closeDrawer();
                   }
-                  },
-                  
-                  // onDragUpdate: (details) {
-                  //   blockModel.updatePosition(details.globalPosition);
-                  //   if(blockModel.child != null){
-                  //     blockModel.child!.updatePosition(blockModel.position + Offset(0, blockModel.height));
-                  //   }
-                  // },
-                  );
-                  
+                },
+
+                // onDragUpdate: (details) {
+                //   blockModel.updatePosition(details.globalPosition);
+                //   if(blockModel.child != null){
+                //     blockModel.child!.updatePosition(blockModel.position + Offset(0, blockModel.height));
+                //   }
+                // },
+              );
             },
             onAcceptWithDetails: (details) {
               log("${details.data}");
@@ -69,8 +77,8 @@ class DraggableBlock extends StatelessWidget {
               blockModel.updatePosition(details.localPosition);
             },
             onDragStarted: () {
-              Provider.of<DraggedBlockNotifier>(context,listen: false).draggedBLock =
-                  blockModel;
+              Provider.of<DraggedBlockNotifier>(context, listen: false)
+                  .draggedBLock = blockModel;
             },
             child: BlockFactory(blockModel: blockModel),
           );

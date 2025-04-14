@@ -33,7 +33,7 @@ class EntityManager extends ChangeNotifier {
   
   void update(Duration dt) {
     for (var entity in _entities.values) {
-      entity.update(dt);
+      entity.update(dt,this);
     }
   }
 

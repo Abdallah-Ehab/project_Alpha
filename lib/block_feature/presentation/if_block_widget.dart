@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/block_feature/data/block_component.dart';
@@ -14,8 +16,8 @@ class IfBlockWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<ConditionBlock> conditions = blockModel.conditions;
     List<BlockModel> statements = blockModel.statements;
-
-
+    const double originalWidth = 150;
+    const double originalHeight = 75;
     return Consumer<Entity>(
       builder: (context, entity, child) {
         final blockComponent = entity.getComponent<BlockComponent>();
@@ -27,7 +29,7 @@ class IfBlockWidget extends StatelessWidget {
               painter: BlockHeaderPainter(color: blockModel.color),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: blockModel.conditions.isEmpty ? blockModel.width : (blockModel.conditions.length + 1) * blockModel.width ,
+                width: blockModel.width ,
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
@@ -70,6 +72,8 @@ class IfBlockWidget extends StatelessWidget {
                                                 removeCondition: () {
                                                   blockModel.removeCondition(
                                                       condition: condition);
+                                                  log("conditionBlocks length is ${blockModel.conditions.length} and the new width is ${(blockModel.conditions.length + 1) * originalWidth}");
+                                                  blockModel.setWidth((blockModel.conditions.length + 1) * originalWidth);
                                                 }),
                                           ))
                                       .toList(),
@@ -80,6 +84,7 @@ class IfBlockWidget extends StatelessWidget {
                           if (blockComponent != null) {
                           blockComponent.removeBlockFromWorkSpace(details.data);
                           blockModel.addConidition(details.data);
+                          blockModel.setWidth((blockModel.conditions.length + 1) * originalWidth);
                         }
                         },
                       ),
@@ -94,8 +99,8 @@ class IfBlockWidget extends StatelessWidget {
               painter: BlockBodyPainter(color: blockModel.color),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: conditions.isEmpty ? blockModel.width : (conditions.length + 1) * blockModel.width ,
-                height: statements.isEmpty ? blockModel.height : blockModel.height * (statements.length + 1),
+                width: blockModel.width ,
+                height: blockModel.height,
                 padding: const EdgeInsets.fromLTRB(12.0, 4.0, 8.0, 8.0),
                 child: Column(
                   
@@ -121,6 +126,7 @@ class IfBlockWidget extends StatelessWidget {
                                         removeStatement: () {
                                           blockModel.removeStatement(
                                               statement: statement);
+                                          blockModel.setHeight((blockModel.statements.length + 1) * originalHeight);
                                         },
                                       ),
                                     ))
@@ -131,6 +137,7 @@ class IfBlockWidget extends StatelessWidget {
                           blockComponent.removeBlockFromWorkSpace(details.data);
                           blockModel.addStatement(details.data);
                           details.data.setIsStatement(true);
+                          blockModel.setHeight((blockModel.statements.length + 1) * originalHeight);
                         }
                       },
                     ),
@@ -229,14 +236,12 @@ class BlockConnectorPainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-
+    var startingPoint = size.width/2 - 20;
     final path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(20, size.height) // Connector tab
-      ..lineTo(10, size.height / 2)
-      ..lineTo(0, size.height)
+      ..moveTo(startingPoint, 0)
+      ..lineTo(startingPoint + 10, size.height+5)
+      ..lineTo(startingPoint+ 30, size.height+5)
+      ..lineTo(startingPoint + 40, 0)
       ..close();
 
     canvas.drawPath(path, paint);

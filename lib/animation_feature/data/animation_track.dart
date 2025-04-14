@@ -2,7 +2,21 @@ import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
 
-class AnimationTrack extends ChangeNotifier {
+
+abstract class Positionable {
+  Offset trackPosition;
+
+  Positionable({
+    this.trackPosition = const Offset(0.0, 0.0),
+  });
+
+  void updatePosition({double? x, double? y});
+}
+
+
+
+
+class AnimationTrack extends Positionable with ChangeNotifier {
   String name;
   List<KeyFrame> frames;
   int fps;
@@ -13,9 +27,15 @@ class AnimationTrack extends ChangeNotifier {
     frames.add(frame);
     notifyListeners();
   }
+  
+  @override
+  void updatePosition({double? x, double? y}) {
+    trackPosition += Offset(x ?? 0, y ?? 0);
+    notifyListeners();
+  }
 }
 
-class KeyFrame extends ChangeNotifier{
+class KeyFrame with ChangeNotifier {
   ui.Image? image;
   List<SketchModel> sketches;
   Offset position;
@@ -32,4 +52,5 @@ class KeyFrame extends ChangeNotifier{
     sketches.last.points.add(point);
     notifyListeners();
   }
+  
 }
