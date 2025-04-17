@@ -90,12 +90,21 @@ class ControlPanel extends StatelessWidget {
         ),
         // Scale Editor
         Slider(
-          value: entity.scale,
+          value: entity.width,
           min: 0.1,
           max: 2.0,
           divisions: 19,
-          label: 'Scale: ${entity.scale.toStringAsFixed(1)}',
-          onChanged: (value) => entity.scaleEntity(value),
+          label: 'Scale: ${entity.width.toStringAsFixed(1)}',
+          onChanged: (value) => entity.changeWidth(value),
+        ),
+
+         Slider(
+          value: entity.height,
+          min: 0.1,
+          max: 2.0,
+          divisions: 19,
+          label: 'Scale: ${entity.height.toStringAsFixed(1)}',
+          onChanged: (value) => entity.changeHeight(value),
         ),
       ],
     );
