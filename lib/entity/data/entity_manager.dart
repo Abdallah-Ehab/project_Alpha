@@ -14,12 +14,12 @@ class EntityManager extends ChangeNotifier {
   EntityManager() {
     _entities = {
       "goku": Entity(
-          name: "goku", position: const Offset(0, 100), rotation: 0, scale: 1),
+          name: "goku", position: const Offset(0, 100), rotation: 0),
       "vegeta": Entity(
           name: "vegeta",
           position: const Offset(100, 100),
           rotation: 0,
-          scale: 1),
+          ),
     };
     _activeEntity = _entities["goku"]!;
   }
