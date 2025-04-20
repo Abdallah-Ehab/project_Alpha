@@ -3,17 +3,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/block_feature/presentation/block_factory.dart';
 import 'package:scratch_clone/block_feature/presentation/condition_block_widget.dart';
 import 'package:scratch_clone/block_feature/presentation/declare_variable_block_widget.dart';
 import 'package:scratch_clone/block_feature/presentation/if_block_widget.dart';
 import 'package:scratch_clone/block_feature/presentation/move_block_widget.dart';
-import 'package:scratch_clone/block_feature/presentation/play_animation_block_widget.dart';
 import 'package:scratch_clone/block_feature/presentation/variable_reference_block_widget.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -74,7 +71,7 @@ abstract class BlockModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Result execute([Entity? activeEntity,EntityManager? entityManager]);
+  Result execute([Entity? activeEntity]);
 
   Widget buildBlock();
 
@@ -120,7 +117,7 @@ class StartBlock extends BlockModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result<String> execute([Entity? activeEntity]) {
     return Result.success(result: "I'm just a cute starting block");
   }
 
@@ -167,7 +164,7 @@ class IfBlock extends BlockModel {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result<bool> execute([Entity? activeEntity]) {
     for (var condition in conditions) {
       Result conditionResult = condition.execute(activeEntity);
       if (conditionResult.errorMessage != null) {
@@ -217,92 +214,8 @@ class IfBlock extends BlockModel {
   }
 }
 
-class PlayAnimationBlock extends BlockModel {
-  String? trackName;
-
-  PlayAnimationBlock({
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
-    super.isDragTarget,
-    this.trackName,
-  });
-
-  @override
-  PlayAnimationBlock copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    BlockModel? child,
-    BlockModel? parent,
-    bool? isDragTarget,
-    String? trackName,
-  }) {
-    return PlayAnimationBlock(
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
-      isDragTarget: isDragTarget ?? this.isDragTarget,
-      trackName: trackName ?? this.trackName,
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child
-      ..parent = parent ?? this.parent;
-  }
-
-  void setTrackName(String trackName) {
-    this.trackName = trackName;
-    notifyListeners();
-  }
 
   
-
-  @override
-  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
-    if (hasExecuted) {
-      log("block playanimation has already been executed");
-      return Result.failure(errorMessage: "Block has already executed");
-    }
-    // First, validate the inputs
-    if (trackName == null) {
-      return Result.failure(errorMessage: "No trackName specified");
-    }
-
-    if (activeEntity == null) {
-      return Result.failure(errorMessage: "Active entity not provided");
-    }
-
-    AnimationControllerComponent? animComponent =
-        activeEntity.getComponent<AnimationControllerComponent>();
-
-    if (animComponent != null) {
-      if (animComponent.animationTracks.containsKey(trackName!)) {
-        animComponent.setTrack(trackName!);
-        hasExecuted = true;
-        return Result.success(result: "Animation changed to $trackName");
-      } else {
-        return Result.failure(
-            errorMessage: "Animation track '$trackName' does not exist");
-      }
-    } else {
-      return Result.failure(
-          errorMessage: "Entity does not have an AnimationControllerComponent");
-    }
-  }
-
-  @override
-  Widget buildBlock() {
-    return ChangeNotifierProvider.value(
-      value: this,
-      child: PlayAnimationBlockWidget(blockModel: this),
-    );
-  }
-}
-
 class ConditionBlock extends BlockModel {
   dynamic firstOperand;
   dynamic secondOperand;
@@ -349,7 +262,7 @@ class ConditionBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result execute([Entity? activeEntity]) {
     double? op1;
     double? op2;
     if (firstOperand == null ||
@@ -467,7 +380,7 @@ class MoveBlock extends BlockModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result<String> execute([Entity? activeEntity]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "Active entity not provided");
     }
@@ -549,7 +462,7 @@ class DeclareVarableBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result execute([Entity? activeEntity]) {
     if (activeEntity!.variables.containsKey(variableName)) {
       return Result.failure(
           errorMessage:
@@ -609,7 +522,7 @@ class VariableReferenceBlock extends BlockModel {
   }
 
   @override
-  Result execute([Entity? activeEntity,EntityManager? entityManager]) {
+  Result execute([Entity? activeEntity]) {
     if (activeEntity == null) {
       return Result.failure(
           errorMessage: "No active entity to get variable from");

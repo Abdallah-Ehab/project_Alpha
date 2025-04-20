@@ -42,15 +42,15 @@ class BlockTestScreen extends StatelessWidget {
             builder: (context, entityManager, child) {
               return DropdownButton<String>(
                 value: entityManager.activeEntity.name,
-                items: entityManager.entities.keys.map((name) {
+                items: entityManager.allEntities.map((entity) {
                   return DropdownMenuItem<String>(
-                    value: name,
-                    child: Text(name),
+                    value: entity.name,
+                    child: Text(entity.name),
                   );
                 }).toList(),
                 onChanged: (newName) {
                   if (newName != null) {
-                    entityManager.setActiveEntityByName(newName);
+                    entityManager.setActiveEntityByName(EntityType.actors,newName);
                   }
                 },
               );

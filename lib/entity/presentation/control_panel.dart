@@ -7,6 +7,8 @@ import 'package:scratch_clone/block_feature/data/block_component.dart';
 import 'package:scratch_clone/block_feature/presentation/block_test_screen.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/physics_feature/data/collider_component.dart';
+import 'package:scratch_clone/physics_feature/presentation/collider_card_widget.dart';
 
 
 
@@ -90,41 +92,48 @@ class ControlPanel extends StatelessWidget {
         ),
         // Scale Editor
         Slider(
-          value: entity.width,
-          min: 0.1,
-          max: 2.0,
-          divisions: 19,
+          value: entity.widthScale,
+          min: 1.0,
+          max: 10,
+          divisions: 9,
           label: 'Scale: ${entity.width.toStringAsFixed(1)}',
-          onChanged: (value) => entity.changeWidth(value),
+          onChanged: (value) => entity.scaleWidth(value),
         ),
 
          Slider(
-          value: entity.height,
-          min: 0.1,
-          max: 2.0,
-          divisions: 19,
+          value: entity.heigthScale,
+          min: 1.0,
+          max: 10,
+          divisions: 9,
           label: 'Scale: ${entity.height.toStringAsFixed(1)}',
-          onChanged: (value) => entity.changeHeight(value),
+          onChanged: (value) => entity.scaleHeight(value),
         ),
       ],
     );
   }
 
   Widget _buildComponentPanels(BuildContext context, Entity entity) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Components', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 10),
-        // Animation Component Panel
-        if (entity.getComponent<AnimationControllerComponent>() != null)
-          _buildAnimationComponentPanel(context, entity),
-        // Block Component Panel
-        if (entity.getComponent<BlockComponent>() != null)
-          _buildBlockComponentPanel(context, entity),
-      ],
-    );
-  }
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('Components', style: Theme.of(context).textTheme.titleMedium),
+      const SizedBox(height: 10),
+
+      // Animation Component Panel
+      if (entity.getComponent<AnimationControllerComponent>() != null)
+        _buildAnimationComponentPanel(context, entity),
+
+      // Block Component Panel
+      if (entity.getComponent<BlockComponent>() != null)
+        _buildBlockComponentPanel(context, entity),
+
+      // Collider Component Panel
+      if (entity.getComponent<ColliderComponent>() != null)
+        const ColliderCardWidget(), // Use your provided widget here
+    ],
+  );
+}
+
 
   Widget _buildAnimationComponentPanel(BuildContext context, Entity entity) {
     final animationComponent = entity.getComponent<AnimationControllerComponent>()!;
@@ -218,8 +227,8 @@ class ControlPanel extends StatelessWidget {
             } else if (value is int || value is double) {
               return Slider(
                 value: (value as num).toDouble(),
-                min: 0, // Adjust min/max based on your needs
-                max: 100,
+                min: -1.0, // Adjust min/max based on your needs
+                max: 1.0,
                 divisions: 100,
                 label: '$key: $value',
                 onChanged: (newValue) {

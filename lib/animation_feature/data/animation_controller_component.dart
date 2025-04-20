@@ -3,7 +3,7 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
+
 
 class AnimationControllerComponent extends Component {
   int _currentFrame = 0;
@@ -11,7 +11,7 @@ class AnimationControllerComponent extends Component {
   Duration lastUpdate = Duration.zero;
   String _currentAnimationTrackName = "idle";
   List<Transition> transitions = [
-    Transition(startTrackName: "idle",condition: Condition(entityVariable: "x", secondOperand: 1, operator: ">"),
+    Transition(startTrackName: "idle",condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
         targetTrackName: "walk")
   ];
   Map<String, AnimationTrack> animationTracks = {
@@ -56,7 +56,7 @@ class AnimationControllerComponent extends Component {
   }
 
   @override
-  void update(Duration dt, {required Entity activeEntity, required EntityManager entityManager}) {
+  void update(Duration dt, {required Entity activeEntity}) {
     for (Transition transition in transitions) {
       transition.execute(activeEntity, this);
     }

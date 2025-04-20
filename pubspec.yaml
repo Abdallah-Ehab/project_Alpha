@@ -41,6 +41,7 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   image_picker: ^1.1.2
   image: ^4.5.3
+  flutter_joystick: ^0.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,6 +70,7 @@ flutter:
     - assets/goku/idle/
     - assets/vegeta/idle/
     - assets/vegeta/walk/
+    - assets/grid_image.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
