@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/block_feature/data/block_model.dart';
-import 'package:scratch_clone/block_feature/presentation/play_animation_block_widget.dart';
+import 'package:scratch_clone/block_feature/presentation/command_block_painter.dart';
 
 class MoveBlockWidget extends StatelessWidget {
   final MoveBlock blockModel;

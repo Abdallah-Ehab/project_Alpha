@@ -1,15 +1,16 @@
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/component/component.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 
-class Entity with ChangeNotifier {
+abstract class Entity with ChangeNotifier {
   String name;
   ui.Offset position;
   double rotation;
   double width;
   double height;
+  double widthScale = 1.0; 
+  double heigthScale = 1.0;
   Map<Type, Component> components = {};
   Map<String,dynamic> variables = {};
   int layerNumber;
@@ -17,8 +18,8 @@ class Entity with ChangeNotifier {
     required this.name,
     required this.position,
     required this.rotation,
-    this.width = 1.0,
-    this.height = 1.0,
+    this.width = 100,
+    this.height = 100,
     this.layerNumber = 0
   });
 
@@ -37,9 +38,10 @@ class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void update(Duration dt,EntityManager entityManager) {
+  void update(Duration dt) {
+    
     components.forEach((type, component) {
-      component.update(dt, activeEntity: this,entityManager:entityManager);
+      component.update(dt, activeEntity: this);
     });
   }
 
@@ -71,6 +73,16 @@ class Entity with ChangeNotifier {
 
   void changeHeight(double height){
     this.height = height;
+    notifyListeners();
+  }
+
+  void scaleWidth(double scale){
+    widthScale = scale;
+    notifyListeners();
+  }
+
+  void scaleHeight(double scale){
+    heigthScale = scale;
     notifyListeners();
   }
 

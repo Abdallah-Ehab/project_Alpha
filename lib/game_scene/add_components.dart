@@ -6,6 +6,8 @@ import 'package:scratch_clone/block_feature/data/block_component.dart';
 import 'package:scratch_clone/core/image_loader.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
+import 'package:scratch_clone/physics_feature/data/collider_component.dart';
+import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 
 class AddComponents extends StatelessWidget {
   const AddComponents({super.key});
@@ -14,8 +16,16 @@ class AddComponents extends StatelessWidget {
   Widget build(BuildContext context) {
     var entityManager = Provider.of<EntityManager>(context, listen: false);
   var activeEntity = entityManager.activeEntity;
+  var ground = entityManager.entities[EntityType.actors]!["ground"]!;
   activeEntity.addComponent(AnimationControllerComponent());
   activeEntity.addComponent(BlockComponent());
+  activeEntity.addComponent(ColliderComponent());
+  activeEntity.addComponent(RigidBodyComponent());
+
+  // add collider component to ground :
+  ground.addComponent(ColliderComponent());
+  ground.addComponent(RigidBodyComponent(isStatic: true));
+
   var animComponent = activeEntity.getComponent<AnimationControllerComponent>();
 
  
@@ -32,6 +42,8 @@ class AddComponents extends StatelessWidget {
     var keyFrames = value.map((e) => KeyFrame(image: e, sketches: [])).toList();
     animComponent.addFramesToAnimationTracK(trackName: "walk", frames : keyFrames);
   });
+
+
 
     return const TestGameLoop();
   }

@@ -12,7 +12,7 @@ class ColliderWidget extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border.all(color: Colors.green, width: 2),
+        border: Border.all(color: Colors.red, width: 2),
       ),
       
       );
