@@ -1,9 +1,6 @@
-
-
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-
 
 class AnimationControllerComponent extends Component {
   int _currentFrame = 0;
@@ -11,8 +8,16 @@ class AnimationControllerComponent extends Component {
   Duration lastUpdate = Duration.zero;
   String _currentAnimationTrackName = "idle";
   List<Transition> transitions = [
-    Transition(startTrackName: "idle",condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
-        targetTrackName: "walk")
+    Transition(
+        startTrackName: "idle",
+        condition:
+            Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
+        targetTrackName: "walk"),
+    Transition(
+        startTrackName: "walk",
+        condition:
+            Condition(entityVariable: "x", secondOperand: 0.5, operator: "<"),
+        targetTrackName: "idle")
   ];
   Map<String, AnimationTrack> animationTracks = {
     "idle": AnimationTrack("idle", [KeyFrame(sketches: [])])
@@ -68,21 +73,32 @@ class AnimationControllerComponent extends Component {
     }
     notifyListeners();
   }
+  
+  @override
+  void reset() {
+    _currentFrame = 0;
+    _currentAnimationTrackName = "idle";
+    lastUpdate = Duration.zero;
+    notifyListeners();
+  }
 }
 
 class Transition {
   String startTrackName;
   Condition condition;
   String targetTrackName;
-  Transition({required this.startTrackName,required this.condition,required this.targetTrackName});
+  Transition(
+      {required this.startTrackName,
+      required this.condition,
+      required this.targetTrackName});
 
   void execute(Entity entity, AnimationControllerComponent animComponent) {
     if (condition.execute(entity)) {
       if (animComponent._currentAnimationTrackName == startTrackName) {
-      animComponent.setTrack(targetTrackName);
+        animComponent.setTrack(targetTrackName);
+      }
     }
   }
-}
 }
 
 class Condition {

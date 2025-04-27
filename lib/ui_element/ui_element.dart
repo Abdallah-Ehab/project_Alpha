@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 abstract class UIElement {
   Alignment alignment;
   UIElement({
-    this.alignment = Alignment.center,
+    this.alignment = Alignment.centerLeft,
   });
   Widget buildUIElementController();
   Widget buildWidget(); // Added to render the actual UI element

@@ -138,4 +138,9 @@ class ColliderComponent extends Component {
     position = value;
     notifyListeners();
   }
+  
+  @override
+  void reset() {
+   return;
+  }
 }

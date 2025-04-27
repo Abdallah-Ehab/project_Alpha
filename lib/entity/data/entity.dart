@@ -44,6 +44,11 @@ abstract class Entity with ChangeNotifier {
       component.update(dt, activeEntity: this);
     });
   }
+  void reset(){
+    components.forEach((type, component) {
+      component.reset();
+    });
+  }
 
   T? getComponent<T extends Component>() {
     final component = components[T];

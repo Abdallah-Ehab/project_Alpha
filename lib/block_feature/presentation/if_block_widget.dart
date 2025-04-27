@@ -185,7 +185,7 @@ class BlockHeaderPainter extends CustomPainter {
 
     // Add a subtle shadow/highlight for depth
     final highlightPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.2)
+      ..color = Colors.white.withOpacity(0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -248,7 +248,7 @@ class BlockConnectorPainter extends CustomPainter {
 
     // Add a subtle shadow for depth
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.2)
+      ..color = Colors.black.withOpacity(0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 

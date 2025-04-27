@@ -58,7 +58,7 @@ class RigidBodyComponent extends Component {
     Duration dt, {
     required Entity activeEntity,
   }) {
-    if (isStatic) return;
+    if (isStatic || isGrounded) return;
 
     final double seconds = dt.inMilliseconds / 1000.0;
 
@@ -70,5 +70,10 @@ class RigidBodyComponent extends Component {
     final dy = velocity.dy * seconds;
 
     activeEntity.move(x: dx, y: dy);
+  }
+  @override
+  void reset(){
+    velocity = Offset.zero;
+    notifyListeners();
   }
 }

@@ -11,7 +11,7 @@ class BlockComponent extends Component {
   late BlockModel? blockHead;
   Duration lastUpdate = Duration.zero;
   late List<BlockModel> workSpaceBlocks;
-
+  late BlockModel? current;
   BlockComponent() {
     blockHead = StartBlock(
       width: 150,
@@ -36,13 +36,18 @@ class BlockComponent extends Component {
 
   @override
   void update(Duration dt, {required Entity activeEntity}) {
-    var current = blockHead;
+    current = blockHead;
     
     while (current != null) {
-      current.execute(activeEntity);
-      current = current.child;
+      current!.execute(activeEntity);
+      current = current?.child;
     }
     notifyListeners();
+  }
+  @override
+  void reset(){
+   current = blockHead;
+   notifyListeners();
   }
 }
 

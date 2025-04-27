@@ -41,6 +41,7 @@ class _TestGameLoopState extends State<TestGameLoop>
                 _ticker.start();
               } else {
                 _ticker.stop();
+                EntityManager().reset();
                 gameState.isPlaying = false;
               }
             },

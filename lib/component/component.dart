@@ -10,6 +10,7 @@ abstract class Component with ChangeNotifier{
     {this.isActive = true}
   );
   void update(Duration dt,{required Entity activeEntity});
+  void reset();
   void toggleComponent(){
     isActive = !isActive;
     notifyListeners();

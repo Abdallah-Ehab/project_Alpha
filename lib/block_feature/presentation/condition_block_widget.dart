@@ -52,7 +52,7 @@ class ConditionBlockWidget extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: DropdownButton<String>(
-                  dropdownColor: blockModel.color.withValues(alpha: 0.9),
+                  dropdownColor: blockModel.color.withOpacity(0.9),
                   style: const TextStyle(color: Colors.white),
                   value: blockModel.comparisonOperator ?? "==",
                   underline: Container(height: 1, color: Colors.white30),
@@ -143,7 +143,7 @@ class HexagonalBlockPainter extends CustomPainter {
 
     // Add a slight bevel effect with a slightly darker color
     final Paint bevelPaint = Paint()
-      ..color = color.withValues(alpha: 0.7)
+      ..color = color.withOpacity(0.7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawPath(path, bevelPaint);

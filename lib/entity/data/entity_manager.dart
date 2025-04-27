@@ -65,8 +65,8 @@ class EntityManager extends ChangeNotifier {
   }
 
   void update(Duration dt) {
-    for (var typeMap in _entities.values) {
-      for (var entity in typeMap.values) {
+    for (var type in _entities.values) {
+      for (var entity in type.values) {
         entity.update(dt);
       }
     }
@@ -117,6 +117,15 @@ class EntityManager extends ChangeNotifier {
       _activeCamera = cam;
       notifyListeners();
     }
+  }
+
+  void reset(){
+    for (var type in _entities.values) {
+      for (var entity in type.values) {
+        entity.reset();
+      }
+    }
+    
   }
 
   void switchCameraFromEditorToGame() {

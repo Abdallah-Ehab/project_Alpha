@@ -50,7 +50,7 @@ class CommandBlockPainter extends CustomPainter {
 
     // Add a slight bevel effect with a slightly darker color
     final Paint bevelPaint = Paint()
-      ..color = color.withValues(alpha:0.7)
+      ..color = color.withOpacity(0.7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawPath(path, bevelPaint);
