@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
 class ActorEntity extends Entity{
@@ -13,6 +15,35 @@ class ActorEntity extends Entity{
     super.layerNumber,
     this.children = const [],
   });
+
+  factory ActorEntity.fromJson(Map<String, dynamic> json) {
+    return ActorEntity(
+      name: json['name'] as String,
+      position: Entity.offsetFromJson(json['position'] as Map<String, dynamic>),
+      rotation: (json['rotation'] as num).toDouble(),
+      width: (json['width'] as num?)?.toDouble() ?? 100,
+      height: (json['height'] as num?)?.toDouble() ?? 100,
+      layerNumber: json['layerNumber'] as int? ?? 0,
+      children: (json['children'] as List<dynamic>?)
+          ?.map((childJson) => Entity.fromJson(childJson as Map<String, dynamic>))
+          .toList() ??
+          [],
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'actor',
+      'name': name,
+      'position': Entity.offsetToJson(position),
+      'rotation': rotation,
+      'width': width,
+      'height': height,
+      'layerNumber': layerNumber,
+      'children': children.map((c) => c.toJson()).toList(),
+    };
+  }
 
   void addChild(Entity child) {
     children.add(child);

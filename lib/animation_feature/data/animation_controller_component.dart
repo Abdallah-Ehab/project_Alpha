@@ -23,6 +23,43 @@ class AnimationControllerComponent extends Component {
     "idle": AnimationTrack("idle", [KeyFrame(sketches: [])])
   };
 
+
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'animation_controller',
+      'isActive': isActive,
+      'currentFrame': _currentFrame,
+      'animationPlaying': animationPlaying,
+      'lastUpdate': lastUpdate.inMilliseconds, // Save as milliseconds
+      'currentAnimationTrackName': _currentAnimationTrackName,
+      'transitions': transitions.map((t) => t.toJson()).toList(),
+      'animationTracks': animationTracks.map((key, track) => MapEntry(key, track.toJson())),
+    };
+  }
+
+  /// fromJson
+  factory AnimationControllerComponent.fromJson(Map<String, dynamic> json) {
+    return AnimationControllerComponent(
+      isActive: json['isActive'] as bool? ?? true,
+      currentFrame: json['currentFrame'] as int? ?? 0,
+      animationPlaying: json['animationPlaying'] as bool? ?? true,
+      lastUpdate: Duration(milliseconds: json['lastUpdate'] as int? ?? 0),
+      currentAnimationTrackName: json['currentAnimationTrackName'] as String? ?? "idle",
+      transitions: (json['transitions'] as List<dynamic>?)
+          ?.map((e) => Transition.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+          [],
+      animationTracks: (json['animationTracks'] as Map<String, dynamic>?)
+          ?.map((key, value) => MapEntry(key, AnimationTrack.fromJson(value as Map<String, dynamic>))) ??
+          {},
+    );
+  }
+
+
+
+
   void addTrack(String name, {int fps = 10, AnimationTrack? track}) {
     if (track != null) {
       animationTracks[name] = track;
@@ -81,6 +118,8 @@ class AnimationControllerComponent extends Component {
     lastUpdate = Duration.zero;
     notifyListeners();
   }
+
+
 }
 
 class Transition {
@@ -91,6 +130,23 @@ class Transition {
       {required this.startTrackName,
       required this.condition,
       required this.targetTrackName});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'startTrackName': startTrackName,
+      'condition': condition.toJson(),
+      'targetTrackName': targetTrackName,
+    };
+  }
+
+  factory Transition.fromJson(Map<String, dynamic> json) {
+    return Transition(
+      startTrackName: json['startTrackName'] as String,
+      condition: Condition.fromJson(json['condition'] as Map<String, dynamic>),
+      targetTrackName: json['targetTrackName'] as String,
+    );
+  }
+
 
   void execute(Entity entity, AnimationControllerComponent animComponent) {
     if (condition.execute(entity)) {
@@ -109,6 +165,22 @@ class Condition {
       {required this.entityVariable,
       required this.secondOperand,
       required this.operator});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'entityVariable': entityVariable,
+      'secondOperand': secondOperand,
+      'operator': operator,
+    };
+  }
+
+  factory Condition.fromJson(Map<String, dynamic> json) {
+    return Condition(
+      entityVariable: json['entityVariable'] as String,
+      secondOperand: (json['secondOperand'] as num).toDouble(),
+      operator: json['operator'] as String,
+    );
+  }
   bool execute(Entity entity) {
     if (entity.variables[entityVariable] == null) return false;
     switch (operator) {
