@@ -39,7 +39,6 @@ abstract class Entity with ChangeNotifier {
   }
 
   void update(Duration dt) {
-    
     components.forEach((type, component) {
       component.update(dt, activeEntity: this);
     });
