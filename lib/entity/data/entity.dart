@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
+
+import 'actor_entity.dart';
+
 
 abstract class Entity with ChangeNotifier {
   String name;
@@ -9,22 +16,53 @@ abstract class Entity with ChangeNotifier {
   double rotation;
   double width;
   double height;
-  double widthScale = 1.0; 
+  double widthScale = 1.0;
   double heigthScale = 1.0;
   Map<Type, Component> components = {};
-  Map<String,dynamic> variables = {};
+  Map<String, dynamic> variables = {};
   int layerNumber;
+
   Entity({
     required this.name,
     required this.position,
     required this.rotation,
     this.width = 100,
     this.height = 100,
-    this.layerNumber = 0
+    this.layerNumber = 0,
   });
 
+  // Custom serialization for Offset field
+  static Map<String, dynamic> offsetToJson(ui.Offset offset) {
+    return {
+      'x': offset.dx,
+      'y': offset.dy,
+    };
+  }
+
+  // Convert the 'ui.Offset' from a Map during deserialization
+  static ui.Offset offsetFromJson(Map<String, dynamic> json) {
+    return ui.Offset(json['x'], json['y']);
+  }
+
+  factory Entity.fromJson(Map<String, dynamic> json) {
+    switch (json['type']) {
+      case 'actor':
+        return ActorEntity.fromJson(
+            json); // Replace with your specific Entity subclasses
+      case 'camera':
+        return CameraEntity.fromJson(
+            json); // Replace with your specific Entity subclasses
+      default:
+        throw Exception('Unknown entity type');
+    }
+  }
+
+  Map<String, dynamic> toJson();
+
+
+
   void addComponent(Component component) {
-    if(component is ColliderComponent){
+    if (component is ColliderComponent) {
       component.position = position;
       component.width = width;
       component.height = height;
@@ -43,7 +81,8 @@ abstract class Entity with ChangeNotifier {
       component.update(dt, activeEntity: this);
     });
   }
-  void reset(){
+
+  void reset() {
     components.forEach((type, component) {
       component.reset();
     });
@@ -70,50 +109,68 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeWidth(double width){
+  void changeWidth(double width) {
     this.width = width;
     notifyListeners();
   }
 
-  void changeHeight(double height){
+  void changeHeight(double height) {
     this.height = height;
     notifyListeners();
   }
 
-  void scaleWidth(double scale){
+  void scaleWidth(double scale) {
     widthScale = scale;
     notifyListeners();
   }
 
-  void scaleHeight(double scale){
+  void scaleHeight(double scale) {
     heigthScale = scale;
     notifyListeners();
   }
 
-  void addVariable({required String name, required dynamic value}){
+  void addVariable({required String name, required dynamic value}) {
     variables[name] = value;
     notifyListeners();
   }
 
-  void setVariableXToValueY(String name, dynamic value){
+  void setVariableXToValueY(String name, dynamic value) {
     variables[name] = value;
     notifyListeners();
   }
 
-  void removeVariable(String name){
+  void removeVariable(String name) {
     variables.remove(name);
     notifyListeners();
   }
 
-  void toggleComponent(Type componentType){
-    if(components.containsKey(componentType)){
+  void toggleComponent(Type componentType) {
+    if (components.containsKey(componentType)) {
       components[componentType]!.toggleComponent();
     }
     notifyListeners();
   }
-  void setLayerNumber(int newLayerNumber){
+
+  void setLayerNumber(int newLayerNumber) {
     layerNumber = newLayerNumber;
     notifyListeners();
   }
+}
 
+class OffsetConverter
+    implements JsonConverter<ui.Offset, Map<String, dynamic>> {
+  const OffsetConverter();
+
+  @override
+  ui.Offset fromJson(Map<String, dynamic> json) {
+    return ui.Offset(json['x'], json['y']);
+  }
+
+  @override
+  Map<String, dynamic> toJson(ui.Offset offset) {
+    return {
+      'x': offset.dx,
+      'y': offset.dy,
+    };
+  }
 }
