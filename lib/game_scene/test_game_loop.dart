@@ -21,6 +21,7 @@ class _TestGameLoopState extends State<TestGameLoop>
   @override
   void initState() {
     _ticker = createTicker((elapsed) {
+      
       var entityManager = Provider.of<EntityManager>(context, listen: false);
       entityManager.update(elapsed);
     });

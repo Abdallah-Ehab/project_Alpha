@@ -7,6 +7,8 @@ import 'package:scratch_clone/block_feature/data/block_component.dart';
 import 'package:scratch_clone/block_feature/presentation/block_test_screen.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/node_feature/data/node_component.dart';
+import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_card_widget.dart';
 
@@ -127,6 +129,9 @@ class ControlPanel extends StatelessWidget {
       if (entity.getComponent<BlockComponent>() != null)
         _buildBlockComponentPanel(context, entity),
 
+      if (entity.getComponent<NodeComponent>() != null)
+        _buildNodeComponentPanel(context, entity),
+
       // Collider Component Panel
       if (entity.getComponent<ColliderComponent>() != null)
         const ColliderCardWidget(), // Use your provided widget here
@@ -196,6 +201,29 @@ class ControlPanel extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const BlockTestScreen()),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildNodeComponentPanel(BuildContext context, Entity entity) {
+    final blockComponent = entity.getComponent<NodeComponent>()!;
+    return Card(
+      child: ListTile(
+        title: const Text('Block Component'),
+        leading: Checkbox(
+          value: blockComponent.isActive,
+          onChanged: (value) {
+            if (value != null) {
+              entity.toggleComponent(BlockComponent);
+            }
+          },
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NodeWorkspaceTest()),
           );
         },
       ),

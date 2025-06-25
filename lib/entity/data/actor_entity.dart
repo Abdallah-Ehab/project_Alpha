@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:json_annotation/json_annotation.dart';
-import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
 class ActorEntity extends Entity{
@@ -58,4 +56,33 @@ class ActorEntity extends Entity{
     }
     notifyListeners();
   }
+  
+  @override
+  @override
+ActorEntity copy() {
+  final copied = ActorEntity(
+    name: name,
+    position: position,
+    rotation: rotation,
+    width: width,
+    height: height,
+    layerNumber: layerNumber,
+    children: children.map((child) => child.copy()).toList(),
+  );
+
+  copied.widthScale = widthScale;
+  copied.heigthScale = heigthScale;
+
+  // Deep copy components
+  copied.components = {
+    for (final entry in components.entries)
+      entry.key: entry.value.copy(),
+  };
+
+  // Copy variables — assuming all values are primitives or immutable
+  copied.variables = Map<String, dynamic>.from(variables);
+
+  return copied;
+}
+
 }

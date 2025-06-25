@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/block_feature/data/block_model.dart';
 import 'package:scratch_clone/component/component.dart';
@@ -48,6 +46,16 @@ class BlockComponent extends Component {
   void reset(){
    current = blockHead;
    notifyListeners();
+  }
+  
+  factory BlockComponent.fromJson(Map<String,dynamic> json){
+    return BlockComponent();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
   }
 }
 

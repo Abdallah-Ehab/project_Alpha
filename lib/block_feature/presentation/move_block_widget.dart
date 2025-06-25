@@ -60,11 +60,6 @@ class MoveBlockWidget extends StatelessWidget {
                     border: InputBorder.none,
                   ),
                   controller: TextEditingController(text: blockModel.x.toString()),
-                  // onChanged: (value) {
-                  //   double? newx = double.tryParse(value);
-                  //   log(newx.toString());
-                  //   blockModel.setXvalue(double.tryParse(value) ?? 0);
-                  // },
                   onSubmitted: (value) {
                     double? newx = double.tryParse(value);
                     log(newx.toString());
@@ -104,9 +99,6 @@ class MoveBlockWidget extends StatelessWidget {
                   ),
                 
                   controller: TextEditingController(text: blockModel.y.toString()),
-                  onChanged: (value) {
-                    blockModel.setYvalue(double.tryParse(value) ?? 0);
-                  },
                   onSubmitted: (value) {
                     double? newy = double.tryParse(value);
                     log(newy.toString());

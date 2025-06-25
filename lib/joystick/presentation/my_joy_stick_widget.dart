@@ -15,6 +15,7 @@ class MyJoyStickWidget extends StatelessWidget {
       final isPlaying = value.isPlaying;
       if (isPlaying) {
       return Joystick(
+        includeInitialAnimation: false,
         listener: (details) {
           joyStickElement.control(details.x, details.y);
         },
