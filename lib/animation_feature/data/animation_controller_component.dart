@@ -3,25 +3,43 @@ import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
 class AnimationControllerComponent extends Component {
-  int _currentFrame = 0;
-  bool animationPlaying = true;
-  Duration lastUpdate = Duration.zero;
-  String _currentAnimationTrackName = "idle";
-  List<Transition> transitions = [
-    Transition(
-        startTrackName: "idle",
-        condition:
-            Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
-        targetTrackName: "walk"),
-    Transition(
-        startTrackName: "walk",
-        condition:
-            Condition(entityVariable: "x", secondOperand: 0.5, operator: "<"),
-        targetTrackName: "idle")
-  ];
-  Map<String, AnimationTrack> animationTracks = {
-    "idle": AnimationTrack("idle", [KeyFrame(sketches: [])])
-  };
+  int _currentFrame;
+  bool animationPlaying;
+  Duration lastUpdate;
+   String _currentAnimationTrackName;
+   List<Transition> transitions;
+  Map<String, AnimationTrack> animationTracks;
+
+  AnimationControllerComponent({
+  bool? isActive,
+  int? currentFrame,
+  bool? animationPlaying,
+  Duration? lastUpdate,
+  String? currentAnimationTrackName,
+  List<Transition>? transitions,
+  Map<String, AnimationTrack>? animationTracks,
+})  : _currentFrame = currentFrame ?? 0,
+      animationPlaying = animationPlaying ?? false,
+      lastUpdate = lastUpdate ?? Duration.zero,
+      _currentAnimationTrackName = currentAnimationTrackName ?? "idle",
+      transitions = transitions ?? [
+        Transition(
+          startTrackName: "idle",
+          condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
+          targetTrackName: "walk",
+        ),
+        Transition(
+          startTrackName: "walk",
+          condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: "<"),
+          targetTrackName: "idle",
+        ),
+      ],
+      animationTracks = animationTracks ?? {
+        "idle": AnimationTrack("idle", [KeyFrame(sketches: [])],true),
+        "walk": AnimationTrack("walk",[KeyFrame(sketches: [])],false)
+      },
+      super(isActive: isActive ?? true);
+
 
 
 
@@ -66,7 +84,7 @@ class AnimationControllerComponent extends Component {
       notifyListeners();
       return;
     }
-    animationTracks[name] = AnimationTrack(name, [], fps: fps);
+    animationTracks[name] = AnimationTrack(name, [], true,fps: fps);
     _currentAnimationTrackName = name;
     notifyListeners();
   }
@@ -104,8 +122,8 @@ class AnimationControllerComponent extends Component {
     }
     final track = animationTracks[_currentAnimationTrackName]!;
     final frameDuration = Duration(milliseconds: 1000 ~/ track.fps);
-    if (dt - lastUpdate >= frameDuration) {
-      _currentFrame = (_currentFrame + 1) % track.frames.length;
+    if (dt - lastUpdate >= frameDuration) { // was (dt - lastUpdate >= frameDuration)
+      _currentFrame = track.isLooping ? (_currentFrame + 1) % track.frames.length : (_currentFrame + 1).clamp(0, track.frames.length - 1);
       lastUpdate = dt;
     }
     notifyListeners();
@@ -117,6 +135,19 @@ class AnimationControllerComponent extends Component {
     _currentAnimationTrackName = "idle";
     lastUpdate = Duration.zero;
     notifyListeners();
+  }
+  
+  @override
+  Component copy() {
+    return AnimationControllerComponent(
+    isActive: isActive,
+    currentFrame: _currentFrame,
+    animationPlaying: animationPlaying,
+    lastUpdate: lastUpdate,
+    currentAnimationTrackName: _currentAnimationTrackName,
+    transitions: transitions.map((t) => t.copy()).toList(),
+    animationTracks: animationTracks.map((k, v) => MapEntry(k, v.copy())),
+  );
   }
 
 
@@ -130,6 +161,14 @@ class Transition {
       {required this.startTrackName,
       required this.condition,
       required this.targetTrackName});
+
+  Transition copy(){
+    return Transition(
+      startTrackName: startTrackName,
+      condition: condition,
+      targetTrackName: targetTrackName
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -165,7 +204,10 @@ class Condition {
       {required this.entityVariable,
       required this.secondOperand,
       required this.operator});
-
+  
+  Condition copy(){
+    return Condition(entityVariable: entityVariable, secondOperand: secondOperand, operator: operator);
+  }
   Map<String, dynamic> toJson() {
     return {
       'entityVariable': entityVariable,

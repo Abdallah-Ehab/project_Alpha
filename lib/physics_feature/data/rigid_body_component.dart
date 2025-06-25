@@ -4,14 +4,22 @@ import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
 class RigidBodyComponent extends Component {
-  Offset velocity = Offset.zero;
-  double mass = 1.0;
-  bool useGravity = true;
-  double gravity = 0.1;
-  bool isStatic = false; 
-  bool isGrounded = false; 
+   Offset velocity;
+  double mass;
+  bool useGravity;
+  double gravity;
+  bool isStatic;
+  bool isGrounded;
 
-  RigidBodyComponent({this.isStatic = false});
+  RigidBodyComponent({
+    this.velocity = Offset.zero,
+    this.mass = 1.0,
+    this.useGravity = true,
+    this.gravity = 0.2,
+    this.isStatic = false,
+    this.isGrounded = false,
+    super.isActive,
+  });
 
   void applyForce({double fx = 0.0, double fy = 0.0}) {
     if (isStatic) return;
@@ -67,7 +75,7 @@ class RigidBodyComponent extends Component {
     }
 
     final dx = velocity.dx * seconds;
-    final dy = velocity.dy * seconds;
+    final dy = useGravity ? velocity.dy * seconds : 0.0;
 
     activeEntity.move(x: dx, y: dy);
   }
@@ -75,5 +83,24 @@ class RigidBodyComponent extends Component {
   void reset(){
     velocity = Offset.zero;
     notifyListeners();
+  }
+  
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
+  
+  @override
+  RigidBodyComponent copy() {
+    return RigidBodyComponent(
+      velocity: velocity,
+      mass: mass,
+      useGravity: useGravity,
+      gravity: gravity,
+      isStatic: isStatic,
+      isGrounded: isGrounded,
+      isActive: isActive,
+    );
   }
 }

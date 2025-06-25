@@ -10,20 +10,20 @@ class ColliderComponent extends Component {
   double width;
   double height;
 
-  ColliderComponent({
-    this.position = Offset.zero,
-    this.width = 50,
-    this.height = 50,
-  });
+  ColliderComponent(
+      {this.position = Offset.zero,
+      this.width = 50,
+      this.height = 50,
+      super.isActive});
 
   @override
   void update(
     Duration dt, {
     required Entity activeEntity,
-    
   }) {
     final List<Entity> otherEntities = EntityManager()
-        .entities[EntityType.actors]!.values
+        .entities[EntityType.actors]!
+        .values
         .where(
           (e) =>
               e != activeEntity && e.getComponent<ColliderComponent>() != null,
@@ -81,13 +81,15 @@ class ColliderComponent extends Component {
           final halfOverlapX = overlapX / 2;
           final halfOverlapY = overlapY / 2;
           if (overlapX < overlapY) {
-            final dx = (a.center.dx < b.center.dx) ? -halfOverlapX : halfOverlapX;
+            final dx =
+                (a.center.dx < b.center.dx) ? -halfOverlapX : halfOverlapX;
             activeEntity.move(x: dx);
             other.move(x: -dx);
             activeRigidBody.setVelocity(0, activeRigidBody.velocity.dy);
             otherRigidBody.setVelocity(0, otherRigidBody.velocity.dy);
           } else {
-            final dy = (a.center.dy < b.center.dy) ? -halfOverlapY : halfOverlapY;
+            final dy =
+                (a.center.dy < b.center.dy) ? -halfOverlapY : halfOverlapY;
             activeEntity.move(y: dy);
             other.move(y: -dy);
             if (dy < 0) {
@@ -138,9 +140,25 @@ class ColliderComponent extends Component {
     position = value;
     notifyListeners();
   }
-  
+
   @override
   void reset() {
-   return;
+    return;
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
+
+  @override
+  ColliderComponent copy() {
+    return ColliderComponent(
+      position: position,
+      width: width,
+      height: height,
+      isActive: isActive,
+    );
   }
 }

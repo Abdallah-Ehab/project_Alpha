@@ -12,7 +12,7 @@ class BlockTestScreen extends StatelessWidget {
   // Default blocks in the drawer
   static final List<BlockModel> storedBlocks = [
     IfBlock(position: Offset.zero, color: Colors.green, width: 150, height: 75),
-    MoveBlock(position: Offset.zero, color: Colors.purple, width: 225, height: 50,x:-1.0,y:-19.9),
+    MoveBlock(position: Offset.zero, color: Colors.purple, width: 225, height: 50,x:1.0,y:0.0),
     ConditionBlock(position: Offset.zero, color: Colors.orange, width: 150, height: 50),
     DeclareVarableBlock(value: 0.0, position: Offset.zero, color: Colors.deepOrange, width: 250, height: 50),
     VariableReferenceBlock(position: Offset.zero, color: Colors.deepPurple, width: 200, height: 50),  

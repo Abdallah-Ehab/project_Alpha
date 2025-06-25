@@ -1,19 +1,18 @@
 import 'dart:ui';
-
-import 'package:json_annotation/json_annotation.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
 
-class CameraEntity extends Entity{
+class CameraEntity extends Entity {
   double zoom;
   bool isEditorCamera;
+
   CameraEntity({
     required super.name,
     required super.position,
     required super.rotation,
     super.width = 500,
     super.height = 500,
-    super.layerNumber = 0,
+    super.layerNumber,
     this.zoom = 1.0,
     this.isEditorCamera = true,
   });
@@ -56,4 +55,24 @@ class CameraEntity extends Entity{
     notifyListeners();
   }
 
+  @override
+  CameraEntity copy() {
+    return CameraEntity(
+      name: name,
+      position: position,
+      rotation: rotation,
+      width: width,
+      height: height,
+      layerNumber: layerNumber,
+      zoom: zoom,
+      isEditorCamera: isEditorCamera,
+    )
+      ..components = {
+        for (final entry in components.entries)
+          entry.key: entry.value.copy(), // assumes each component has a .copy()
+      }
+      ..variables = Map<String, dynamic>.from(variables)
+      ..widthScale = widthScale
+      ..heigthScale = heigthScale;
+  }
 }

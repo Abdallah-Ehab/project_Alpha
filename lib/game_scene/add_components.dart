@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
-import 'package:scratch_clone/block_feature/data/block_component.dart';
 import 'package:scratch_clone/core/image_loader.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
+import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 
@@ -18,7 +18,7 @@ class AddComponents extends StatelessWidget {
   var activeEntity = entityManager.activeEntity;
   var ground = entityManager.entities[EntityType.actors]!["ground"]!;
   activeEntity.addComponent(AnimationControllerComponent());
-  activeEntity.addComponent(BlockComponent());
+  activeEntity.addComponent(NodeComponent());
   activeEntity.addComponent(ColliderComponent());
   activeEntity.addComponent(RigidBodyComponent());
 
@@ -29,8 +29,8 @@ class AddComponents extends StatelessWidget {
   var animComponent = activeEntity.getComponent<AnimationControllerComponent>();
 
  
-  animComponent!.addTrack("idle", track: AnimationTrack("idle", []));
-  animComponent.addTrack("walk", track: AnimationTrack("walk", []));
+  animComponent!.addTrack("idle", track: AnimationTrack("idle", [],true));
+  animComponent.addTrack("walk", track: AnimationTrack("walk", [],false));
 
 
   ImageLoader.loadImages(animationName: "idle", character: "goku", animationLength: 4).then((value) {
@@ -42,7 +42,6 @@ class AddComponents extends StatelessWidget {
     var keyFrames = value.map((e) => KeyFrame(image: e, sketches: [])).toList();
     animComponent.addFramesToAnimationTracK(trackName: "walk", frames : keyFrames);
   });
-
 
 
     return const TestGameLoop();

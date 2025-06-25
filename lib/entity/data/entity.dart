@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:developer';
+
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -31,6 +30,7 @@ abstract class Entity with ChangeNotifier {
     this.layerNumber = 0,
   });
 
+    Entity copy();
   // Custom serialization for Offset field
   static Map<String, dynamic> offsetToJson(ui.Offset offset) {
     return {
@@ -173,4 +173,6 @@ class OffsetConverter
       'y': offset.dy,
     };
   }
+
+
 }

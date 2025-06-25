@@ -4,15 +4,13 @@ import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/actor_entity.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 
-
-
 enum EntityType { actors, cameras, lights, sounds }
+
 enum CameraType { main, game }
+
 extension EntityTypeExtension on EntityType {
   String get name => toString().split('.').last;
 }
-
-
 
 class EntityManager extends ChangeNotifier {
   late Map<EntityType, Map<String, Entity>> _entities;
@@ -20,13 +18,34 @@ class EntityManager extends ChangeNotifier {
   CameraEntity? _activeCamera;
   static final EntityManager _instance = EntityManager._internal();
   factory EntityManager() => _instance;
+
+  //prefab stuff
+  final _entitiesToAdd = <Entity>[];
+  final _entitiesToRemove = <Entity>[];
+
+  final Map<String, Entity> _prefabs = {};
+
+void addPrefab(String name, Entity entity) {
+  _prefabs[name] = entity;
+}
+
+void spawnPrefab(String name, Offset position) {
+  final prefab = _prefabs[name];
+  if (prefab == null) return;
+
+  final clone = prefab.copy();
+  clone.position = position;
+  spawnEntityLater(prefab);
+}
+
+
   EntityManager._internal() {
     _entities = {
       EntityType.actors: {
         "goku": ActorEntity(
-          name: "goku", position: const Offset(0, 0), rotation: 0),
+            name: "goku", position: const Offset(0, 0), rotation: 0),
         "vegeta": ActorEntity(
-          name: "vegeta", position: const Offset(100, 100), rotation: 0),
+            name: "vegeta", position: const Offset(100, 100), rotation: 0),
         "ground": ActorEntity(
           name: "ground",
           position: const Offset(0, 200),
@@ -47,7 +66,8 @@ class EntityManager extends ChangeNotifier {
       }
     };
     _activeEntity = _entities[EntityType.actors]!["goku"];
-    _activeCamera = _entities[EntityType.cameras]!["mainCamera"] as CameraEntity;
+    _activeCamera =
+        _entities[EntityType.cameras]!["mainCamera"] as CameraEntity;
   }
 
   Map<EntityType, Map<String, Entity>> get entities => _entities;
@@ -64,12 +84,34 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  //for prefab
+  void spawnEntityLater(Entity entity) {
+    _entitiesToAdd.add(entity);
+  }
+
+  void removeEntityLater(Entity entity) {
+    _entitiesToRemove.add(entity);
+  }
+
   void update(Duration dt) {
     for (var type in _entities.values) {
-      for (var entity in type.values) {
-        entity.update(dt);
-      }
+    for (var entity in type.values) {
+      entity.update(dt);
     }
+  }
+
+  // this is deferred for prefab to prevent conflicts and performance issues 
+  //while adding and removing from the list of prefabs
+  
+  for (var e in _entitiesToAdd) {
+    addEntity(EntityType.actors, e.name, e);
+  }
+  _entitiesToAdd.clear();
+
+  for (var e in _entitiesToRemove) {
+    removeEntity(EntityType.actors, e.name);
+  }
+  _entitiesToRemove.clear();
   }
 
   Entity get activeEntity => _activeEntity!;
@@ -107,7 +149,7 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Entity? getActorByName(String name){
+  Entity? getActorByName(String name) {
     return _entities[EntityType.actors]?[name];
   }
 
@@ -119,25 +161,22 @@ class EntityManager extends ChangeNotifier {
     }
   }
 
-  void reset(){
+  void reset() {
     for (var type in _entities.values) {
       for (var entity in type.values) {
         entity.reset();
       }
     }
-    
   }
 
   void switchCameraFromEditorToGame() {
-  final cameras = _entities[EntityType.cameras]?.values.cast<CameraEntity>();
+    final cameras = _entities[EntityType.cameras]?.values.cast<CameraEntity>();
 
-  final cam = cameras?.firstWhere((cam) => !cam.isEditorCamera);
+    final cam = cameras?.firstWhere((cam) => !cam.isEditorCamera);
 
-  if (cam != null) {
-    _activeCamera = cam;
-    notifyListeners();
+    if (cam != null) {
+      _activeCamera = cam;
+      notifyListeners();
+    }
   }
 }
-
-}
-

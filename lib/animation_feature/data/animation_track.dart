@@ -22,8 +22,13 @@ class AnimationTrack extends Positionable with ChangeNotifier {
   String name;
   List<KeyFrame> frames;
   int fps;
+  bool isLooping;
 
-  AnimationTrack(this.name, this.frames, {this.fps = 10});
+  AnimationTrack(this.name, this.frames,this.isLooping, {this.fps = 10});
+
+  AnimationTrack copy(){
+    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping, fps: fps)..trackPosition = trackPosition;
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,6 +39,7 @@ class AnimationTrack extends Positionable with ChangeNotifier {
         'y': trackPosition.dy,
       },
       'frames': frames.map((frame) => frame.toJson()).toList(),
+      'isLooping': isLooping
     };
   }
 
@@ -43,6 +49,7 @@ class AnimationTrack extends Positionable with ChangeNotifier {
       (json['frames'] as List<dynamic>)
           .map((e) => KeyFrame.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['isLooping'], 
       fps: json['fps'] as int? ?? 10,
     )..trackPosition = Offset(
       (json['trackPosition']['x'] as num).toDouble(),
@@ -71,6 +78,17 @@ class KeyFrame with ChangeNotifier {
 
   // temporarily holds the base64 string
   String? _imageBase64;
+
+  KeyFrame copy() {
+  return KeyFrame(
+    sketches: sketches.map((e) => e.copy()).toList(),
+    image: image, // still a reference to the same image, safe if immutable
+    position: position,
+    rotation: rotation,
+    scale: scale,
+  ).._imageBase64 = _imageBase64; // optional: preserve image data if needed
+}
+
 
   KeyFrame({
     required this.sketches,
