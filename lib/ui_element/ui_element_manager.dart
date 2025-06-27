@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:scratch_clone/joystick/data/joy_stick_element.dart';
+import 'package:scratch_clone/ui_element/joystick/data/joy_stick_element.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class UiElementManager extends ChangeNotifier {

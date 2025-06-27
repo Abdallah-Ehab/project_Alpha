@@ -11,60 +11,62 @@ class AnimationEditorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Entity>(builder: (context, activeEntity, child) {
-      var animationComponent =
-          activeEntity.getComponent<AnimationControllerComponent>();
-      if (animationComponent == null) {
-        return const Center(child: Text("No animation component"));
-      } else {
-        return ChangeNotifierProvider.value(
-          value: animationComponent,
-          child: Consumer<AnimationControllerComponent>(
-            builder: (context, animComponent, child) {
-              var currentFrame =
-                  animComponent.currentAnimationTrack.frames.isNotEmpty
-                      ? animComponent.currentAnimationTrack
-                          .frames[animComponent.currentFrame]
-                      : null;
-              return GestureDetector(
-                onPanStart: (details) {
-                  if (currentFrame != null) {
-                    var newSketch = SketchModel(
-                        points: [details.localPosition],
-                        color: Colors.black,
-                        strokeWidth: 1.0);
-                    currentFrame.addSketch(newSketch);
-                  }
-                },
-                onPanUpdate: (details) {
-                  if (currentFrame != null &&
-                      currentFrame.sketches.isNotEmpty) {
-                    currentFrame.addPointToCurrentSketch(details.localPosition);
-                  }
-                },
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  width: MediaQuery.of(context).size.width,
-                  child: currentFrame != null
-                      ? ChangeNotifierProvider.value(
-                          value: currentFrame,
-                          child: Consumer<KeyFrame>(
-                            builder: (context, keyFrame, child) {
-                              return CustomPaint(
-                                painter: AnimationPainter(keyFrame: keyFrame),
-                                size: const Size(500, 500),
-                              );
-                            },
-                          ),
-                        )
-                      : const Center(child: Text("No frame")),
-                ),
-              );
-            },
-          ),
-        );
-      }
-    });
+    return Scaffold(
+      body: Consumer<Entity>(builder: (context, activeEntity, child) {
+        var animationComponent =
+            activeEntity.getComponent<AnimationControllerComponent>();
+        if (animationComponent == null) {
+          return const Center(child: Text("No animation component"));
+        } else {
+          return ChangeNotifierProvider.value(
+            value: animationComponent,
+            child: Consumer<AnimationControllerComponent>(
+              builder: (context, animComponent, child) {
+                var currentFrame =
+                    animComponent.currentAnimationTrack.frames.isNotEmpty
+                        ? animComponent.currentAnimationTrack
+                            .frames[animComponent.currentFrame]
+                        : null;
+                return GestureDetector(
+                  onPanStart: (details) {
+                    if (currentFrame != null) {
+                      var newSketch = SketchModel(
+                          points: [details.localPosition],
+                          color: Colors.black,
+                          strokeWidth: 1.0);
+                      currentFrame.addSketch(newSketch);
+                    }
+                  },
+                  onPanUpdate: (details) {
+                    if (currentFrame != null &&
+                        currentFrame.sketches.isNotEmpty) {
+                      currentFrame.addPointToCurrentSketch(details.localPosition);
+                    }
+                  },
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    width: MediaQuery.of(context).size.width,
+                    child: currentFrame != null
+                        ? ChangeNotifierProvider.value(
+                            value: currentFrame,
+                            child: Consumer<KeyFrame>(
+                              builder: (context, keyFrame, child) {
+                                return CustomPaint(
+                                  painter: AnimationPainter(keyFrame: keyFrame),
+                                  size: const Size(500, 500),
+                                );
+                              },
+                            ),
+                          )
+                        : const Center(child: Text("No frame")),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      }),
+    );
   }
 }
 

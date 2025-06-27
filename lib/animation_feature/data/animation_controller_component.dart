@@ -1,6 +1,7 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 class AnimationControllerComponent extends Component {
   int _currentFrame;
@@ -76,6 +77,10 @@ class AnimationControllerComponent extends Component {
   }
 
 
+  void addTransition(Transition transition){
+    transitions.add(transition);
+    notifyListeners();
+  }
 
 
   void addTrack(String name, {int fps = 10, AnimationTrack? track}) {
@@ -118,7 +123,7 @@ class AnimationControllerComponent extends Component {
   @override
   void update(Duration dt, {required Entity activeEntity}) {
     for (Transition transition in transitions) {
-      transition.execute(activeEntity, this);
+      transition.execute(activeEntity, animComponent: this);
     }
     final track = animationTracks[_currentAnimationTrackName]!;
     final frameDuration = Duration(milliseconds: 1000 ~/ track.fps);
@@ -187,13 +192,19 @@ class Transition {
   }
 
 
-  void execute(Entity entity, AnimationControllerComponent animComponent) {
-    if (condition.execute(entity)) {
+  void execute(Entity entity,{ AnimationControllerComponent? animComponent, SoundControllerComponent? soundComponent}) {
+    if(animComponent != null){if (condition.execute(entity)) {
       if (animComponent._currentAnimationTrackName == startTrackName) {
         animComponent.setTrack(targetTrackName);
       }
+    }}else{
+      if (condition.execute(entity)) {
+      if (soundComponent!.currentlyPlaying == startTrackName) {
+        soundComponent.play(targetTrackName);
+      }
     }
   }
+}
 }
 
 class Condition {

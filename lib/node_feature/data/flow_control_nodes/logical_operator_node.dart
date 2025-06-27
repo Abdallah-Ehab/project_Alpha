@@ -5,8 +5,6 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logic_element.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 
-enum LogicalOperator { and, or }
-
 extension LogicalOperatorSymbol on LogicalOperator {
   String get symbol {
     switch (this) {
@@ -18,7 +16,6 @@ extension LogicalOperatorSymbol on LogicalOperator {
   }
 }
 
-
 class LogicOperatorNode extends LogicElementNode {
   final LogicalOperator operator;
 
@@ -27,7 +24,6 @@ class LogicOperatorNode extends LogicElementNode {
     required super.color,
     required super.width,
     required super.height,
-    
   }) : super(connectionPoints: []);
 
   @override
@@ -51,7 +47,7 @@ class LogicOperatorNode extends LogicElementNode {
   }
 
   @override
-  LogicOperatorNode copyWith({
+  NodeModel copyWith({
     Offset? position,
     Color? color,
     double? width,
@@ -59,9 +55,8 @@ class LogicOperatorNode extends LogicElementNode {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
-    bool? isDragTarget,
-    List<ConnectionPointModel>? connectionPoints,
     LogicalOperator? operator,
+    List<ConnectionPointModel>? connectionPoints,
   }) {
     return LogicOperatorNode(
       operator: operator ?? this.operator,
@@ -70,21 +65,34 @@ class LogicOperatorNode extends LogicElementNode {
       height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child
-      ..parent = parent ?? this.parent;
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
-  
-  @override
-LogicOperatorNode copy() {
-  return LogicOperatorNode(
-    operator: operator,
-    color: color,
-    width: width,
-    height: height,
-  )
-    ..isConnected = isConnected
-    ..child = child
-    ..parent = parent;
-}
-}
 
+  static LogicOperatorNode fromJson(Map<String, dynamic> json) {
+    return LogicOperatorNode(
+      operator: LogicalOperator.values
+          .firstWhere((e) => e.toString() == json['operator']),
+      color: Color(json['color']),
+      width: (json['width'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+    )..id = json['id'];
+  }
+
+  @override
+  LogicOperatorNode copy() {
+    return copyWith(
+      position: position,
+      color: color,
+      width: width,
+      height: height,
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      operator: operator,
+    ) as LogicOperatorNode;
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
+import 'package:scratch_clone/node_feature/presentation/node_wrapper.dart';
 
 class StatementGroupNodeWidget extends StatelessWidget {
   final StatementGroupNode node;
@@ -44,18 +45,7 @@ class StatementGroupNodeWidget extends StatelessWidget {
                       return Padding(
                         padding:
                             const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: Text(
-                            statement.runtimeType.toString(),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
+                        child: NodeWrapper(nodeModel: statement)
                       );
                     },
                   ),

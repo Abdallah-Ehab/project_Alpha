@@ -12,10 +12,6 @@ class MoveNode extends NodeModel {
   double y;
 
   MoveNode({
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
     this.x = 0.0,
     this.y = 0.0,
   }) : super(
@@ -25,7 +21,7 @@ class MoveNode extends NodeModel {
             ConnectConnectionPoint(
                 position: Offset.zero, isTop: false, width: 20),
           ],
-        );
+        position: Offset.zero,color: Colors.blue,width: 100, height: 50);
 
   @override
   Result<String> execute([Entity? activeEntity]) {
@@ -58,7 +54,7 @@ class MoveNode extends NodeModel {
   }
 
   @override
-  NodeModel copyWith({
+  MoveNode copyWith({
     Offset? position,
     Color? color,
     double? width,
@@ -67,32 +63,32 @@ class MoveNode extends NodeModel {
     NodeModel? child,
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
+    double? x,
+    double? y,
   }) {
     return MoveNode(
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
-      x: x,
-      y: y,
+      x: x ?? this.x,
+      y: y ?? this.y,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child
-      ..parent = parent ?? this.parent;
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   MoveNode copy() {
-    return MoveNode(
+    return copyWith(
       position: position,
-      color: color,
-      width: width,
-      height: height,
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      connectionPoints:
+          List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy())),
       x: x,
       y: y,
-    )
-      ..isConnected = isConnected
-      ..child = child
-      ..parent = parent;
+    );
   }
 }

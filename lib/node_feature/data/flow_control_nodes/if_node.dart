@@ -6,7 +6,8 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/presentation/flow_control/if_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/if_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 
 
@@ -15,27 +16,24 @@ import 'package:scratch_clone/node_feature/presentation/flow_control/if_node_wid
 // the output will be green and it's for statements that will be executed when condition is true
 // the connect point is for what ever nodes come after the if stamtements may be an else statement too
 class IfNode extends InputOutputNode {
-  IfNode(
-      {
-      super.position,
-      required super.color,
-      required super.width,
-      required super.height,
-      }) : super(connectionPoints: [
-        InputConnectionPoint(position: Offset.zero, width: 50),
-        OutputConnectionPoint(position: Offset.zero, width: 50),
-        ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 50),
-        ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 50),
-      ]);
-
-  // it has input slot for condition or condition group we can make it so condition is a condition group by using inheritance :) I don't know what Iam doing anymore
-  // it has output slot same as condition group it just goes over the statments one by one and execute if true
+  IfNode({
+    super.position,
+    required super.color,
+    required super.width,
+    required super.height,
+  }) : super(
+          connectionPoints: [
+            InputConnectionPoint(position: Offset.zero, width: 20),
+            OutputConnectionPoint(position: Offset.zero, width: 20),
+            ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
+            ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20),
+          ],
+        );
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
     if (input != null) {
-      Result<bool> conditionResult = input!.execute(activeEntity) as Result<
-          bool>; // this will execute all of the conditions to see if they are true or false using the conditions and the logic operators like && or || or not etc...
+      Result<bool> conditionResult = input!.execute(activeEntity) as Result<bool>;
       if (conditionResult.errorMessage != null) {
         return Result.failure(errorMessage: conditionResult.errorMessage);
       }
@@ -61,32 +59,53 @@ class IfNode extends InputOutputNode {
   }
 
   @override
-  NodeModel copyWith(
-      {Offset? position,
-      Color? color,
-      double? width,
-      double? height,
-      bool? isConnected,
-      NodeModel? child,
-      NodeModel? parent}) {
-    throw UnimplementedError();
+  NodeModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    NodeModel? input,
+    NodeModel? output,
+  }) {
+    return IfNode(
+      position: position ?? this.position,
+      color: color ?? this.color,
+      width: width ?? this.width,
+      height: height ?? this.height,
+    )..isConnected = isConnected ?? this.isConnected
+     ..child = child
+     ..parent = parent
+     ..input = input ?? this.input?.copy()
+     ..output = output ?? this.output?.copy()
+     ..connectionPoints = List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy()));
   }
-  
+
+  static IfNode fromJson(Map<String, dynamic> json) {
+    return IfNode(
+      position: OffsetJson.fromJson(json['position']),
+      color: Color(json['color']),
+      width: (json['width'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+    )..id = json['id']; // preserve id for linking
+  }
+
   @override
   IfNode copy() {
-    return IfNode(
+    return copyWith(
       position: position,
       color: color,
       width: width,
       height: height,
-    )
-      ..isConnected = isConnected
-      ..child = child?.copy()
-      ..parent = parent?.copy()
-      ..input = input?.copy()
-      ..output = output?.copy();
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      input: input?.copy(),
+      output: output?.copy(),
+    ) as IfNode;
   }
 }
-
 
 

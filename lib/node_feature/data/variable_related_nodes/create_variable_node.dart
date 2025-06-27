@@ -52,12 +52,12 @@ class CreateVariableNode extends NodeModel {
       return Result.failure(errorMessage: "No active entity.");
     }
 
-    activeEntity.addVariable(name: variableName, value: value); // overrides if exists
+    activeEntity.addVariable(name: variableName, value: value);
     return Result.success(result: "Variable '$variableName' set to $value.");
   }
 
   @override
-  NodeModel copyWith({
+  CreateVariableNode copyWith({
     Offset? position,
     Color? color,
     double? width,
@@ -65,34 +65,40 @@ class CreateVariableNode extends NodeModel {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
+    String? variableName,
+    dynamic value,
     List<ConnectionPointModel>? connectionPoints,
   }) {
     return CreateVariableNode(
-      variableName: variableName,
-      value: value,
+      variableName: variableName ?? this.variableName,
+      value: value ?? this.value,
       position: position ?? this.position,
       color: color ?? this.color,
       width: width ?? this.width,
       height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child
-      ..parent = parent ?? this.parent;
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
-  
- @override
-CreateVariableNode copy() {
-  return CreateVariableNode(
-    variableName: variableName,
-    value: value,
-    position: position,
-    color: color,
-    width: width,
-    height: height,
-  )
-    ..isConnected = isConnected
-    ..child = child
-    ..parent = parent;
-}
 
+  @override
+  CreateVariableNode copy() {
+    return copyWith(
+      position: position,
+      color: color,
+      width: width,
+      height: height,
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      variableName: variableName,
+      value: value,
+      connectionPoints: List<ConnectionPointModel>.from(
+        connectionPoints.map((cp) => cp.copy()),
+      ),
+    );
+  }
 }

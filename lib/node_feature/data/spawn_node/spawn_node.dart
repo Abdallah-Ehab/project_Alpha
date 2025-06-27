@@ -57,29 +57,45 @@ class SpawnEntityNode extends NodeModel {
   }
 
   @override
-  SpawnEntityNode copy() {
+  SpawnEntityNode copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    List<ConnectionPointModel>? connectionPoints,
+    String? prefabName,
+  }) {
     return SpawnEntityNode(
-      prefabName: prefabName,
+      prefabName: prefabName ?? this.prefabName,
+      position: position ?? this.position,
+      color: color ?? this.color,
+      width: width ?? this.width,
+      height: height ?? this.height,
+    )
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+  }
+
+  @override
+  SpawnEntityNode copy() {
+    return copyWith(
       position: position,
       color: color,
       width: width,
       height: height,
-    )
-      ..isConnected = isConnected
-      ..parent = parent
-      ..child = child;
-  }
-
-  @override
-  NodeModel copyWith(
-      {Offset? position,
-      Color? color,
-      double? width,
-      double? height,
-      bool? isConnected,
-      NodeModel? child,
-      NodeModel? parent}) {
-    // TODO: implement copyWith
-    throw UnimplementedError();
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      prefabName: prefabName,
+      connectionPoints: List<ConnectionPointModel>.from(
+        connectionPoints.map((cp) => cp.copy()),
+      ),
+    );
   }
 }

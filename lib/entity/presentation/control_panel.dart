@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/presentation/animation_editor_screen.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
-import 'package:scratch_clone/block_feature/data/block_component.dart';
-import 'package:scratch_clone/block_feature/presentation/block_test_screen.dart';
+
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
@@ -126,7 +125,7 @@ class ControlPanel extends StatelessWidget {
         _buildAnimationComponentPanel(context, entity),
 
       // Block Component Panel
-      if (entity.getComponent<BlockComponent>() != null)
+      if (entity.getComponent<NodeComponent>() != null)
         _buildBlockComponentPanel(context, entity),
 
       if (entity.getComponent<NodeComponent>() != null)
@@ -185,7 +184,7 @@ class ControlPanel extends StatelessWidget {
   }
 
   Widget _buildBlockComponentPanel(BuildContext context, Entity entity) {
-    final blockComponent = entity.getComponent<BlockComponent>()!;
+    final blockComponent = entity.getComponent<NodeComponent>()!;
     return Card(
       child: ListTile(
         title: const Text('Block Component'),
@@ -193,14 +192,14 @@ class ControlPanel extends StatelessWidget {
           value: blockComponent.isActive,
           onChanged: (value) {
             if (value != null) {
-              entity.toggleComponent(BlockComponent);
+              entity.toggleComponent(NodeComponent);
             }
           },
         ),
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const BlockTestScreen()),
+            MaterialPageRoute(builder: (context) => const NodeWorkspaceTest()),
           );
         },
       ),
@@ -216,7 +215,7 @@ class ControlPanel extends StatelessWidget {
           value: blockComponent.isActive,
           onChanged: (value) {
             if (value != null) {
-              entity.toggleComponent(BlockComponent);
+              entity.toggleComponent(NodeComponent);
             }
           },
         ),

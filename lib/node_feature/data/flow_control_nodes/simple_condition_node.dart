@@ -7,7 +7,7 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/presentation/flow_control/simple_condition_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/simple_condition_node_widget.dart';
 
 class SimpleConditionNode extends NodeModel with HasOutput {
   dynamic firstOperand;
@@ -90,6 +90,10 @@ class SimpleConditionNode extends NodeModel with HasOutput {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
+    dynamic firstOperand,
+    dynamic secondOperand,
+    String? comparisonOperator,
+    NodeModel? output,
     List<ConnectionPointModel>? connectionPoints,
   }) {
     return SimpleConditionNode(
@@ -98,29 +102,30 @@ class SimpleConditionNode extends NodeModel with HasOutput {
       width: width ?? this.width,
       height: height ?? this.height,
     )
-      ..firstOperand = firstOperand
-      ..secondOperand = secondOperand
-      ..comparisonOperator = comparisonOperator
+      ..firstOperand = firstOperand ?? this.firstOperand
+      ..secondOperand = secondOperand ?? this.secondOperand
+      ..comparisonOperator = comparisonOperator ?? this.comparisonOperator
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child
-      ..parent = parent ?? this.parent;
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..output = output ?? this.output?.copy()
+      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
-SimpleConditionNode copy() {
-  return SimpleConditionNode(
-    position: position,
-    color: color,
-    width: width,
-    height: height,
-  )
-    ..firstOperand = firstOperand
-    ..secondOperand = secondOperand
-    ..comparisonOperator = comparisonOperator
-    ..isConnected = isConnected
-    ..child = child
-    ..parent = parent
-    ..output = output;
-}
-  
+  SimpleConditionNode copy() {
+    return copyWith(
+      position: position,
+      color: color,
+      width: width,
+      height: height,
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      firstOperand: firstOperand,
+      secondOperand: secondOperand,
+      comparisonOperator: comparisonOperator,
+      output: output?.copy(),
+    ) as SimpleConditionNode;
+  }
 }
