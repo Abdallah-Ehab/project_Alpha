@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
@@ -39,30 +38,47 @@ class NodeWorkspaceTest extends StatelessWidget {
                     height: 5000,
                     child: Stack(
                       children: [
-                        Positioned.fill(
-                          child: IgnorePointer(
-                            child: CustomPaint(
-                              painter: ArrowPainter(
-                                nodes: nodeComponent.workspaceNodes,
-                                connectionProvider: connectionProvider,
-                              ),
-                            ),
-                          ),
+                        // DragTarget for adding nodes from the deck
+                        DragTarget<NodeModel>(
+                          builder: (context, candidateData, rejectedData) {
+                            return Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: IgnorePointer(
+                                    child: CustomPaint(
+                                      painter: ArrowPainter(
+                                        nodes: nodeComponent.workspaceNodes,
+                                        connectionProvider: connectionProvider,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ...nodeComponent.workspaceNodes.map((node) {
+                                  return ChangeNotifierProvider.value(
+                                    value: node,
+                                    child: Consumer<NodeModel>(
+                                      builder: (context, value, child) {
+                                        return Positioned(
+                                          top: node.position.dy,
+                                          left: node.position.dx,
+                                          child: NodeWrapper(nodeModel: node),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ],
+                            );
+                          },
+                          onAcceptWithDetails: (details) {
+                            final node = details.data;
+                            final offset = details.offset - const Offset(25, 25); // Center the node
+                            final newNode = node.copyWith(
+                              position: offset,
+                            );
+                            nodeComponent.addNodeToWorkspace(newNode);
+                          },
                         ),
-                        ...nodeComponent.workspaceNodes.map((node) {
-                          return ChangeNotifierProvider.value(
-                            value: node,
-                            child: Consumer<NodeModel>(
-                              builder: (context, value, child) {
-                                return Positioned(
-                                  top: node.position.dy,
-                                  left: node.position.dx,
-                                  child: NodeWrapper(nodeModel: node),
-                                );
-                              },
-                            ),
-                          );
-                        }),
                       ],
                     ),
                   ),

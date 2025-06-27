@@ -1,4 +1,3 @@
-
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,6 +7,7 @@ import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 
 import 'actor_entity.dart';
 
+enum Property { name, position, rotation, width, height, layerNumber }
 
 abstract class Entity with ChangeNotifier {
   String name;
@@ -30,7 +30,24 @@ abstract class Entity with ChangeNotifier {
     this.layerNumber = 0,
   });
 
-    Entity copy();
+  dynamic getProperty(Property property) {
+    switch (property) {
+      case Property.name:
+        return name;
+      case Property.position:
+        return position;
+      case Property.height:
+        return height * heigthScale;
+      case Property.rotation:
+        return rotation;
+      case Property.width:
+        return width * widthScale;
+      case Property.layerNumber:
+        return layerNumber;
+    }
+  }
+
+  Entity copy();
   // Custom serialization for Offset field
   static Map<String, dynamic> offsetToJson(ui.Offset offset) {
     return {
@@ -59,8 +76,6 @@ abstract class Entity with ChangeNotifier {
 
   Map<String, dynamic> toJson();
 
-
-
   void addComponent(Component component) {
     if (component is ColliderComponent) {
       component.position = position;
@@ -80,6 +95,11 @@ abstract class Entity with ChangeNotifier {
     components.forEach((type, component) {
       component.update(dt, activeEntity: this);
     });
+  }
+
+  void teleport({double? dx, double? dy}) {
+    position = ui.Offset(dx ?? position.dx, dy ?? position.dy);
+    notifyListeners();
   }
 
   void reset() {
@@ -173,6 +193,4 @@ class OffsetConverter
       'y': offset.dy,
     };
   }
-
-
 }

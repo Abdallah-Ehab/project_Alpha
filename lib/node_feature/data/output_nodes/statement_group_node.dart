@@ -13,11 +13,7 @@ class StatementGroupNode extends InputNode {
   StatementGroupNode({
     this.isHighlighted = false,
     required this.statements,
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
-  }) : super(connectionPoints: [InputConnectionPoint(position: Offset.zero, width:50)]);
+  }) : super(connectionPoints: [InputConnectionPoint(position: Offset.zero, width:50),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
 
   void addStatement(NodeModel node) {
     statements.add(node);
@@ -55,6 +51,11 @@ class StatementGroupNode extends InputNode {
     );
   }
 
+  void highlightNode(bool highlight){
+    isHighlighted = highlight;
+    notifyListeners();
+  }
+
   @override
   StatementGroupNode copyWith({
     Offset? position,
@@ -69,29 +70,22 @@ class StatementGroupNode extends InputNode {
   }) {
     return StatementGroupNode(
       statements: statements ?? this.statements,
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
-    )
+    )..position = position ?? this.position
       ..parent = parent ?? this.parent
       ..child = child ?? this.child
-      ..isConnected = isConnected ?? this.isConnected;
+      ..isConnected = isConnected ?? this.isConnected
+      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
-  
- @override
-StatementGroupNode copy() {
-  return StatementGroupNode(
-    isHighlighted: isHighlighted,
-    statements: statements.map((s) => s.copy()).toList(),
-    position: position,
-    color: color,
-    width: width,
-    height: height,
-  )
-    ..isConnected = isConnected
-    ..child = child
-    ..parent = parent;
-}
 
+  @override
+  StatementGroupNode copy() {
+    return StatementGroupNode(
+      isHighlighted: isHighlighted,
+      statements: statements.map((s) => s.copy()).toList(),
+    )
+      ..isConnected = isConnected
+      ..child = child
+      ..parent = parent
+      ..connectionPoints = List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy()));
+  }
 }

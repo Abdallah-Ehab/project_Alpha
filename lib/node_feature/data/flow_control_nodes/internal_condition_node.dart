@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logic_element.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/presentation/flow_control/internal_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/internal_node_widget.dart';
 
 class InternalConditionNode extends LogicElementNode with HasOutput {
   final dynamic firstOperand;
@@ -14,8 +15,22 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
   InternalConditionNode({
     required this.firstOperand,
     required this.comparisonOperator,
-    required this.secondOperand, required super.color, required super.width, required super.height,
+    required this.secondOperand,
+    required super.color,
+    required super.width,
+    required super.height,
   }) : super(connectionPoints: []);
+
+  static InternalConditionNode fromJson(Map<String, dynamic> json) {
+    return InternalConditionNode(
+      firstOperand: json['firstOperand'],
+      secondOperand: json['secondOperand'],
+      comparisonOperator: json['comparisonOperator'],
+      color: Color(json['color']),
+      width: (json['width'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+    )..id = json['id'];
+  }
 
   @override
   Result<bool> execute([Entity? entity]) {
@@ -26,7 +41,6 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
     dynamic op1 = firstOperand;
     dynamic op2 = secondOperand;
 
-    // Try to resolve from variables if entity provided
     if (entity != null) {
       if (entity.variables.containsKey(op1)) {
         op1 = entity.variables[op1];
@@ -36,7 +50,6 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
       }
     }
 
-    // Attempt to parse numeric values if they are strings
     final num1 = _tryParseDouble(op1);
     final num2 = _tryParseDouble(op2);
 
@@ -81,17 +94,53 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
 
   @override
   Widget buildNode() {
-    return InternalConditionNodeWidget(node: this,);
+    return InternalConditionNodeWidget(node: this);
   }
 
   @override
-  NodeModel copyWith({Offset? position, Color? color, double? width, double? height, bool? isConnected, NodeModel? child, NodeModel? parent}) {
-    throw UnimplementedError();
+  NodeModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    NodeModel? output,
+    dynamic firstOperand,
+    dynamic secondOperand,
+    String? comparisonOperator,
+    List<ConnectionPointModel>? connectionPoints,
+  }) {
+    return InternalConditionNode(
+      firstOperand: firstOperand ?? this.firstOperand,
+      comparisonOperator: comparisonOperator ?? this.comparisonOperator,
+      secondOperand: secondOperand ?? this.secondOperand,
+      color: color ?? this.color,
+      width: width ?? this.width,
+      height: height ?? this.height,
+    )
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = child ?? this.child?.copy()
+      ..parent = parent ?? this.parent?.copy()
+      ..output = output ?? this.output?.copy()
+      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
-  
+
   @override
   NodeModel copy() {
-    // TODO: implement copy
-    throw UnimplementedError();
+    return copyWith(
+      position: position,
+      color: color,
+      width: width,
+      height: height,
+      isConnected: isConnected,
+      child: child?.copy(),
+      parent: parent?.copy(),
+      output: output?.copy(),
+      firstOperand: firstOperand,
+      secondOperand: secondOperand,
+      comparisonOperator: comparisonOperator,
+    ) as InternalConditionNode;
   }
 }

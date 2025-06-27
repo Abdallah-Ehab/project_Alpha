@@ -31,6 +31,15 @@ mixin HasOutput on NodeModel {
   }
 }
 
+mixin HasValue on NodeModel{
+  NodeModel? sourceNode;
+  void disconnect() {
+    sourceNode = null;
+    isConnected = false;
+    notifyListeners();
+  }
+}
+
 
 
 
