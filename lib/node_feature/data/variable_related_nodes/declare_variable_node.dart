@@ -1,32 +1,29 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/presentation/variable_related_node_widgets/create_variable_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/variable_related_node_widgets/declare_variable_node_widget.dart';
 
-
-// //Todo more like a block it just creates a global variable it's not considered as a node no input, output, or connection
-class CreateVariableNode extends NodeModel {
+class DeclareVariableNode extends NodeModel {
   String variableName;
   dynamic value;
 
-  CreateVariableNode({
+  DeclareVariableNode({
     this.variableName = "x",
-    required this.value,
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
+    this.value = 0,
+
+    
   }) : super(
-          connectionPoints: [
-            ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
-            ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20),
-          ],
+          connectionPoints: [],
+          position: Offset.zero,color: Colors.orange,width: 200,height: 100
         );
+
+    static DeclareVariableNode fromJson(Map<String, dynamic> json) => DeclareVariableNode(
+        variableName: json['variableName'] as String,
+        value: json['value'],
+      );
 
   void setVariableName(String newName) {
     variableName = newName;
@@ -39,25 +36,20 @@ class CreateVariableNode extends NodeModel {
   }
 
   @override
+  Result execute([Entity? activeEntity]) {
+    return Result.success(result: "Variable '$variableName' updated to $value.");
+  }
+
+  @override
   Widget buildNode() {
     return ChangeNotifierProvider.value(
       value: this,
-      child: CreateVariableNodeWidget(node: this),
+      child: DeclareVarableNodeWidget(node: this),
     );
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
-    if (activeEntity == null) {
-      return Result.failure(errorMessage: "No active entity.");
-    }
-
-    activeEntity.addVariable(name: variableName, value: value);
-    return Result.success(result: "Variable '$variableName' set to $value.");
-  }
-
-  @override
-  CreateVariableNode copyWith({
+  DeclareVariableNode copyWith({
     Offset? position,
     Color? color,
     double? width,
@@ -69,13 +61,9 @@ class CreateVariableNode extends NodeModel {
     dynamic value,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return CreateVariableNode(
+    return DeclareVariableNode(
       variableName: variableName ?? this.variableName,
       value: value ?? this.value,
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()
@@ -85,7 +73,7 @@ class CreateVariableNode extends NodeModel {
   }
 
   @override
-  CreateVariableNode copy() {
+  DeclareVariableNode copy() {
     return copyWith(
       position: position,
       color: color,
@@ -102,3 +90,7 @@ class CreateVariableNode extends NodeModel {
     );
   }
 }
+
+
+
+

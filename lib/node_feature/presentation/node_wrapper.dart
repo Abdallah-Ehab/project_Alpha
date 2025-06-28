@@ -27,7 +27,7 @@ class NodeWrapper extends StatelessWidget {
         for (var node in nodeComponent.workspaceNodes) {
           if (node is! StatementGroupNode) continue;
 
-          if (nodeModel.isStatement) {
+          if (nodeModel.isStatement && !nodeComponent.workspaceNodes.any((node) => node.id == nodeModel.id)) {
             // If already inside a group and being dragged out
             node.removeStatement(nodeModel);
             nodeComponent.addNodeToWorkspace(nodeModel);

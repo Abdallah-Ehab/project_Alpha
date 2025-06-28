@@ -39,7 +39,6 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
   void _submit() {
     final entityName = entityController.text.trim();
     final variableName = variableController.text.trim();
-    final value = valueController.text.trim();
 
     final entity = EntityManager().getActorByName(entityName);
     if (entity == null) {
@@ -51,21 +50,10 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
       return;
     }
 
-    // Try parsing the value based on existing variable type
-    final currentVar = entity.variables[variableName];
-    dynamic parsedValue = value;
-
-    if (currentVar is int) {
-      parsedValue = int.tryParse(value);
-    } else if (currentVar is double) {
-      parsedValue = double.tryParse(value);
-    } else if (currentVar is bool) {
-      parsedValue = (value.toLowerCase() == 'true');
-    }
+  
 
     widget.buttonElement.entityName = entityName;
     widget.buttonElement.variableName = variableName;
-    widget.buttonElement.valueToSet = parsedValue;
     Navigator.pop(context);
   }
 
@@ -83,10 +71,6 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
           TextField(
             controller: variableController,
             decoration: const InputDecoration(labelText: 'Variable Name'),
-          ),
-          TextField(
-            controller: valueController,
-            decoration: const InputDecoration(labelText: 'Value to Set'),
           ),
           if (error != null)
             Padding(

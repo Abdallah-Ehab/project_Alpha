@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -16,14 +14,17 @@ class SimpleConditionNode extends NodeModel with HasOutput {
 
   SimpleConditionNode({
     super.position,
-    required super.color,
-    required super.width,
-    required super.height,
+    this.firstOperand,
+    this.secondOperand,
+    this.comparisonOperator,
   }) : super(
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 20),
-          ],
-        );
+            color: Colors.yellow,
+            width: 200,
+            height: 100,
+            connectionPoints: [
+              OutputConnectionPoint(position: Offset.zero, width: 20),
+            ],
+          );
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
@@ -98,9 +99,6 @@ class SimpleConditionNode extends NodeModel with HasOutput {
   }) {
     return SimpleConditionNode(
       position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
     )
       ..firstOperand = firstOperand ?? this.firstOperand
       ..secondOperand = secondOperand ?? this.secondOperand
@@ -128,4 +126,26 @@ class SimpleConditionNode extends NodeModel with HasOutput {
       output: output?.copy(),
     ) as SimpleConditionNode;
   }
+
+  
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'firstOperand': firstOperand,
+      'secondOperand': secondOperand,
+      'comparisonOperator': comparisonOperator,
+    };
+  }
+
+  factory SimpleConditionNode.fromMap(Map<String, dynamic> map) {
+    return SimpleConditionNode(
+      firstOperand: map['firstOperand'] as dynamic,
+      secondOperand: map['secondOperand'] as dynamic,
+      comparisonOperator: map['comparisonOperator'] != null ? map['comparisonOperator'] as String : null,
+    );
+  }
+
+
+
+  
 }

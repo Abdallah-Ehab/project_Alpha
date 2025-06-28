@@ -15,8 +15,8 @@ extension ActorEntitySerialization on ActorEntity {
         'heigthScale': heigthScale,
         'layerNumber': layerNumber,
         'variables': variables,
-        'components': components.map((key, component) =>
-            MapEntry(key.toString(), component.toJson())),
+        'components': components.map((key, components) =>
+            MapEntry(key.toString(), [for(final component in components) component.toJson()])),
         'children': children.map((child) {
           if (child is ActorEntity) return child.toJson();
           throw UnimplementedError('Unknown child entity type');
@@ -41,11 +41,15 @@ extension ActorEntitySerialization on ActorEntity {
     for (final entry in componentMap.entries) {
       switch (entry.key) {
         case 'NodeComponent':
-          entity.components[NodeComponent] = NodeComponent.fromJson(entry.value);
+          entity.components[NodeComponent] = [
+            for (final componentJson in entry.value)
+              NodeComponent.fromJson(componentJson)
+          ];
           break;
         case 'AnimationControllerComponent':
-          entity.components[AnimationControllerComponent] =
-              AnimationControllerComponent.fromJson(entry.value);
+          entity.components[AnimationControllerComponent] = [
+            AnimationControllerComponent.fromJson(entry.value)
+          ];
           break;
         // Add other component cases here as needed
         default:

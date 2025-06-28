@@ -10,9 +10,8 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/teleport_node_widget.dart';
 
 class TeleportNode extends InputOutputNode {
-  TeleportNode({Offset? position})
+  TeleportNode({super.position = Offset.zero})
       : super(
-          position: position ?? Offset.zero,
           color: Colors.orange,
           width: 180,
           height: 160,

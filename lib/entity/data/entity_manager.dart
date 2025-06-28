@@ -139,10 +139,10 @@ void spawnPrefab(String name, Offset position) {
     }
   }
 
-  void addComponentToActiveEntity(Component component) {
-    _activeEntity?.components[component.runtimeType] = component;
-    notifyListeners();
-  }
+  // void addComponentToActiveEntity(Component component) {
+  //   _activeEntity?.components[component.runtimeType] = component;
+  //   notifyListeners();
+  // }
 
   void removeEntity(EntityType type, String name) {
     _entities[type]?.remove(name);

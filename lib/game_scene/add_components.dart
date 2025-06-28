@@ -29,8 +29,8 @@ class AddComponents extends StatelessWidget {
   var animComponent = activeEntity.getComponent<AnimationControllerComponent>();
 
  
-  animComponent!.addTrack("idle", track: AnimationTrack("idle", [],true));
-  animComponent.addTrack("walk", track: AnimationTrack("walk", [],false));
+  animComponent!.addTrack("idle", track: AnimationTrack("idle", [],false,true));
+  animComponent.addTrack("walk", track: AnimationTrack("walk", [],false,false));
 
 
   ImageLoader.loadImages(animationName: "idle", character: "goku", animationLength: 4).then((value) {

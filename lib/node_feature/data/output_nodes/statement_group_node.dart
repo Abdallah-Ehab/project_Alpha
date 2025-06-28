@@ -7,13 +7,13 @@ import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/output_node_widgets/statements_group_node_widget.dart';
 
-class StatementGroupNode extends InputNode {
+class StatementGroupNode extends OutputNode {
   final List<NodeModel> statements;
   bool isHighlighted;
   StatementGroupNode({
     this.isHighlighted = false,
     required this.statements,
-  }) : super(connectionPoints: [InputConnectionPoint(position: Offset.zero, width:50),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
+  }) : super(connectionPoints: [InputConnectionPoint(position: Offset.zero, width:20),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
 
   void addStatement(NodeModel node) {
     statements.add(node);

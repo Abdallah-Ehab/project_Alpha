@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'dart:developer' as dev;
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
@@ -36,7 +36,7 @@ class ArrowPainter extends CustomPainter {
         if (bottomPoint != null && topPoint != null) {
           final start = node.position + bottomPoint.computeOffset(node);
           final end = child.position + topPoint.computeOffset(child);
-          dev.log('start is $start is and end is $end');
+      
           paint.color = Colors.blueGrey;
           _drawArrow(canvas, paint, start, end, dashed: false);
         }

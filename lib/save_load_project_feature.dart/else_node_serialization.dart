@@ -10,9 +10,7 @@ extension ElseNodeSerialization on ElseNode {
   static ElseNode fromJson(Map<String, dynamic> json) {
     return ElseNode(
       position: OffsetJson.fromJson(json['position']),
-      color: Color(json['color']),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
+    
     )..id = json['id'];
   }
 }

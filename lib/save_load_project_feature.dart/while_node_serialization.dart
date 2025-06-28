@@ -9,8 +9,5 @@ extension WhileNodeSerialization on WhileNode {
 
   static WhileNode fromJson(Map<String, dynamic> json) => WhileNode(
         position: OffsetJson.fromJson(json['position']),
-        color: Color(json['color']),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
       );
 }

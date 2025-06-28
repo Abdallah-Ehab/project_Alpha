@@ -69,7 +69,7 @@ class CameraEntity extends Entity {
     )
       ..components = {
         for (final entry in components.entries)
-          entry.key: entry.value.copy(), // assumes each component has a .copy()
+          entry.key: [for(final component in entry.value) component.copy()], // assumes each component has a .copy()
       }
       ..variables = Map<String, dynamic>.from(variables)
       ..widthScale = widthScale

@@ -21,7 +21,7 @@ class MoveNode extends NodeModel {
             ConnectConnectionPoint(
                 position: Offset.zero, isTop: false, width: 20),
           ],
-        position: Offset.zero,color: Colors.blue,width: 100, height: 50);
+        position: Offset.zero,color: Colors.blue,width: 200, height: 100);
 
   @override
   Result<String> execute([Entity? activeEntity]) {
@@ -29,6 +29,7 @@ class MoveNode extends NodeModel {
       return Result.failure(errorMessage: "Active entity not provided");
     }
     activeEntity.move(x: x, y: y);
+   
     return Result.success(
         result: "Moved by $x horizontally and by $y vertically");
   }

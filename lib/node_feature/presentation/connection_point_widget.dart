@@ -18,7 +18,7 @@ class ConnectionPointWidget extends StatelessWidget {
         Provider.of<ConnectionProvider>(context, listen: false);
     return GestureDetector(
       onPanStart: (details) {
-        if(connectionPoint is InputConnectionPoint) return;
+        if(connectionPoint is InputConnectionPoint || connectionPoint.isConnected) return;
         log('point pan start');
         connectionProvider.startConnection(connectionPoint);
       },
