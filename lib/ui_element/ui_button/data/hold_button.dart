@@ -9,12 +9,12 @@ class HoldButton extends UIButtonElement {
     super.entityName,
     super.variableName,
     super.valueToSet = true,
-    super.alignment = Alignment.center,
+    super.alignment = Alignment.centerRight,
   });
 
   @override
   void trigger({required bool down}) {
-    setVariable(down ? valueToSet : false);
+    setVariable(down ? true : false);
   }
 
   @override
@@ -23,13 +23,19 @@ class HoldButton extends UIButtonElement {
       builder: (context, gameState, _) {
         return gameState.isPlaying
             ? GestureDetector(
-                onTapDown: (_) => trigger(down: true),
+                onTapDown: (_) => triggerOnce(),
                 onTapUp: (_) => trigger(down: false),
                 onTapCancel: () => trigger(down: false),
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: const Text("Hold"),
-                ),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.redAccent
+                  ),),
+                )
               )
             : GestureDetector(
                 onTap: () {

@@ -18,16 +18,18 @@ abstract class Positionable {
 
 
 
+
 class AnimationTrack extends Positionable with ChangeNotifier {
   String name;
   List<KeyFrame> frames;
   int fps;
   bool isLooping;
+  bool mustFinish;
 
-  AnimationTrack(this.name, this.frames,this.isLooping, {this.fps = 10});
+  AnimationTrack(this.name, this.frames,this.isLooping,this.mustFinish, {this.fps = 10});
 
   AnimationTrack copy(){
-    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping, fps: fps)..trackPosition = trackPosition;
+    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping,mustFinish, fps: fps)..trackPosition = trackPosition;
   }
 
   Map<String, dynamic> toJson() {
@@ -49,7 +51,8 @@ class AnimationTrack extends Positionable with ChangeNotifier {
       (json['frames'] as List<dynamic>)
           .map((e) => KeyFrame.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['isLooping'], 
+      json['isLooping'],
+      json['mustFinish'], 
       fps: json['fps'] as int? ?? 10,
     )..trackPosition = Offset(
       (json['trackPosition']['x'] as num).toDouble(),
@@ -57,8 +60,40 @@ class AnimationTrack extends Positionable with ChangeNotifier {
     );
   }
 
+  void setIsLooping(bool isLooping){
+  this.isLooping = isLooping;
+  notifyListeners();
+}
+
+void setMustFinish(bool  mustFinish){
+    this.mustFinish = mustFinish;
+    notifyListeners();
+}
+
   void addFrame(KeyFrame frame){
     frames.add(frame);
+    notifyListeners();
+  }
+
+  void removeFrame(int index) {
+  if (index >= 0 && index < frames.length) {
+    frames.removeAt(index);
+    notifyListeners();
+  }
+}
+  KeyFrame removeFrameAt(int index){
+    final frame = frames.removeAt(index);
+    notifyListeners();
+    return frame;
+  }
+
+  void insertFrameAt(int index,KeyFrame frame){
+    frames.insert(index, frame);
+    notifyListeners();
+  }
+
+  void addMultipleFrames(List<KeyFrame> frames){
+    this.frames.addAll(frames);
     notifyListeners();
   }
   
@@ -153,4 +188,15 @@ class KeyFrame with ChangeNotifier {
     sketches.last.points.add(point);
     notifyListeners();
   }
+
+  void removePointFromSketch(Offset point) {
+  const double threshold = 20.0;
+
+  for (final sketch in sketches) {
+    sketch.points.removeWhere((p) => (point - p).distance <= threshold);
+  }
+
+  notifyListeners();
+}
+
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
@@ -9,7 +10,7 @@ import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dar
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/while_node.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
 import 'package:uuid/uuid.dart';
 
@@ -91,8 +92,8 @@ abstract class NodeModel with ChangeNotifier {
         return IfNode.fromJson(json);
       case 'WhileNode':
         return WhileNode.fromJson(json);
-      case 'SetVariableNode':
-        return SetVariableNode.fromJson(json);
+      case 'DeclareVariableNode':
+        return DeclareVariableNode.fromJson(json);
       case 'ElseNode':
         return ElseNode.fromJson(json);
       // Add other node types here...
@@ -160,13 +161,11 @@ abstract class NodeModel with ChangeNotifier {
 
 //Todo this will have only one connection point which is 'connect' aka the 'grey' one
 class StartNode extends NodeModel {
-  StartNode({
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
-    required super.connectionPoints,
-  });
+  StartNode(
+   
+  ): super(position: Offset.zero,color: Colors.orange,width: 200,height: 100, connectionPoints: [
+    ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
+  ]);
 
   @override
   NodeModel copyWith({
@@ -179,15 +178,7 @@ class StartNode extends NodeModel {
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return StartNode(
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
-      connectionPoints: connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy())),
-    )
+    return StartNode()
       ..isConnected = isConnected ?? this.isConnected
       ..child = child
       ..parent = parent;

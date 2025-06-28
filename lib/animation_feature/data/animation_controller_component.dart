@@ -1,5 +1,6 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
+import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
@@ -26,21 +27,25 @@ class AnimationControllerComponent extends Component {
       transitions = transitions ?? [
         Transition(
           startTrackName: "idle",
-          condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: ">"),
+          condition: Condition(entityVariable: "x", secondOperand: 'true', operator: "=="),
           targetTrackName: "walk",
         ),
-        Transition(
-          startTrackName: "walk",
-          condition: Condition(entityVariable: "x", secondOperand: 0.5, operator: "<"),
-          targetTrackName: "idle",
-        ),
+        
       ],
       animationTracks = animationTracks ?? {
-        "idle": AnimationTrack("idle", [KeyFrame(sketches: [])],true),
-        "walk": AnimationTrack("walk",[KeyFrame(sketches: [])],false)
+        "idle": AnimationTrack("idle", [KeyFrame(sketches: [])],false,true),
+        "walk": AnimationTrack("walk",[KeyFrame(sketches: [])],false,false)
       },
       super(isActive: isActive ?? true);
 
+
+void setFrame(int index) {
+  if (index >= 0 && index < currentAnimationTrack.frames.length) {
+    currentFrame = index;
+    notifyListeners();
+  }
+
+}
 
 
 
@@ -89,7 +94,7 @@ class AnimationControllerComponent extends Component {
       notifyListeners();
       return;
     }
-    animationTracks[name] = AnimationTrack(name, [], true,fps: fps);
+    animationTracks[name] = AnimationTrack(name, [], true,false,fps: fps);
     _currentAnimationTrackName = name;
     notifyListeners();
   }
@@ -194,7 +199,7 @@ class Transition {
 
   void execute(Entity entity,{ AnimationControllerComponent? animComponent, SoundControllerComponent? soundComponent}) {
     if(animComponent != null){if (condition.execute(entity)) {
-      if (animComponent._currentAnimationTrackName == startTrackName) {
+      if (animComponent._currentAnimationTrackName == startTrackName && !animComponent.currentAnimationTrack.mustFinish) {
         animComponent.setTrack(targetTrackName);
       }
     }}else{
@@ -209,7 +214,7 @@ class Transition {
 
 class Condition {
   String entityVariable;
-  double secondOperand;
+  dynamic secondOperand;
   String operator;
   Condition(
       {required this.entityVariable,
@@ -236,24 +241,39 @@ class Condition {
   }
   bool execute(Entity entity) {
     if (entity.variables[entityVariable] == null) return false;
+    final secondOp = _parseValue(secondOperand);
     switch (operator) {
       case "==":
-        return entity.variables[entityVariable] == secondOperand;
+        return entity.variables[entityVariable] == secondOp;
 
       case ">":
-        return entity.variables[entityVariable] > secondOperand;
+        return entity.variables[entityVariable] > secondOp;
 
       case "<":
-        return entity.variables[entityVariable] < secondOperand;
+        return entity.variables[entityVariable] < secondOp;
 
       case ">=":
-        return entity.variables[entityVariable] >= secondOperand;
+        return entity.variables[entityVariable] >= secondOp;
       case "<=":
-        return entity.variables[entityVariable] <= secondOperand;
+        return entity.variables[entityVariable] <= secondOp;
       case "!=":
-        return entity.variables[entityVariable] != secondOperand;
+        return entity.variables[entityVariable] != secondOp;
       default:
         return false;
     }
   }
+
+  dynamic _parseValue(dynamic val) {
+  if (val is bool) return val;
+  if (val is String) {
+    final lower = val.toLowerCase();
+    if (lower == 'true') return true;
+    if (lower == 'false') return false;
+    final numVal = double.tryParse(val);
+    if (numVal != null) return numVal;
+    return val;
+  }
+  if (val is num) return val;
+  return val;
+}
 }

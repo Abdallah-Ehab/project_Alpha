@@ -57,7 +57,7 @@ class ActorEntity extends Entity{
     notifyListeners();
   }
   
-  @override
+
   @override
 ActorEntity copy() {
   final copied = ActorEntity(
@@ -76,7 +76,7 @@ ActorEntity copy() {
   // Deep copy components
   copied.components = {
     for (final entry in components.entries)
-      entry.key: entry.value.copy(),
+      entry.key: [for(final component in entry.value)component.copy()],
   };
 
   // Copy variables — assuming all values are primitives or immutable

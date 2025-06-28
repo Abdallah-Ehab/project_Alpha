@@ -5,16 +5,19 @@ import 'package:scratch_clone/ui_element/ui_button/data/abstract_button.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/button_config_dialog.dart';
 
 class TapButton extends UIButtonElement {
+  bool isTapped;
   TapButton({
+    this.isTapped = false,
     super.entityName,
     super.variableName,
     super.valueToSet,
-    super.alignment = Alignment.center,
+    super.alignment = Alignment.centerRight,
   });
 
   @override
   void trigger({required bool down}) {
-    if (down) setVariable(valueToSet);
+    isTapped = !isTapped;
+    setVariable(isTapped);
   }
 
   @override
@@ -23,12 +26,17 @@ class TapButton extends UIButtonElement {
       builder: (context, gameState, _) {
         return gameState.isPlaying
             ? GestureDetector(
-                onTap: () => trigger(down: true),
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: const Text("Tap"),
+              onTap: () => trigger(down: true),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),
+                  color: Colors.greenAccent),
                 ),
               )
+            )
             : GestureDetector(
                 onTap: () {
                   showDialog(

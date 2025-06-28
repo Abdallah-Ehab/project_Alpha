@@ -18,9 +18,6 @@ extension ConditionGroupNodeSerialization on ConditionGroupNode {
 
     return ConditionGroupNode(
       logicSequence: logicNodes,
-      color: Color(json['color']),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
     )..id = json['id'];
   }
 }

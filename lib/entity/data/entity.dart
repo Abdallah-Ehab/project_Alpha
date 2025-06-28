@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
+import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 
 import 'actor_entity.dart';
 
@@ -17,7 +18,7 @@ abstract class Entity with ChangeNotifier {
   double height;
   double widthScale = 1.0;
   double heigthScale = 1.0;
-  Map<Type, Component> components = {};
+  Map<Type, List<Component>> components = {};
   Map<String, dynamic> variables = {};
   int layerNumber;
 
@@ -82,7 +83,8 @@ abstract class Entity with ChangeNotifier {
       component.width = width;
       component.height = height;
     }
-    components[component.runtimeType] = component;
+    components.putIfAbsent(component.runtimeType,()=>[]);
+    components[component.runtimeType]!.add(component);
     notifyListeners();
   }
 
@@ -92,8 +94,13 @@ abstract class Entity with ChangeNotifier {
   }
 
   void update(Duration dt) {
-    components.forEach((type, component) {
-      component.update(dt, activeEntity: this);
+    getComponent<ColliderComponent>()?.update(dt, activeEntity: this);
+    getComponent<RigidBodyComponent>()?.update(dt, activeEntity:this);
+    components.forEach((type, list) {
+      if(type == RigidBodyComponent || type == ColliderComponent) return;
+      for (final component in list) {
+    component.update(dt, activeEntity: this);
+  }
     });
   }
 
@@ -103,14 +110,22 @@ abstract class Entity with ChangeNotifier {
   }
 
   void reset() {
-    components.forEach((type, component) {
-      component.reset();
+    components.forEach((type, list) {
+      for(final component in list){
+        component.reset();
+      }
     });
   }
 
-  T? getComponent<T extends Component>() {
-    final component = components[T];
-    if (component is T) return component;
+  T? getComponent<T extends Component>(){
+    final components = this.components[T];
+    if (components is List<T>) return components[0];
+    return null;
+  }
+
+ List<Component>? getAllComponents<T extends Component>() {
+    final components = this.components[T];
+    if (components is List<T>) return components;
     return null;
   }
 
@@ -164,9 +179,9 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleComponent(Type componentType) {
+  void toggleComponent(Type componentType,int index) {
     if (components.containsKey(componentType)) {
-      components[componentType]!.toggleComponent();
+      components[componentType]?[index].toggleComponent();
     }
     notifyListeners();
   }

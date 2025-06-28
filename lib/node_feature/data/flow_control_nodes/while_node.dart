@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -11,10 +12,11 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class WhileNode extends InputOutputNode {
   WhileNode({
     super.position,
-    required super.color,
-    required super.width,
-    required super.height,
+   
   }) : super(
+          color: Colors.cyan,
+          width: 200,
+          height: 200,
           connectionPoints: [
             InputConnectionPoint(position: Offset.zero, width: 50),
             OutputConnectionPoint(position: Offset.zero, width: 50),
@@ -27,9 +29,7 @@ class WhileNode extends InputOutputNode {
 
   static WhileNode fromJson(Map<String, dynamic> json) => WhileNode(
         position: OffsetJson.fromJson(json['position']),
-        color: Color(json['color']),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
+     
       );
 
   @override
@@ -91,9 +91,7 @@ class WhileNode extends InputOutputNode {
   }) {
     return WhileNode(
       position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
+     
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()

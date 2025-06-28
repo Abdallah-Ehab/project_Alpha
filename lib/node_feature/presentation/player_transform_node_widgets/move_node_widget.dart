@@ -16,10 +16,11 @@ class MoveNodeWidget extends StatelessWidget {
       height: node.height,
       decoration: BoxDecoration(
         color: node.color,
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.blueGrey),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           // Node UI
           Padding(
@@ -34,7 +35,7 @@ class MoveNodeWidget extends StatelessWidget {
                     Expanded(
                       child: TextField(
                         controller: xController,
-                        onChanged: (value) {
+                        onSubmitted: (value) {
                           final parsed = double.tryParse(value);
                           if (parsed != null) node.setX(parsed);
                         },
@@ -42,24 +43,23 @@ class MoveNodeWidget extends StatelessWidget {
                         decoration: const InputDecoration(isDense: true),
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
+                    SizedBox(width: 20,),
                     const Text("Y: "),
-                    Expanded(
-                      child: TextField(
-                        controller: yController,
-                        onChanged: (value) {
-                          final parsed = double.tryParse(value);
-                          if (parsed != null) node.setY(parsed);
-                        },
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(isDense: true),
-                      ),
-                    ),
+                    
+                Expanded(
+                  child: TextField(
+                    controller: yController,
+                    onSubmitted: (value) {
+                      final parsed = double.tryParse(value);
+                      if (parsed != null) node.setY(parsed);
+                    },
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(isDense: true),
+                  ),
+                ),
                   ],
                 ),
+                
               ],
             ),
           ),

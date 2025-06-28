@@ -10,9 +10,7 @@ extension IfNodeSerialization on IfNode {
   static IfNode fromJson(Map<String, dynamic> json) {
     return IfNode(
       position: OffsetJson.fromJson(json['position']),
-      color: Color(json['color']),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
+      
     )..id = json['id']; // preserve id for linking
   }
 }

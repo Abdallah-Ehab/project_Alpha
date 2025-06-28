@@ -4,8 +4,7 @@ import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/presentation/variable_related_node_widgets/set_variable_node_widget.dart';
-import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
+import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/set_variable_node_widget.dart';
 
 class SetVariableNode extends NodeModel {
   String variableName;
@@ -13,25 +12,20 @@ class SetVariableNode extends NodeModel {
 
   SetVariableNode({
     this.variableName = "x",
-    required this.value,
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
+    this.value = 0,
+
+    
   }) : super(
           connectionPoints: [
             ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
             ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20),
           ],
+          position: Offset.zero,color: Colors.orange,width: 200,height: 100
         );
 
     static SetVariableNode fromJson(Map<String, dynamic> json) => SetVariableNode(
         variableName: json['variableName'] as String,
         value: json['value'],
-        position: OffsetJson.fromJson(json['position']),
-        color: Color(json['color']),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
       );
 
   void setVariableName(String newName) {
@@ -82,10 +76,6 @@ class SetVariableNode extends NodeModel {
     return SetVariableNode(
       variableName: variableName ?? this.variableName,
       value: value ?? this.value,
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()
@@ -112,3 +102,4 @@ class SetVariableNode extends NodeModel {
     );
   }
 }
+  

@@ -14,7 +14,7 @@ class LongPressButton extends UIButtonElement {
 
   @override
   void trigger({required bool down}) {
-    if (down) setVariable(valueToSet);
+    setVariable(down ? true : false);
   }
 
   @override
@@ -24,10 +24,17 @@ class LongPressButton extends UIButtonElement {
         return gameState.isPlaying
             ? GestureDetector(
                 onLongPress: () => trigger(down: true),
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: const Text("Long Press"),
-                ),
+                onLongPressUp: ()=>trigger(down:false),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.blue
+                  ),),
+                )
               )
             : GestureDetector(
                 onTap: () {

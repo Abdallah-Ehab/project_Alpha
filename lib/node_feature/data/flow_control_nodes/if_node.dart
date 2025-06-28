@@ -1,5 +1,6 @@
 import 'dart:developer';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -16,12 +17,12 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 // the output will be green and it's for statements that will be executed when condition is true
 // the connect point is for what ever nodes come after the if stamtements may be an else statement too
 class IfNode extends InputOutputNode {
-  IfNode({
-    super.position,
-    required super.color,
-    required super.width,
-    required super.height,
-  }) : super(
+  IfNode(
+    {
+      super.position = Offset.zero
+    }
+  ) : super(color: Colors.green,width: 200,
+  height: 200,
           connectionPoints: [
             InputConnectionPoint(position: Offset.zero, width: 20),
             OutputConnectionPoint(position: Offset.zero, width: 20),
@@ -38,7 +39,7 @@ class IfNode extends InputOutputNode {
         return Result.failure(errorMessage: conditionResult.errorMessage);
       }
       if (conditionResult.result != null && !conditionResult.result!) {
-        log("false condition");
+       
         return Result.success(result: false);
       }
     }
@@ -49,6 +50,7 @@ class IfNode extends InputOutputNode {
         return Result.failure(errorMessage: statementResult.errorMessage);
       }
     }
+ 
     return Result.success(result: true);
   }
 
@@ -71,10 +73,7 @@ class IfNode extends InputOutputNode {
     NodeModel? output,
   }) {
     return IfNode(
-      position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
+   position: position ?? this.position
     )..isConnected = isConnected ?? this.isConnected
      ..child = child
      ..parent = parent
@@ -86,9 +85,6 @@ class IfNode extends InputOutputNode {
   static IfNode fromJson(Map<String, dynamic> json) {
     return IfNode(
       position: OffsetJson.fromJson(json['position']),
-      color: Color(json['color']),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
     )..id = json['id']; // preserve id for linking
   }
 

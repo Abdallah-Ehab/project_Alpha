@@ -14,9 +14,7 @@ extension SimpleConditionNodeSerialization on SimpleConditionNode {
 
   static SimpleConditionNode fromJson(Map<String, dynamic> json) => SimpleConditionNode(
         position: OffsetJson.fromJson(json['position']),
-        color: Color(json['color']),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
+       
       )
         ..firstOperand = json['firstOperand']
         ..secondOperand = json['secondOperand']

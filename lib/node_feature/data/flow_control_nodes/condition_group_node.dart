@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -6,9 +8,10 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logic_element.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logical_operator_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
+import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/condition_group_node_widget.dart';
 
-class ConditionGroupNode extends NodeModel {
+class ConditionGroupNode extends InputNode {
   final List<LogicElementNode> logicSequence;
 
   final double baseHeight = 120;
@@ -16,14 +19,12 @@ class ConditionGroupNode extends NodeModel {
 
   ConditionGroupNode({
     required this.logicSequence,
-    required super.color,
-    required super.width,
-    required super.height,
+   
   }) : super(
           connectionPoints: [
             OutputConnectionPoint(position: Offset.zero, width: 50),
           ],
-          
+          width: 300, height: 300,color: Colors.redAccent
         );
 
   void addLogicNode(LogicElementNode node) {
@@ -60,6 +61,8 @@ class ConditionGroupNode extends NodeModel {
     if (!isValidSequence()) {
       return Result.failure(
           errorMessage: "Invalid condition sequence (missing or misplaced logical operator).");
+
+     
     }
 
     bool? result;
@@ -93,8 +96,9 @@ class ConditionGroupNode extends NodeModel {
         pendingOperator = null;
       }
     }
-
+   
     return Result.success(result: result ?? false);
+
   }
 
   bool isValidSequence() {
@@ -133,9 +137,6 @@ class ConditionGroupNode extends NodeModel {
   }) {
     return ConditionGroupNode(
       logicSequence: logicSequence ?? List<LogicElementNode>.from(this.logicSequence.map((e) => e.copy() as LogicElementNode)),
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()
