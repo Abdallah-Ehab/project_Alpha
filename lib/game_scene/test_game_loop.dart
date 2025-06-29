@@ -8,7 +8,7 @@ import 'package:scratch_clone/game_scene/game_scene.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 
 class TestGameLoop extends StatefulWidget {
-  const TestGameLoop({super.key});
+  const   TestGameLoop({super.key});
 
   @override
   State<TestGameLoop> createState() => _TestGameLoopState();
@@ -32,10 +32,13 @@ class _TestGameLoopState extends State<TestGameLoop>
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context, listen: false);
     return Scaffold(
+      backgroundColor: Color(0xFF222222),
       body: const GameScene(),
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
+            color: Colors.white,
             onPressed: () {
               if (!_ticker.isActive) {
                 gameState.isPlaying = true;
