@@ -11,20 +11,26 @@ class GameScene extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          flex: 6,
+          flex:4,
           child: SizedBox(
-          child: Stack(
-            children: [
-              // GameView as the background, expanded to fill available space
-              const GameView(),
-              // UIElementsLayer on top of GameView
-              const UIElementsLayer()
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(16),
+              child: Stack(
+                children: [
+                  // GameView as the background, expanded to fill available space
+                  const GameView(),
+                  // UIElementsLayer on top of GameView
+                  const UIElementsLayer()
+                ],
+              ),
+            ),
           ),
                 ),
         ),
         Expanded(
-          flex: 3,
+          flex:2,
           child: ControlPanel(), // Control panel at the bottom
         ),]
     );

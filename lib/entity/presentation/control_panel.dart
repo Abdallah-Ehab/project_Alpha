@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/presentation/animation_editor_screen.dart';
 import 'package:scratch_clone/animation_editor/presentation/full_animation_page.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_slider.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
@@ -11,7 +13,7 @@ import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_card_widget.dart';
 
-
+import '../../core/ui_widgets/animation_component.dart';
 
 class ControlPanel extends StatefulWidget {
   const ControlPanel({super.key});
@@ -72,163 +74,187 @@ class _ControlPanelState extends State<ControlPanel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Entity: ${entity.name}', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 10),
-        TextField(
-          decoration: const InputDecoration(labelText: 'Name'),
-          controller: nameController,
-          onChanged: (value) => entity.setName(value),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: const InputDecoration(labelText: 'X'),
-                keyboardType: TextInputType.number,
-                controller: xController,
-                onChanged: (value) => entity.teleport(dx: double.tryParse(value) ?? entity.position.dx),
-              ),
+        Card(
+          color: Color(0xffE8E8E8),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Entity: ${entity.name}',
+                  style: TextStyle(
+                    fontFamily: 'PressStart2P',
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                PixelatedTextField(
+                  keyboardType: TextInputType.text,
+                  controller: nameController,
+                  hintText: 'Name',
+                  onChanged: (value) => entity.setName(value),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: PixelatedTextField(
+                        controller: xController,
+                        hintText: 'Position X',
+                        onChanged: (value) => entity.teleport(
+                            dx: double.tryParse(value) ?? entity.position.dx),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: PixelatedTextField(
+                        controller: yController,
+                        hintText: 'Position Y',
+                        onChanged: (value) => entity.teleport(
+                            dy: double.tryParse(value) ?? entity.position.dy),
+                      ),
+                    ),
+                  ],
+                ),
+                PixelatedSlider(
+                  label: 'Rotation: ${entity.rotation.toStringAsFixed(0)}°',
+                  divisions: 10,
+                  max: 10,
+                  min: 0,
+                  value: entity.rotation,
+                  onChanged: (value) => entity.rotate(value),
+                ),
+                PixelatedSlider(
+                  label: 'Width: ${entity.width.toStringAsFixed(1)}',
+                  divisions: 9,
+                  max: 10,
+                  min: 1.0,
+                  value: entity.widthScale,
+                  onChanged: (value) => entity.scaleWidth(value),
+                ),
+                PixelatedSlider(
+                    max: 10,
+                    min: 1.0,
+                    divisions: 9,
+                    value: entity.heigthScale,
+                    onChanged: (value) => entity.scaleHeight(value),
+                    label: 'Height: ${entity.height.toStringAsFixed(1)}'),
+              ],
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                decoration: const InputDecoration(labelText: 'Y'),
-                keyboardType: TextInputType.number,
-                controller: yController,
-                onChanged: (value) => entity.teleport(dy: double.tryParse(value) ?? entity.position.dy),
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: entity.rotation,
-          min: 0,
-          max: 10,
-          divisions: 10,
-          label: 'Rotation: ${entity.rotation.toStringAsFixed(0)}°',
-          onChanged: (value) => entity.rotate(value),
-        ),
-        Slider(
-          value: entity.widthScale,
-          min: 1.0,
-          max: 10,
-          divisions: 9,
-          label: 'Width: ${entity.width.toStringAsFixed(1)}',
-          onChanged: (value) => entity.scaleWidth(value),
-        ),
-        Slider(
-          value: entity.heigthScale,
-          min: 1.0,
-          max: 10,
-          divisions: 9,
-          label: 'Height: ${entity.height.toStringAsFixed(1)}',
-          onChanged: (value) => entity.scaleHeight(value),
-        ),
+          ),
+        )
       ],
     );
   }
 
   Widget _buildComponentPanels(BuildContext context, Entity entity) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Components', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 10),
-        if (entity.getComponent<AnimationControllerComponent>() != null)
-          _buildAnimationComponentPanel(context, entity),
-        if (entity.getAllComponents<NodeComponent>() != null)
-          _buildNodeComponentPanel(context, entity),
-        if (entity.getComponent<ColliderComponent>() != null)
-          const ColliderCardWidget(),
-      ],
-    );
-  }
-
-  Widget _buildAnimationComponentPanel(BuildContext context, Entity entity) {
-    final animationComponent = entity.getComponent<AnimationControllerComponent>()!;
     return Card(
-      child: ListTile(
-        title: const Text('Animation Component'),
-        subtitle: ChangeNotifierProvider.value(
-          value: animationComponent,
-          child: Consumer<AnimationControllerComponent>(
-            builder: (context, component, child) {
-              return DropdownButton<String>(
-                value: component.currentAnimationTrack.name,
-                items: component.animationTracks.keys.map((trackName) {
-                  return DropdownMenuItem<String>(
-                    value: trackName,
-                    child: Text(trackName),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    component.setTrack(value);
-                  }
-                },
-              );
-            },
-          ),
+      color: Color(0xffE8E8E8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Components',
+              style: TextStyle(fontFamily: 'PressStart2P', fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            if (entity.getComponent<AnimationControllerComponent>() != null)
+              _buildAnimationComponentPanel(context, entity),
+            if (entity.getAllComponents<NodeComponent>() != null)
+              _buildNodeComponentPanel(context, entity),
+            if (entity.getComponent<ColliderComponent>() != null)
+              const ColliderCardWidget(),
+          ],
         ),
-        leading: Checkbox(
-          value: animationComponent.isActive,
-          onChanged: (value) {
-            if (value != null) {
-              entity.toggleComponent(AnimationControllerComponent,0);
-            }
-          },
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const FullAnimationEditorPage()),
-          );
-        },
       ),
     );
   }
 
-Widget _buildNodeComponentPanel(BuildContext context, Entity entity) {
-  final nodeComponents = entity.getAllComponents<NodeComponent>();
-  if(nodeComponents == null) return SizedBox.expand();
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('Block Components (${nodeComponents?.length})',
-          style: Theme.of(context).textTheme.titleMedium),
-      const SizedBox(height: 8),
+  Widget _buildAnimationComponentPanel(BuildContext context, Entity entity) {
+    final comp = entity.getComponent<AnimationControllerComponent>()!;
+    final trackNames = comp.animationTracks.keys.toList();
 
-      ...List.generate(nodeComponents.length, (index) {
-        final nodeComponent = nodeComponents[index];
-        return Card(
-          child: ListTile(
-            title: Text('Node Component #$index'),
-            leading: Checkbox(
-              value: nodeComponent.isActive,
-              onChanged: (value) {
-                if (value != null) {
-                  nodeComponent.toggleComponent();
-                  
-                }
-              },
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => NodeWorkspaceTest(),
-                  ),
-                );
-              },
-            ),
+    return AnimationControllerWidget(
+      options: trackNames,
+      initiallyChecked: comp.isActive,
+      initiallySelection: comp.currentAnimationTrack.name,
+      onToggleChecked: (isActive) {
+        // toggles the component on/off
+        entity.toggleComponent(AnimationControllerComponent, 0);
+      },
+      onTrackChanged: (trackName) {
+        comp.setTrack(trackName);
+      },
+      onOpenEditor: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const FullAnimationEditorPage(),
           ),
         );
-      }),
-    ],
-  );
-}
+      },
+    );
+  }
+
+  Widget _buildNodeComponentPanel(BuildContext context, Entity entity) {
+    final nodeComponents = entity.getAllComponents<NodeComponent>();
+    if (nodeComponents == null) return SizedBox.expand();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+      
+        const SizedBox(height: 8),
+        Text('Block Components (${nodeComponents?.length})',
+            style: TextStyle(fontFamily: 'PressStart2P',fontSize: 15)),
+        const SizedBox(height: 8),
+        ...List.generate(nodeComponents.length, (index) {
+          final nodeComponent = nodeComponents[index];
+          return Card(
+            color: Color(0xFF222222),
+            child: ListTile(
+              title: Text(
+                'Node Component #$index',
+                style: TextStyle(
+                    fontFamily: 'PressStart2P',
+                    fontSize: 12,
+                    color: Colors.white),
+              ),
+              leading: Checkbox(
+                value: nodeComponent.isActive,
+                onChanged: (value) {
+                  if (value != null) {
+                    nodeComponent.toggleComponent();
+                  }
+                },
+                checkColor: Colors.white,
+                fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                  return Colors.transparent;
+                }),
+                side: const BorderSide(color: Colors.white, width: 2.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.open_in_new,color: Colors.white,),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => NodeWorkspaceTest(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
 
   Widget _buildVariablesDisplay(BuildContext context, Entity entity) {
     return Column(
@@ -260,7 +286,8 @@ Widget _buildNodeComponentPanel(BuildContext context, Entity entity) {
                 divisions: 100,
                 label: '$key: $value',
                 onChanged: (newValue) {
-                  entity.setVariableXToValueY(key, value is int ? newValue.round() : newValue);
+                  entity.setVariableXToValueY(
+                      key, value is int ? newValue.round() : newValue);
                 },
               );
             } else {
