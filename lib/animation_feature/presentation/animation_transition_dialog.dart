@@ -3,17 +3,18 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 
-
 class AddAnimationTransitionDialog extends StatefulWidget {
   final String entityName;
 
   const AddAnimationTransitionDialog({super.key, required this.entityName});
 
   @override
-  State<AddAnimationTransitionDialog> createState() => _AddAnimationTransitionDialogState();
+  State<AddAnimationTransitionDialog> createState() =>
+      _AddAnimationTransitionDialogState();
 }
 
-class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDialog> {
+class _AddAnimationTransitionDialogState
+    extends State<AddAnimationTransitionDialog> {
   String fromTrack = '';
   String toTrack = '';
   String selectedVariable = '';
@@ -35,8 +36,10 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
                 final entity = entityManager.getActorByName(widget.entityName);
                 if (entity == null) return const Text("Entity not found");
 
-                final animationComponent = entity.getComponent<AnimationControllerComponent>();
-                if (animationComponent == null) return const Text("No Animation Component");
+                final animationComponent =
+                    entity.getComponent<AnimationControllerComponent>();
+                if (animationComponent == null)
+                  return const Text("No Animation Component");
 
                 return ChangeNotifierProvider.value(
                   value: animationComponent,
@@ -45,17 +48,22 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
                       Consumer<AnimationControllerComponent>(
                         builder: (context, animComponent, _) {
                           return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'From Track'),
-                            value: fromTrack.isNotEmpty && animComponent.animationTracks.containsKey(fromTrack)
+                            decoration:
+                                const InputDecoration(labelText: 'From Track'),
+                            value: fromTrack.isNotEmpty &&
+                                    animComponent.animationTracks
+                                        .containsKey(fromTrack)
                                 ? fromTrack
                                 : null,
-                            items: animComponent.animationTracks.keys.map((trackName) {
+                            items: animComponent.animationTracks.keys
+                                .map((trackName) {
                               return DropdownMenuItem(
                                 value: trackName,
                                 child: Text(trackName),
                               );
                             }).toList(),
-                            onChanged: (value) => setState(() => fromTrack = value ?? ''),
+                            onChanged: (value) =>
+                                setState(() => fromTrack = value ?? ''),
                           );
                         },
                       ),
@@ -63,42 +71,57 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
                       Consumer<AnimationControllerComponent>(
                         builder: (context, animComponent, _) {
                           return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'To Track'),
-                            value: toTrack.isNotEmpty && animComponent.animationTracks.containsKey(toTrack)
+                            decoration:
+                                const InputDecoration(labelText: 'To Track'),
+                            value: toTrack.isNotEmpty &&
+                                    animComponent.animationTracks
+                                        .containsKey(toTrack)
                                 ? toTrack
                                 : null,
-                            items: animComponent.animationTracks.keys.map((trackName) {
+                            items: animComponent.animationTracks.keys
+                                .map((trackName) {
                               return DropdownMenuItem(
                                 value: trackName,
                                 child: Text(trackName),
                               );
                             }).toList(),
-                            onChanged: (value) => setState(() => toTrack = value ?? ''),
+                            onChanged: (value) =>
+                                setState(() => toTrack = value ?? ''),
                           );
                         },
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(labelText: 'Entity Variable'),
-                        value: selectedVariable.isNotEmpty ? selectedVariable : null,
+                        decoration:
+                            const InputDecoration(labelText: 'Entity Variable'),
+                        value: selectedVariable.isNotEmpty
+                            ? selectedVariable
+                            : null,
                         items: entity.variables.keys.map((varName) {
                           return DropdownMenuItem(
                             value: varName,
                             child: Text(varName),
                           );
                         }).toList(),
-                        onChanged: (value) => setState(() => selectedVariable = value ?? ''),
+                        onChanged: (value) =>
+                            setState(() => selectedVariable = value ?? ''),
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(labelText: 'Operator'),
+                        decoration:
+                            const InputDecoration(labelText: 'Operator'),
                         value: selectedOperator,
-                        items: operators.map((op) => DropdownMenuItem(value: op, child: Text(op))).toList(),
-                        onChanged: (value) => setState(() => selectedOperator = value ?? '=='),
+                        items: operators
+                            .map((op) =>
+                                DropdownMenuItem(value: op, child: Text(op)))
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => selectedOperator = value ?? '=='),
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        decoration: const InputDecoration(labelText: 'Second Operand (number)'),
+                        decoration: const InputDecoration(
+                            labelText: 'Second Operand (number)'),
                         keyboardType: TextInputType.number,
                         onChanged: (value) => secondOperand = value,
                       ),
@@ -119,12 +142,27 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
           onPressed: () {
             final entity = Provider.of<EntityManager>(context, listen: false)
                 .getActorByName(widget.entityName);
-            final animComponent = entity?.getComponent<AnimationControllerComponent>();
+            final animComponent =
+                entity?.getComponent<AnimationControllerComponent>();
             if (entity == null || animComponent == null) return;
+
+            if (fromTrack.isEmpty ||
+                toTrack.isEmpty ||
+                selectedVariable.isEmpty ||
+                secondOperand.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      "Please fill in all the fields to add a transition."),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+              return;
+            }
 
             final condition = Condition(
               entityVariable: selectedVariable,
-              secondOperand: double.tryParse(secondOperand) ?? 0.0,
+              secondOperand: secondOperand,
               operator: selectedOperator,
             );
 
@@ -134,7 +172,7 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
               condition: condition,
             );
 
-            (animComponent as AnimationControllerComponent).addTransition(transition);
+            animComponent.addTransition(transition);
             Navigator.of(context).pop();
           },
           child: const Text("OK"),

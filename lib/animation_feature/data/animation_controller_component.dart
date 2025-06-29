@@ -8,46 +8,46 @@ class AnimationControllerComponent extends Component {
   int _currentFrame;
   bool animationPlaying;
   Duration lastUpdate;
-   String _currentAnimationTrackName;
-   List<Transition> transitions;
+  String _currentAnimationTrackName;
+  List<Transition> transitions;
   Map<String, AnimationTrack> animationTracks;
 
   AnimationControllerComponent({
-  bool? isActive,
-  int? currentFrame,
-  bool? animationPlaying,
-  Duration? lastUpdate,
-  String? currentAnimationTrackName,
-  List<Transition>? transitions,
-  Map<String, AnimationTrack>? animationTracks,
-})  : _currentFrame = currentFrame ?? 0,
-      animationPlaying = animationPlaying ?? false,
-      lastUpdate = lastUpdate ?? Duration.zero,
-      _currentAnimationTrackName = currentAnimationTrackName ?? "idle",
-      transitions = transitions ?? [
-        Transition(
-          startTrackName: "idle",
-          condition: Condition(entityVariable: "x", secondOperand: 'true', operator: "=="),
-          targetTrackName: "walk",
-        ),
-        
-      ],
-      animationTracks = animationTracks ?? {
-        "idle": AnimationTrack("idle", [KeyFrame(sketches: [])],false,true),
-        "walk": AnimationTrack("walk",[KeyFrame(sketches: [])],false,false)
-      },
-      super(isActive: isActive ?? true);
+    bool? isActive,
+    int? currentFrame,
+    bool? animationPlaying,
+    Duration? lastUpdate,
+    String? currentAnimationTrackName,
+    List<Transition>? transitions,
+    Map<String, AnimationTrack>? animationTracks,
+  })  : _currentFrame = currentFrame ?? 0,
+        animationPlaying = animationPlaying ?? false,
+        lastUpdate = lastUpdate ?? Duration.zero,
+        _currentAnimationTrackName = currentAnimationTrackName ?? "idle",
+        transitions = transitions ??
+            [
+              Transition(
+                startTrackName: "idle",
+                condition: Condition(
+                    entityVariable: "x", secondOperand: 'true', operator: "=="),
+                targetTrackName: "walk",
+              ),
+            ],
+        animationTracks = animationTracks ??
+            {
+              "idle":
+                  AnimationTrack("idle", [KeyFrame(sketches: [])], false, true),
+              "walk":
+                  AnimationTrack("walk", [KeyFrame(sketches: [])], false, false)
+            },
+        super(isActive: isActive ?? true);
 
-
-void setFrame(int index) {
-  if (index >= 0 && index < currentAnimationTrack.frames.length) {
-    currentFrame = index;
-    notifyListeners();
+  void setFrame(int index) {
+    if (index >= 0 && index < currentAnimationTrack.frames.length) {
+      currentFrame = index;
+      notifyListeners();
+    }
   }
-
-}
-
-
 
   @override
   Map<String, dynamic> toJson() {
@@ -59,7 +59,8 @@ void setFrame(int index) {
       'lastUpdate': lastUpdate.inMilliseconds, // Save as milliseconds
       'currentAnimationTrackName': _currentAnimationTrackName,
       'transitions': transitions.map((t) => t.toJson()).toList(),
-      'animationTracks': animationTracks.map((key, track) => MapEntry(key, track.toJson())),
+      'animationTracks':
+          animationTracks.map((key, track) => MapEntry(key, track.toJson())),
     };
   }
 
@@ -70,23 +71,28 @@ void setFrame(int index) {
       currentFrame: json['currentFrame'] as int? ?? 0,
       animationPlaying: json['animationPlaying'] as bool? ?? true,
       lastUpdate: Duration(milliseconds: json['lastUpdate'] as int? ?? 0),
-      currentAnimationTrackName: json['currentAnimationTrackName'] as String? ?? "idle",
+      currentAnimationTrackName:
+          json['currentAnimationTrackName'] as String? ?? "idle",
       transitions: (json['transitions'] as List<dynamic>?)
-          ?.map((e) => Transition.fromJson(e as Map<String, dynamic>))
-          .toList() ??
+              ?.map((e) => Transition.fromJson(e as Map<String, dynamic>))
+              .toList() ??
           [],
-      animationTracks: (json['animationTracks'] as Map<String, dynamic>?)
-          ?.map((key, value) => MapEntry(key, AnimationTrack.fromJson(value as Map<String, dynamic>))) ??
+      animationTracks: (json['animationTracks'] as Map<String, dynamic>?)?.map(
+              (key, value) => MapEntry(key,
+                  AnimationTrack.fromJson(value as Map<String, dynamic>))) ??
           {},
     );
   }
 
-
-  void addTransition(Transition transition){
+  void addTransition(Transition transition) {
     transitions.add(transition);
     notifyListeners();
   }
 
+  void removeTransitionAtIndex(int index) {
+    transitions.removeAt(index);
+    notifyListeners();
+  }
 
   void addTrack(String name, {int fps = 10, AnimationTrack? track}) {
     if (track != null) {
@@ -94,7 +100,7 @@ void setFrame(int index) {
       notifyListeners();
       return;
     }
-    animationTracks[name] = AnimationTrack(name, [], true,false,fps: fps);
+    animationTracks[name] = AnimationTrack(name, [], true, false, fps: fps);
     _currentAnimationTrackName = name;
     notifyListeners();
   }
@@ -132,13 +138,16 @@ void setFrame(int index) {
     }
     final track = animationTracks[_currentAnimationTrackName]!;
     final frameDuration = Duration(milliseconds: 1000 ~/ track.fps);
-    if (dt - lastUpdate >= frameDuration) { // was (dt - lastUpdate >= frameDuration)
-      _currentFrame = track.isLooping ? (_currentFrame + 1) % track.frames.length : (_currentFrame + 1).clamp(0, track.frames.length - 1);
+    if (dt - lastUpdate >= frameDuration) {
+      // was (dt - lastUpdate >= frameDuration)
+      _currentFrame = track.isLooping
+          ? (_currentFrame + 1) % track.frames.length
+          : (_currentFrame + 1).clamp(0, track.frames.length - 1);
       lastUpdate = dt;
     }
     notifyListeners();
   }
-  
+
   @override
   void reset() {
     _currentFrame = 0;
@@ -146,21 +155,19 @@ void setFrame(int index) {
     lastUpdate = Duration.zero;
     notifyListeners();
   }
-  
+
   @override
   Component copy() {
     return AnimationControllerComponent(
-    isActive: isActive,
-    currentFrame: _currentFrame,
-    animationPlaying: animationPlaying,
-    lastUpdate: lastUpdate,
-    currentAnimationTrackName: _currentAnimationTrackName,
-    transitions: transitions.map((t) => t.copy()).toList(),
-    animationTracks: animationTracks.map((k, v) => MapEntry(k, v.copy())),
-  );
+      isActive: isActive,
+      currentFrame: _currentFrame,
+      animationPlaying: animationPlaying,
+      lastUpdate: lastUpdate,
+      currentAnimationTrackName: _currentAnimationTrackName,
+      transitions: transitions.map((t) => t.copy()).toList(),
+      animationTracks: animationTracks.map((k, v) => MapEntry(k, v.copy())),
+    );
   }
-
-
 }
 
 class Transition {
@@ -172,12 +179,11 @@ class Transition {
       required this.condition,
       required this.targetTrackName});
 
-  Transition copy(){
+  Transition copy() {
     return Transition(
-      startTrackName: startTrackName,
-      condition: condition,
-      targetTrackName: targetTrackName
-    );
+        startTrackName: startTrackName,
+        condition: condition,
+        targetTrackName: targetTrackName);
   }
 
   Map<String, dynamic> toJson() {
@@ -196,34 +202,42 @@ class Transition {
     );
   }
 
-
-  void execute(Entity entity,{ AnimationControllerComponent? animComponent, SoundControllerComponent? soundComponent}) {
-    if(animComponent != null){if (condition.execute(entity)) {
-      if (animComponent._currentAnimationTrackName == startTrackName && !animComponent.currentAnimationTrack.mustFinish) {
-        animComponent.setTrack(targetTrackName);
-      }
-    }}else{
+  void execute(Entity entity,
+      {AnimationControllerComponent? animComponent,
+      SoundControllerComponent? soundComponent}) {
+    if (animComponent != null) {
       if (condition.execute(entity)) {
-      if (soundComponent!.currentlyPlaying == startTrackName) {
-        soundComponent.play(targetTrackName);
+        if (animComponent._currentAnimationTrackName == startTrackName &&
+            !animComponent.currentAnimationTrack.mustFinish) {
+          animComponent.setTrack(targetTrackName);
+        }
+      }
+    } else {
+      if (condition.execute(entity)) {
+        if (soundComponent!.currentlyPlaying == startTrackName) {
+          soundComponent.play(targetTrackName);
+        }
       }
     }
   }
 }
-}
 
 class Condition {
   String entityVariable;
-  dynamic secondOperand;
+  String secondOperand;
   String operator;
   Condition(
       {required this.entityVariable,
       required this.secondOperand,
       required this.operator});
-  
-  Condition copy(){
-    return Condition(entityVariable: entityVariable, secondOperand: secondOperand, operator: operator);
+
+  Condition copy() {
+    return Condition(
+        entityVariable: entityVariable,
+        secondOperand: secondOperand,
+        operator: operator);
   }
+
   Map<String, dynamic> toJson() {
     return {
       'entityVariable': entityVariable,
@@ -235,7 +249,7 @@ class Condition {
   factory Condition.fromJson(Map<String, dynamic> json) {
     return Condition(
       entityVariable: json['entityVariable'] as String,
-      secondOperand: (json['secondOperand'] as num).toDouble(),
+      secondOperand: json['secondOperand'],
       operator: json['operator'] as String,
     );
   }
@@ -264,16 +278,16 @@ class Condition {
   }
 
   dynamic _parseValue(dynamic val) {
-  if (val is bool) return val;
-  if (val is String) {
-    final lower = val.toLowerCase();
-    if (lower == 'true') return true;
-    if (lower == 'false') return false;
-    final numVal = double.tryParse(val);
-    if (numVal != null) return numVal;
+    if (val is bool) return val;
+    if (val is String) {
+      final lower = val.toLowerCase();
+      if (lower == 'true') return true;
+      if (lower == 'false') return false;
+      final numVal = double.tryParse(val);
+      if (numVal != null) return numVal;
+      return val;
+    }
+    if (val is num) return val;
     return val;
   }
-  if (val is num) return val;
-  return val;
-}
 }

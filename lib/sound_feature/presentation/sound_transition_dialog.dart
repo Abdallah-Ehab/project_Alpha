@@ -10,7 +10,8 @@ class AddSoundTransitionDialog extends StatefulWidget {
   const AddSoundTransitionDialog({super.key, required this.entityName});
 
   @override
-  State<AddSoundTransitionDialog> createState() => _AddSoundTransitionDialogState();
+  State<AddSoundTransitionDialog> createState() =>
+      _AddSoundTransitionDialogState();
 }
 
 class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
@@ -35,8 +36,11 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
                 final entity = entityManager.getActorByName(widget.entityName);
                 if (entity == null) return const Text("Entity not found");
 
-                final soundComponent = entity.getComponent<SoundControllerComponent>();
-                if (soundComponent == null) return const Text("No Sound Component");
+                final soundComponent =
+                    entity.getComponent<SoundControllerComponent>();
+                if (soundComponent == null) {
+                  return const Text("No Sound Component");
+                }
 
                 return ChangeNotifierProvider.value(
                   value: soundComponent,
@@ -45,8 +49,10 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
                       Consumer<SoundControllerComponent>(
                         builder: (context, soundComponent, _) {
                           return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'From Track'),
-                            value: fromTrack.isNotEmpty && soundComponent.tracks.containsKey(fromTrack)
+                            decoration:
+                                const InputDecoration(labelText: 'From Track'),
+                            value: fromTrack.isNotEmpty &&
+                                    soundComponent.tracks.containsKey(fromTrack)
                                 ? fromTrack
                                 : null,
                             items: soundComponent.tracks.keys.map((trackName) {
@@ -55,7 +61,8 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
                                 child: Text(trackName),
                               );
                             }).toList(),
-                            onChanged: (value) => setState(() => fromTrack = value ?? ''),
+                            onChanged: (value) =>
+                                setState(() => fromTrack = value ?? ''),
                           );
                         },
                       ),
@@ -63,8 +70,10 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
                       Consumer<SoundControllerComponent>(
                         builder: (context, soundComponent, _) {
                           return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'To Track'),
-                            value: toTrack.isNotEmpty && soundComponent.tracks.containsKey(toTrack)
+                            decoration:
+                                const InputDecoration(labelText: 'To Track'),
+                            value: toTrack.isNotEmpty &&
+                                    soundComponent.tracks.containsKey(toTrack)
                                 ? toTrack
                                 : null,
                             items: soundComponent.tracks.keys.map((trackName) {
@@ -73,32 +82,43 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
                                 child: Text(trackName),
                               );
                             }).toList(),
-                            onChanged: (value) => setState(() => toTrack = value ?? ''),
+                            onChanged: (value) =>
+                                setState(() => toTrack = value ?? ''),
                           );
                         },
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(labelText: 'Entity Variable'),
-                        value: selectedVariable.isNotEmpty ? selectedVariable : null,
+                        decoration:
+                            const InputDecoration(labelText: 'Entity Variable'),
+                        value: selectedVariable.isNotEmpty
+                            ? selectedVariable
+                            : null,
                         items: entity.variables.keys.map((varName) {
                           return DropdownMenuItem(
                             value: varName,
                             child: Text(varName),
                           );
                         }).toList(),
-                        onChanged: (value) => setState(() => selectedVariable = value ?? ''),
+                        onChanged: (value) =>
+                            setState(() => selectedVariable = value ?? ''),
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(labelText: 'Operator'),
+                        decoration:
+                            const InputDecoration(labelText: 'Operator'),
                         value: selectedOperator,
-                        items: operators.map((op) => DropdownMenuItem(value: op, child: Text(op))).toList(),
-                        onChanged: (value) => setState(() => selectedOperator = value ?? '=='),
+                        items: operators
+                            .map((op) =>
+                                DropdownMenuItem(value: op, child: Text(op)))
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => selectedOperator = value ?? '=='),
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        decoration: const InputDecoration(labelText: 'Second Operand (number)'),
+                        decoration: const InputDecoration(
+                            labelText: 'Second Operand (number)'),
                         keyboardType: TextInputType.number,
                         onChanged: (value) => secondOperand = value,
                       ),
@@ -119,12 +139,25 @@ class _AddSoundTransitionDialogState extends State<AddSoundTransitionDialog> {
           onPressed: () {
             final entity = Provider.of<EntityManager>(context, listen: false)
                 .getActorByName(widget.entityName);
-            final soundComponent = entity?.getComponent<SoundControllerComponent>();
+            final soundComponent =
+                entity?.getComponent<SoundControllerComponent>();
             if (entity == null || soundComponent == null) return;
-
+            if (fromTrack.isEmpty ||
+                toTrack.isEmpty ||
+                selectedVariable.isEmpty ||
+                secondOperand.trim().isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      "Please fill in all the fields to add a transition."),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+              return;
+            }
             final condition = Condition(
               entityVariable: selectedVariable,
-              secondOperand: double.tryParse(secondOperand) ?? 0.0,
+              secondOperand: secondOperand,
               operator: selectedOperator,
             );
 
