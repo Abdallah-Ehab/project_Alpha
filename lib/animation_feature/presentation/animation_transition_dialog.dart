@@ -134,7 +134,7 @@ class _AddAnimationTransitionDialogState extends State<AddAnimationTransitionDia
               condition: condition,
             );
 
-            animComponent.addTransition(transition);
+            (animComponent as AnimationControllerComponent).addTransition(transition);
             Navigator.of(context).pop();
           },
           child: const Text("OK"),

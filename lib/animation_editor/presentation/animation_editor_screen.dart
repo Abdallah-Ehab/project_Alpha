@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
+import 'package:scratch_clone/animation_editor/data/tool_settings.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-
 
 class AnimationEditorScreen extends StatelessWidget {
   const AnimationEditorScreen({super.key});
@@ -30,17 +30,26 @@ class AnimationEditorScreen extends StatelessWidget {
                 return GestureDetector(
                   onPanStart: (details) {
                     if (currentFrame != null) {
-                      var newSketch = SketchModel(
-                          points: [details.localPosition],
-                          color: Colors.black,
-                          strokeWidth: 1.0);
-                      currentFrame.addSketch(newSketch);
+                      final tool = context.read<ToolSettings>();
+                      final sketch = SketchModel(
+                        points: [details.localPosition],
+                        color: tool.isEraser
+                            ? Colors.transparent
+                            : tool.currentColor,
+                        strokeWidth: tool.strokeWidth,
+                      );
+                      currentFrame.addSketch(sketch);
                     }
                   },
                   onPanUpdate: (details) {
-                    if (currentFrame != null &&
-                        currentFrame.sketches.isNotEmpty) {
-                      currentFrame.addPointToCurrentSketch(details.localPosition);
+                    if (currentFrame == null) return;
+                    final tool = context.read<ToolSettings>();
+
+                    if (tool.isEraser) {
+                      currentFrame.removePointFromSketch(details.localPosition);
+                    } else if (currentFrame.sketches.isNotEmpty) {
+                      currentFrame
+                          .addPointToCurrentSketch(details.localPosition);
                     }
                   },
                   child: SizedBox(

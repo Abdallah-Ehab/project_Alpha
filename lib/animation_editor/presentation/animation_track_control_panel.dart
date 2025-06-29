@@ -17,97 +17,125 @@ class AnimationTrackControlPanel extends StatelessWidget {
           return const Text("No Animation Component");
         }
 
-        final trackNames = animComp.animationTracks.keys.toList();
-        final currentTrack = animComp.currentAnimationTrack;
+        
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Dropdown to switch tracks
-            DropdownButton<String>(
-              value: currentTrack.name,
-              items: trackNames.map((name) {
-                return DropdownMenuItem(
-                  value: name,
-                  child: Text(name),
-                );
-              }).toList(),
-              onChanged: (selected) {
-                if (selected == null || selected == currentTrack.name) return;
-                final newTrack = animComp.animationTracks[selected]!;
-
-                // Clamp frame index
-                if (animComp.currentFrame >= newTrack.frames.length) {
-                  animComp.setFrame(newTrack.frames.length - 1);
-                }
-                animComp.setTrack(selected);
-              },
-            ),
-
-            // Track name + delete
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Track: ${currentTrack.name}",
-                    style: Theme.of(context).textTheme.titleMedium),
-                IconButton(
-                  onPressed: () {
-                    if (animComp.animationTracks.length <= 1) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("At least one animation track must exist."),
-                      ));
-                      return;
-                    }
-
-                    final currentName = currentTrack.name;
-                    animComp.animationTracks.remove(currentName);
-
-                    // Fallback
-                    final fallback = animComp.animationTracks.keys.first;
-                    animComp.setTrack(fallback);
-                    animComp.setFrame(0);
-                  },
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                ),
-              ],
-            ),
-
-            const Divider(),
-
-            // Checkboxes for looping and mustFinish
-            CheckboxListTile(
-              title: const Text("Looping"),
-              value: currentTrack.isLooping,
-              onChanged: (value) {
-                currentTrack.setIsLooping(value ?? false);
-                
-              },
-            ),
-            CheckboxListTile(
-              title: const Text("Must Finish Before Transition"),
-              value: currentTrack.mustFinish,
-              onChanged: (value) {
-                currentTrack.setMustFinish(value ?? false);
-                
-              },
-            ),
-
-            const Divider(),
-
-            // Add new track
-            Center(
-              child: IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                tooltip: "Add Animation Track",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => _buildAddTrackDialog(context, animComp),
-                  );
-                },
+        return ChangeNotifierProvider.value(
+          value: animComp,
+          child: Consumer<AnimationControllerComponent>(
+          
+            builder: (context, animComp, child) {
+              final currentTrack = animComp.currentAnimationTrack;
+              final trackNames = animComp.animationTracks.keys.toList();
+             return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Dropdown to switch tracks
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: DropdownButton<String>(
+                      value: currentTrack.name,
+                      items: trackNames.map((name) {
+                        return DropdownMenuItem(
+                          value: name,
+                          child: Text(name),
+                        );
+                      }).toList(),
+                      onChanged: (selected) {
+                        if (selected == null || selected == currentTrack.name) return;
+                        final newTrack = animComp.animationTracks[selected]!;
+                                  
+                        // Clamp frame index
+                        if (animComp.currentFrame >= newTrack.frames.length) {
+                          animComp.setFrame(newTrack.frames.length - 1);
+                        }
+                        animComp.setTrack(selected);
+                      },
+                    ),
+                  ),
+              
+                  // Track name + delete
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Track: ${currentTrack.name}",
+                            style: Theme.of(context).textTheme.titleMedium),
+                        IconButton(
+                          onPressed: () {
+                            if (animComp.animationTracks.length <= 1) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text("At least one animation track must exist."),
+                              ));
+                              return;
+                            }
+                                  
+                            final currentName = currentTrack.name;
+                            animComp.animationTracks.remove(currentName);
+                                  
+                            // Fallback
+                            final fallback = animComp.animationTracks.keys.first;
+                            animComp.setTrack(fallback);
+                            animComp.setFrame(0);
+                          },
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+              
+                  const Divider(),
+              
+                  // Checkboxes for looping and mustFinish
+                  ChangeNotifierProvider.value(
+                    value: currentTrack,
+                    child: Consumer<AnimationTrack>(
+                      builder: (context, value, child) =>  CheckboxListTile(
+                        title: const Text("Looping"),
+                        value: currentTrack.isLooping,
+                        onChanged: (value) {
+                          currentTrack.setIsLooping(value ?? false);
+                          
+                        },
+                      ),
+                    ),
+                  ),
+                  ChangeNotifierProvider.value(
+                    value: currentTrack,
+                  
+                    child: Consumer<AnimationTrack>(
+                      
+                      builder: (context, value, child) =>  CheckboxListTile(
+                        title: const Text("Must Finish Before Transition"),
+                        value: currentTrack.mustFinish,
+                        onChanged: (value) {
+                          currentTrack.setMustFinish(value ?? false);
+                          
+                        },
+                      ),
+                    ),
+                  ),
+              
+                  const Divider(),
+              
+                  // Add new track
+                  Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      tooltip: "Add Animation Track",
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => _buildAddTrackDialog(context, animComp),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+                }),
         );
       },
     );

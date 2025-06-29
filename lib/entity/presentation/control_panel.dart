@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/presentation/animation_editor_screen.dart';
+import 'package:scratch_clone/animation_editor/presentation/full_animation_page.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
@@ -135,7 +136,7 @@ class _ControlPanelState extends State<ControlPanel> {
         const SizedBox(height: 10),
         if (entity.getComponent<AnimationControllerComponent>() != null)
           _buildAnimationComponentPanel(context, entity),
-        if (entity.getComponent<NodeComponent>() != null)
+        if (entity.getAllComponents<NodeComponent>() != null)
           _buildNodeComponentPanel(context, entity),
         if (entity.getComponent<ColliderComponent>() != null)
           const ColliderCardWidget(),
@@ -180,7 +181,7 @@ class _ControlPanelState extends State<ControlPanel> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AnimationEditorScreen()),
+            MaterialPageRoute(builder: (context) => const FullAnimationEditorPage()),
           );
         },
       ),
