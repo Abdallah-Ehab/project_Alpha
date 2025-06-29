@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
+import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 
@@ -83,9 +85,17 @@ abstract class Entity with ChangeNotifier {
       component.width = width;
       component.height = height;
     }
-    components.putIfAbsent(component.runtimeType,()=>[]);
-    components[component.runtimeType]!.add(component);
-    notifyListeners();
+    final type = component.runtimeType;
+
+    components.putIfAbsent(type, () => []);
+    components.putIfAbsent(component.runtimeType, () => []);
+    final isNode = type == NodeComponent;
+    final alreadyExists = components[type]!.isNotEmpty;
+
+    if (isNode || !alreadyExists) {
+      components[type]!.add(component);
+      notifyListeners();
+    }
   }
 
   void removeComponent(Type componentType) {
@@ -95,12 +105,12 @@ abstract class Entity with ChangeNotifier {
 
   void update(Duration dt) {
     getComponent<ColliderComponent>()?.update(dt, activeEntity: this);
-    getComponent<RigidBodyComponent>()?.update(dt, activeEntity:this);
+    getComponent<RigidBodyComponent>()?.update(dt, activeEntity: this);
     components.forEach((type, list) {
-      if(type == RigidBodyComponent || type == ColliderComponent) return;
+      if (type == RigidBodyComponent || type == ColliderComponent) return;
       for (final component in list) {
-    component.update(dt, activeEntity: this);
-  }
+        component.update(dt, activeEntity: this);
+      }
     });
   }
 
@@ -111,21 +121,23 @@ abstract class Entity with ChangeNotifier {
 
   void reset() {
     components.forEach((type, list) {
-      for(final component in list){
+      for (final component in list) {
         component.reset();
       }
     });
   }
 
-  T? getComponent<T extends Component>(){
+  T? getComponent<T extends Component>() {
     final components = this.components[T];
-    if (components is List<T>) return components[0];
+    if (components == null) return null;
+    log('${components.runtimeType}');
+    if (components.runtimeType == List<Component>) return (components[0] as T);
     return null;
   }
 
- List<Component>? getAllComponents<T extends Component>() {
+  List<Component>? getAllComponents<T extends Component>() {
     final components = this.components[T];
-    if (components is List<T>) return components;
+    if (components.runtimeType == List<Component>) return components;
     return null;
   }
 
@@ -179,7 +191,7 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleComponent(Type componentType,int index) {
+  void toggleComponent(Type componentType, int index) {
     if (components.containsKey(componentType)) {
       components[componentType]?[index].toggleComponent();
     }

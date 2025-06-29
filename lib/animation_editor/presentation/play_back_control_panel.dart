@@ -19,9 +19,17 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
   void initState() {
     super.initState();
 
+    final entity = context.read<EntityManager>().activeEntity;
+    final animComp = entity.getComponent<AnimationControllerComponent>();
+    final track = animComp?.currentAnimationTrack;
+
+    const fps = 12;
+    final totalDuration = Duration(
+      milliseconds: ((track?.frames.length ?? 1) * (1000 ~/ fps)),
+    );
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200), // how fast to switch frames
+      duration: totalDuration,
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _controller.reset();
@@ -67,7 +75,11 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
     final entity = context.read<EntityManager>().activeEntity;
     final animComp = entity.getComponent<AnimationControllerComponent>();
 
-    if (animComp != null && animComp.currentAnimationTrack.frames.isNotEmpty) {
+    if (animComp != null &&
+        animComp
+            .currentAnimationTrack
+            .frames
+            .isNotEmpty) {
       final current = animComp.currentFrame;
       final total = animComp.currentAnimationTrack.frames.length;
       animComp.setFrame((current + 1) % total);
@@ -85,12 +97,12 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
     return Row(
       children: [
         IconButton(
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          onPressed: togglePlayPause,
-        ),
-        IconButton(
           icon: const Icon(Icons.skip_previous),
           onPressed: goToPreviousFrame,
+        ),
+        IconButton(
+          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+          onPressed: togglePlayPause,
         ),
         IconButton(
           icon: const Icon(Icons.skip_next),

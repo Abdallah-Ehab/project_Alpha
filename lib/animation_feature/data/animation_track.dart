@@ -192,11 +192,13 @@ class KeyFrame with ChangeNotifier {
   void removePointFromSketch(Offset point) {
   const double threshold = 20.0;
 
-  for (final sketch in sketches) {
+  sketches.removeWhere((sketch) {
     sketch.points.removeWhere((p) => (point - p).distance <= threshold);
-  }
+    return sketch.points.isEmpty;
+  });
 
   notifyListeners();
 }
+
 
 }
