@@ -33,78 +33,78 @@ class _AnimationTransitionVisualizerState extends State<AnimationTransitionVisua
 
     final random = Random();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Animation Transition Visualizer"),
-      ),
-      body: InteractiveViewer(
-        constrained: false,
-        minScale: 0.5,
-        maxScale: 2.5,
-        child: SizedBox(
-          width: 5000,
-          height: 5000,
-          child: Stack(
-            children: [
-              // Background grid
-              Positioned.fill(
-                child: Image.asset(
-                  'assets/images/grid_placeholder.png', // <-- Replace later with your actual grid image
-                  fit: BoxFit.cover,
-                ),
-              ),
-          
-              // Arrows between nodes
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: TransitionArrowPainter(
-                    transitions: transitions,
-                    trackPositions: _trackPositions,
+    return 
+      
+      Scaffold(
+        body: InteractiveViewer(
+          constrained: false,
+          minScale: 0.5,
+          maxScale: 2.5,
+          child: SizedBox(
+            width: 5000,
+            height: 5000,
+            child: Stack(
+              children: [
+                // Background grid
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/grid_placeholder.png', // <-- Replace later with your actual grid image
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-          
-              // Track boxes
-              ...tracks.keys.map((trackName) {
-                final position = _trackPositions.putIfAbsent(
-                  trackName,
-                  () => Offset(
-                    100 + random.nextDouble() * 300,
-                    100 + random.nextDouble() * 400,
-                  ),
-                );
-          
-                return Positioned(
-                  left: position.dx,
-                  top: position.dy,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        _trackPositions[trackName] = position + details.delta;
-                      });
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 60,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: trackName == 'idle' ? Colors.red : Colors.teal,
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        trackName,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+            
+                // Arrows between nodes
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: TransitionArrowPainter(
+                      transitions: transitions,
+                      trackPositions: _trackPositions,
                     ),
                   ),
-                );
-              }),
-            ],
+                ),
+            
+                // Track boxes
+                ...tracks.keys.map((trackName) {
+                  final position = _trackPositions.putIfAbsent(
+                    trackName,
+                    () => Offset(
+                      100 + random.nextDouble() * 300,
+                      100 + random.nextDouble() * 400,
+                    ),
+                  );
+            
+                  return Positioned(
+                    left: position.dx,
+                    top: position.dy,
+                    child: GestureDetector(
+                      onPanUpdate: (details) {
+                        setState(() {
+                          _trackPositions[trackName] = position + details.delta;
+                        });
+                      },
+                      child: Container(
+                        width: 120,
+                        height: 60,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: trackName == 'idle' ? Colors.red : Colors.teal,
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          trackName,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+  
   }
 }
 

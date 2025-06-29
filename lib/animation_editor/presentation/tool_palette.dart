@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scratch_clone/animation_editor/data/onin_skin_settings.dart';
 import 'package:scratch_clone/animation_editor/data/tool_settings.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -14,7 +15,8 @@ class ToolPaletteDrawer extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const Text('Tool Settings', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text('Tool Settings',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SwitchListTile(
             title: const Text('Eraser'),
             value: tool.isEraser,
@@ -33,18 +35,48 @@ class ToolPaletteDrawer extends StatelessWidget {
             leading: Icon(Icons.color_lens, color: tool.currentColor),
             title: const Text('Pick Color'),
             onTap: () async {
-              final selected = await showColorPickerDialog(context, tool.currentColor);
+              final selected =
+                  await showColorPickerDialog(context, tool.currentColor);
               if (selected != null) {
                 tool.setColor(selected);
               }
             },
-          )
+          ),
+          ExpansionTile(
+            title: const Text('Onion Skinning'),
+            children: [
+              SwitchListTile(
+                title: const Text('Enable Onion Skinning'),
+                value: context.watch<OnionSkinSettings>().enabled,
+                onChanged: (_) => context.read<OnionSkinSettings>().toggle(),
+              ),
+              const Text('Previous Frames'),
+              Slider(
+                value: context.watch<OnionSkinSettings>().prevFrames.toDouble(),
+                min: 0,
+                max: 5,
+                divisions: 5,
+                label: '${context.watch<OnionSkinSettings>().prevFrames}',
+                onChanged: (val) =>
+                    context.read<OnionSkinSettings>().setPrev(val.toInt()),
+              ),
+              const Text('Next Frames'),
+              Slider(
+                value: context.watch<OnionSkinSettings>().nextFrames.toDouble(),
+                min: 0,
+                max: 5,
+                divisions: 5,
+                label: '${context.watch<OnionSkinSettings>().nextFrames}',
+                onChanged: (val) =>
+                    context.read<OnionSkinSettings>().setNext(val.toInt()),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 }
-
 
 Future<Color?> showColorPickerDialog(BuildContext context, Color initialColor) {
   Color selectedColor = initialColor;
