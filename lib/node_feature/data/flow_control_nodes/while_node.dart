@@ -14,6 +14,7 @@ class WhileNode extends InputOutputNode {
     super.position,
    
   }) : super(
+          image: '',
           color: Colors.cyan,
           width: 200,
           height: 200,

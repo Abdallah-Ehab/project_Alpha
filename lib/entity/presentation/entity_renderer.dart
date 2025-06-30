@@ -18,13 +18,6 @@ class EntityRenderer extends StatelessWidget {
     final animationController = entity.getComponent<AnimationControllerComponent>();
     final colliderComponent = entity.getComponent<ColliderComponent>();
 
-    // Default keyFrame for entities without animation
-    KeyFrame defaultKeyFrame = KeyFrame(
-      sketches: [],
-      position: Offset.zero,
-      rotation: 0,
-      scale: 1.0,
-    );
 
     Widget animationWidget;
     if (animationController != null) {

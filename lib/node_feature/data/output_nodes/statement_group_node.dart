@@ -13,7 +13,7 @@ class StatementGroupNode extends OutputNode {
   StatementGroupNode({
     this.isHighlighted = false,
     required this.statements,
-  }) : super(connectionPoints: [InputConnectionPoint(position: Offset.zero, width:20),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
+  }) : super(image:'',connectionPoints: [InputConnectionPoint(position: Offset.zero, width:20),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
 
   void addStatement(NodeModel node) {
     statements.add(node);

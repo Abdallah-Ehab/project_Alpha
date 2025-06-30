@@ -45,13 +45,13 @@ mixin HasValue on NodeModel{
 
 
 abstract class InputNode extends NodeModel with HasOutput {
-  InputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints});
+  InputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints,required super.image});
 }
 
 abstract class OutputNode extends NodeModel with HasInput {
-  OutputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints});
+  OutputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints,required super.image});
 }
 
 abstract class InputOutputNode extends NodeModel with HasInput, HasOutput {
-  InputOutputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints});
+  InputOutputNode({super.position,required super.color, required super.width, required super.height, required super.connectionPoints,required super.image});
 }

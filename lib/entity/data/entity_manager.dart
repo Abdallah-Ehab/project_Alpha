@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
@@ -24,14 +26,17 @@ class EntityManager extends ChangeNotifier {
   final _entitiesToAdd = <Entity>[];
   final _entitiesToRemove = <Entity>[];
 
-  final Map<String, Entity> _prefabs = {};
+  final Map<String, Entity> prefabs = {};
 
 void addPrefab(String name, Entity entity) {
-  _prefabs[name] = entity;
+  entities[EntityType.actors]?.removeWhere((key, value) => value.name == entity.name);
+  activeEntity = entities[EntityType.actors]!['goku']!;
+  prefabs[name] = entity;
+  notifyListeners();
 }
 
 void spawnPrefab(String name, Offset position) {
-  final prefab = _prefabs[name];
+  final prefab = prefabs[name];
   if (prefab == null) return;
 
   final clone = prefab.copy();
@@ -97,6 +102,9 @@ void spawnPrefab(String name, Offset position) {
   void update(Duration dt) {
     for (var type in _entities.values) {
     for (var entity in type.values) {
+      if(entity.name == 'fire'){
+        log('spawn and fire babyyyyy');
+      }
       entity.update(dt);
     }
   }

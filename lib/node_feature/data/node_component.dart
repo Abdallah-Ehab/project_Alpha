@@ -8,18 +8,18 @@ import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart'
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 
 class NodeComponent extends Component {
   NodeModel? startNode;
-  NodeModel? current;
   late List<NodeModel> workspaceNodes;
 
   NodeComponent(
       {super.isActive = true,
       NodeModel? startNode,
       List<NodeModel>? workspaceNodes}) {
-    this.startNode = StartNode();
+    this.startNode = startNode ?? StartNode();
     this.workspaceNodes = workspaceNodes ??
         [
           this.startNode!,
@@ -27,7 +27,8 @@ class NodeComponent extends Component {
           ConditionGroupNode(logicSequence: []),
           StatementGroupNode(statements: []),
           MoveNode(),
-          DeclareVariableNode()
+          DeclareVariableNode(),
+          SpawnEntityNode()
         ];
   }
 
@@ -62,35 +63,37 @@ class NodeComponent extends Component {
     notifyListeners();
   }
 
+  NodeModel? _current;
   @override
   void update(Duration dt, {required Entity activeEntity}) {
-    current = startNode;
+    
+    _current = startNode;
 
-    while (current != null) {
-      log('${current?.child} is child of $current of id : ${current?.id}');
-      final result = current!.execute(activeEntity);
+    while (_current != null) {
+      log('${_current?.child} is child of $_current of id : ${_current?.id}');
+      final result = _current!.execute(activeEntity);
       if (result.errorMessage != null) {
         log("Execution error: ${result.errorMessage}");
         break;
       }
 
       // Special case: IfNode false condition
-      if (current is IfNode &&
+      if (_current is IfNode &&
           result is Result<bool> &&
           result.result == false) {
-        final elseNode = current!.child;
+        final elseNode = _current!.child;
         if (elseNode is ElseNode) {
           final elseResult = elseNode.execute(activeEntity);
           if (elseResult.errorMessage != null) {
             log("Else block error: ${elseResult.errorMessage}");
             break;
           }
-          current = elseNode.child;
+          _current = elseNode.child;
           continue;
         }
       }
 
-      current = current!.child;
+      _current = _current!.child;
     }
 
     notifyListeners();
@@ -98,7 +101,7 @@ class NodeComponent extends Component {
 
   @override
   void reset() {
-    current = startNode;
+    _current = startNode;
     notifyListeners();
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -27,6 +29,9 @@ class MoveNode extends NodeModel {
   Result<String> execute([Entity? activeEntity]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "Active entity not provided");
+    }
+    if(activeEntity.name == 'fire'){
+      log("Iam fire and Iam moving baby");
     }
     activeEntity.move(x: x, y: y);
    

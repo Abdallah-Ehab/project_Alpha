@@ -12,6 +12,7 @@ import 'package:scratch_clone/node_feature/presentation/player_transform_node_wi
 class TeleportNode extends InputOutputNode {
   TeleportNode({super.position = Offset.zero})
       : super(
+          image: '',
           color: Colors.orange,
           width: 180,
           height: 160,

@@ -14,6 +14,7 @@ class ElseNode extends InputOutputNode {
     super.position,
     
   }) : super(
+    image: '',
           color: Colors.blue,
           width: 200,
           height: 200,
