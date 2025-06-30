@@ -5,21 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
 
 
-abstract class Positionable {
-  Offset trackPosition;
-
-  Positionable({
-    this.trackPosition = const Offset(0.0, 0.0),
-  });
-
-  void updatePosition({double? x, double? y});
-}
 
 
 
 
 
-class AnimationTrack extends Positionable with ChangeNotifier {
+class AnimationTrack with ChangeNotifier {
   String name;
   List<KeyFrame> frames;
   int fps;
@@ -29,17 +20,13 @@ class AnimationTrack extends Positionable with ChangeNotifier {
   AnimationTrack(this.name, this.frames,this.isLooping,this.mustFinish, {this.fps = 10});
 
   AnimationTrack copy(){
-    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping,mustFinish, fps: fps)..trackPosition = trackPosition;
+    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping,mustFinish, fps: fps);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'fps': fps,
-      'trackPosition': {
-        'x': trackPosition.dx,
-        'y': trackPosition.dy,
-      },
       'frames': frames.map((frame) => frame.toJson()).toList(),
       'isLooping': isLooping
     };
@@ -54,9 +41,6 @@ class AnimationTrack extends Positionable with ChangeNotifier {
       json['isLooping'],
       json['mustFinish'], 
       fps: json['fps'] as int? ?? 10,
-    )..trackPosition = Offset(
-      (json['trackPosition']['x'] as num).toDouble(),
-      (json['trackPosition']['y'] as num).toDouble(),
     );
   }
 
@@ -97,11 +81,6 @@ void setMustFinish(bool  mustFinish){
     notifyListeners();
   }
   
-  @override
-  void updatePosition({double? x, double? y}) {
-    trackPosition += Offset(x ?? 0, y ?? 0);
-    notifyListeners();
-  }
 }
 
 class KeyFrame with ChangeNotifier {
@@ -118,7 +97,7 @@ class KeyFrame with ChangeNotifier {
   return KeyFrame(
     sketches: sketches.map((e) => e.copy()).toList(),
     image: image, // still a reference to the same image, safe if immutable
-    position: position,
+    position: Offset(position.dx,position.dy),
     rotation: rotation,
     scale: scale,
   ).._imageBase64 = _imageBase64; // optional: preserve image data if needed

@@ -132,8 +132,8 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
           children: [
             Column(
               children: [
-                const Expanded(flex: 6, child: AnimationEditorScreen()),
-                const Expanded(flex:2,child: PlayBackControlPanel()),
+                const Expanded(flex: 20, child: AnimationEditorScreen()),
+                const Expanded(flex:1,child: PlayBackControlPanel()),
                 Expanded(
                   flex: 4,
                   child: Row(

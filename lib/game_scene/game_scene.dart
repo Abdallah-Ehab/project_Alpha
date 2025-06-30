@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
+import 'package:scratch_clone/entity/presentation/create_entity_button.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/ui_element/ui_elements_layer.dart';
 
@@ -8,31 +11,47 @@ class GameScene extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex:4,
-          child: SizedBox(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(16),
-              child: Stack(
-                children: [
-                  // GameView as the background, expanded to fill available space
-                  const GameView(),
-                  // UIElementsLayer on top of GameView
-                  const UIElementsLayer()
-                ],
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white), 
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.transparent,
+      ),
+      
+      drawer: Column(
+        children: [
+          CreateEntityButton(),
+          SizedBox(height: 20,),
+          AddToPrefabsButton()
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex:4,
+            child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  children: [
+                    // GameView as the background, expanded to fill available space
+                    const GameView(),
+                    // UIElementsLayer on top of GameView
+                    const UIElementsLayer()
+                  ],
+                ),
               ),
             ),
+                  ),
           ),
-                ),
-        ),
-        Expanded(
-          flex:2,
-          child: ControlPanel(), // Control panel at the bottom
-        ),]
+          Expanded(
+            flex:2,
+            child: ControlPanel(), // Control panel at the bottom
+          ),]
+      ),
     );
   }
 }

@@ -10,26 +10,26 @@ import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_nod
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 
-
-
 class NodeComponent extends Component {
   NodeModel? startNode;
   NodeModel? current;
   late List<NodeModel> workspaceNodes;
 
-  NodeComponent({
-    super.isActive = true,
-    NodeModel? startNode,
-    this.current,
-    List<NodeModel>? workspaceNodes
-  }){
+  NodeComponent(
+      {super.isActive = true,
+      NodeModel? startNode,
+      List<NodeModel>? workspaceNodes}) {
     this.startNode = StartNode();
-    this.workspaceNodes = workspaceNodes ?? [this.startNode! , IfNode(), ConditionGroupNode(logicSequence: []),StatementGroupNode(statements: []),MoveNode(),DeclareVariableNode()];
+    this.workspaceNodes = workspaceNodes ??
+        [
+          this.startNode!,
+          IfNode(),
+          ConditionGroupNode(logicSequence: []),
+          StatementGroupNode(statements: []),
+          MoveNode(),
+          DeclareVariableNode()
+        ];
   }
-  
-    
-  
-
 
   @override
   Map<String, dynamic> toJson() => {
@@ -64,7 +64,6 @@ class NodeComponent extends Component {
 
   @override
   void update(Duration dt, {required Entity activeEntity}) {
-
     current = startNode;
 
     while (current != null) {
@@ -105,9 +104,36 @@ class NodeComponent extends Component {
 
   @override
   NodeComponent copy() {
+    // Copy all workspace nodes (this breaks all connections since each gets new UUIDs)
+    final copiedNodes = workspaceNodes.map((node) => node.copy()).toList();
+
+    // Restore ALL connections between nodes using index-based matching
+    for (int i = 0; i < workspaceNodes.length; i++) {
+      final originalNode = workspaceNodes[i];
+      final copiedNode = copiedNodes[i];
+
+      // If original node has a child, find its index and connect to copied version
+      if (originalNode.child != null) {
+        final childIndex = workspaceNodes.indexOf(originalNode.child!);
+        if (childIndex != -1) {
+          copiedNode.connectNode(copiedNodes[childIndex]);
+        }
+      }
+    }
+
+    // Find the copied startNode
+    NodeModel? newStartNode;
+    if (startNode != null) {
+      final startIndex = workspaceNodes.indexOf(startNode!);
+      if (startIndex != -1) {
+        newStartNode = copiedNodes[startIndex];
+      }
+    }
+
     return NodeComponent(
-      workspaceNodes: workspaceNodes.map((node) => node.copy()).toList(),
-      current: current?.copy(),
+      isActive: isActive,
+      startNode: newStartNode,
+      workspaceNodes: copiedNodes,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
@@ -54,9 +56,10 @@ class EntityRenderer extends StatelessWidget {
       );
     } else {
       
-      animationWidget = CustomPaint(
-        painter: EntityPainter(keyFrame: defaultKeyFrame),
-        size: Size(entity.width, entity.height),
+      animationWidget = Container(
+        width: entity.width,
+        height: entity.height,
+        color: Colors.blue,
       );
     }
 
@@ -64,27 +67,25 @@ class EntityRenderer extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         // Visualize entity canvas
-        Container(
-          width: entity.width,
-          height: entity.height,
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-        ),
-        animationWidget,
+        Positioned(
+          top: 0,
+          left: 0,
+          child: animationWidget),
         if (colliderComponent != null)
           ChangeNotifierProvider.value(
             value: colliderComponent,
             child: Consumer<ColliderComponent>(
-              builder: (context, value, child) => Positioned(
+              builder: (context, value, child) {
+                log('collider component width is ${colliderComponent.width}');
+                return Positioned(
                 top: 0, // Align collider to entity's top-left
                 left: 0,
                 child: ColliderWidget(
                   width: colliderComponent.width,
                   height: colliderComponent.height,
                 ),
-              ),
-            ),
+              );
+  }),
           ),
       ],
     );

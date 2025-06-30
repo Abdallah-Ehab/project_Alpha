@@ -10,17 +10,21 @@ class SoundControllerComponent extends Component {
   List<Transition> transitions;
 
   SoundControllerComponent({
-    required this.tracks,
+   
     this.currentlyPlaying,
-    this.transitions = const [],
     super.isActive,
-  });
+  }): tracks = {},transitions = [];
 
   @override
   void update(Duration dt, {required Entity activeEntity}) {
     for (final transition in transitions) {
       transition.execute(activeEntity,soundComponent: this);
     }
+  }
+
+  void removeTransitionAtIndex(int index){
+    transitions.removeAt(index);
+    notifyListeners();
   }
 
   
@@ -43,11 +47,10 @@ class SoundControllerComponent extends Component {
   @override
   Component copy() {
     return SoundControllerComponent(
-      tracks: Map.from(tracks),
       currentlyPlaying: currentlyPlaying,
-      transitions: transitions.map((t) => t.copy()).toList(),
       isActive: isActive,
-    );
+    )..transitions = transitions.map((t) => t.copy()).toList()
+    ..tracks = Map.from(tracks);
   }
 
   void addTransition(Transition transition){

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scratch_clone/animation_editor/data/onin_skin_settings.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
 import 'package:scratch_clone/animation_editor/data/tool_settings.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
@@ -11,6 +12,8 @@ class AnimationEditorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onion = context.watch<OnionSkinSettings>();
+
     return Scaffold(
       body: Consumer<Entity>(builder: (context, activeEntity, child) {
         var animationComponent =
@@ -61,8 +64,16 @@ class AnimationEditorScreen extends StatelessWidget {
                             child: Consumer<KeyFrame>(
                               builder: (context, keyFrame, child) {
                                 return CustomPaint(
-                                  painter: AnimationPainter(keyFrame: keyFrame),
-                                  size: const Size(500, 500),
+                                  painter: AnimationPainter(
+                                    frames: animComponent
+                                        .currentAnimationTrack.frames,
+                                    currentIndex: animComponent.currentFrame,
+                                    prevFrames:
+                                        onion.enabled ? onion.prevFrames : 0,
+                                    nextFrames:
+                                        onion.enabled ? onion.nextFrames : 0,
+                                  ),
+                                  size: const Size(600, 600),
                                 );
                               },
                             ),
@@ -80,40 +91,78 @@ class AnimationEditorScreen extends StatelessWidget {
 }
 
 class AnimationPainter extends CustomPainter {
-  KeyFrame keyFrame;
+  final List<KeyFrame> frames;
+  final int currentIndex;
+  final int prevFrames;
+  final int nextFrames;
+
   AnimationPainter({
-    required this.keyFrame,
+    required this.frames,
+    required this.currentIndex,
+    required this.prevFrames,
+    required this.nextFrames,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    var sketches = keyFrame.sketches;
+
+    // Draw gray background
+  canvas.drawRect(
+    Offset.zero & size,
+    Paint()..color = Colors.grey[300]!,
+  );
+
+
+    // Paint previous frames
+    for (int i = 1; i <= prevFrames; i++) {
+      int index = currentIndex - i;
+      if (index >= 0) {
+        _paintFrame(canvas, frames[index], Colors.red.withAlpha(100),size);
+      }
+    }
+
+    // Paint next frames
+    for (int i = 1; i <= nextFrames; i++) {
+      int index = currentIndex + i;
+      if (index < frames.length) {
+        _paintFrame(canvas, frames[index], Colors.green.withAlpha(100),size);
+      }
+    }
+
+    // Paint current frame normally
+    _paintFrame(canvas, frames[currentIndex], null,size);
+  }
+
+  void _paintFrame(Canvas canvas, KeyFrame keyFrame, Color? overrideColor,Size size) {
     canvas.save();
     canvas.translate(keyFrame.position.dx, keyFrame.position.dy);
     canvas.rotate(keyFrame.rotation);
     canvas.scale(keyFrame.scale);
 
-    for (var sketch in sketches) {
+    for (var sketch in keyFrame.sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
         canvas.drawLine(
-            sketch.points[i],
-            sketch.points[i + 1],
-            Paint()
-              ..color = sketch.color
-              ..strokeWidth = sketch.strokeWidth
-              ..style = PaintingStyle.stroke);
+          sketch.points[i],
+          sketch.points[i + 1],
+          Paint()
+            ..color = overrideColor ?? sketch.color
+            ..strokeWidth = sketch.strokeWidth
+            ..style = PaintingStyle.stroke,
+        );
       }
     }
+
     if (keyFrame.image != null) {
       canvas.drawImage(
-          keyFrame.image!, Offset(size.width / 2, size.height / 2), Paint());
+        keyFrame.image!,
+        Offset(size.width/2,size.height/2),
+        Paint()..color = overrideColor ?? Colors.white,
+      );
     }
 
     canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

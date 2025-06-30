@@ -162,8 +162,10 @@ abstract class NodeModel with ChangeNotifier {
 //Todo this will have only one connection point which is 'connect' aka the 'grey' one
 class StartNode extends NodeModel {
   StartNode(
-   
-  ): super(position: Offset.zero,color: Colors.orange,width: 200,height: 100, connectionPoints: [
+   {
+     super.position = Offset.zero,
+   }
+  ): super(color: Colors.orange,width: 200,height: 100, connectionPoints: [
     ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
   ]);
 
@@ -178,11 +180,15 @@ class StartNode extends NodeModel {
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return StartNode()
+    return StartNode(
+      position: position ?? this.position
+    )
+      .. connectionPoints = connectionPoints ?? this.connectionPoints.map((e)=>e.copy()).toList()
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child
-      ..parent = parent;
+      ..child = null
+      ..parent = null;
   }
+
 
   @override
   Result<String> execute([Entity? activeEntity]) {
@@ -196,17 +202,8 @@ class StartNode extends NodeModel {
 
   @override
   NodeModel copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      connectionPoints: List<ConnectionPointModel>.from(
-          connectionPoints.map((cp) => cp.copy())),
-    );
+    final startNodeCopy =  copyWith();
+    return startNodeCopy;
   }
 }
 

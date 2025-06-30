@@ -18,20 +18,22 @@ abstract class Entity with ChangeNotifier {
   double rotation;
   double width;
   double height;
-  double widthScale = 1.0;
-  double heigthScale = 1.0;
-  Map<Type, List<Component>> components = {};
-  Map<String, dynamic> variables = {};
+  double widthScale;
+  double heigthScale;
+  Map<Type, List<Component>> components;
+  Map<String, dynamic> variables;
   int layerNumber;
 
   Entity({
     required this.name,
     required this.position,
     required this.rotation,
+    this.widthScale = 1.0,
+    this.heigthScale = 1.0,
     this.width = 100,
     this.height = 100,
     this.layerNumber = 0,
-  });
+  }):components = {},variables = {};
 
   dynamic getProperty(Property property) {
     switch (property) {
@@ -94,8 +96,9 @@ abstract class Entity with ChangeNotifier {
 
     if (isNode || !alreadyExists) {
       components[type]!.add(component);
-      notifyListeners();
+      
     }
+    notifyListeners();
   }
 
   void removeComponent(Type componentType) {

@@ -56,31 +56,26 @@ class GameView extends StatelessWidget {
               border: Border.all(color: Colors.red, width: 2),
               color: Colors.transparent,
             ),
-            child: ClipRect(
-              child: Stack(
-                children: [
-                  // Grid background moves with camera
-                  Transform(
-                    transform: Matrix4.identity()
-                      ..translate(-cam.position.dx, -cam.position.dy),
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          repeat: ImageRepeat.repeat,
-                          fit: BoxFit.cover,
-                          image: AssetImage("assets/grid_image.jpg"),
-                        ),
-                      ),
+            child: Stack(
+              children: [
+                // Grid background moves with camera
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      scale:0.01,
+                      repeat: ImageRepeat.repeat,
+                      
+                      image: AssetImage("assets/grid_image.jpg"),
                     ),
                   ),
-                  // Scene on top
-                  cam.isEditorCamera
-                      ? EditorCameraWrapper(camera: cam, child: scene)
-                      : scene,
-                ],
-              ),
+                ),
+                // Scene on top
+                cam.isEditorCamera
+                    ? EditorCameraWrapper(camera: cam, child: scene)
+                    : scene,
+              ],
             ),
           );
         },
