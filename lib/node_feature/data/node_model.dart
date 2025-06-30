@@ -25,6 +25,7 @@ abstract class NodeModel with ChangeNotifier {
   Offset position;
   bool isStatement;
   Color color;
+  String image;
   double width;
   double height;
   bool isConnected;
@@ -36,6 +37,7 @@ abstract class NodeModel with ChangeNotifier {
 
       {this.position = Offset.zero,
       this.isStatement= false,
+      this.image = '',
       required this.color,
       required this.width,
       required this.height,

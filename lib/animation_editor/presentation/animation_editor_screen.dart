@@ -6,6 +6,7 @@ import 'package:scratch_clone/animation_editor/data/tool_settings.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 class AnimationEditorScreen extends StatelessWidget {
   const AnimationEditorScreen({super.key});
@@ -13,79 +14,82 @@ class AnimationEditorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onion = context.watch<OnionSkinSettings>();
-
+    final entityManager = context.read<EntityManager>();
     return Scaffold(
-      body: Consumer<Entity>(builder: (context, activeEntity, child) {
-        var animationComponent =
-            activeEntity.getComponent<AnimationControllerComponent>();
-        if (animationComponent == null) {
-          return const Center(child: Text("No animation component"));
-        } else {
-          return ChangeNotifierProvider.value(
-            value: animationComponent,
-            child: Consumer<AnimationControllerComponent>(
-              builder: (context, animComponent, child) {
-                var currentFrame =
-                    animComponent.currentAnimationTrack.frames.isNotEmpty
-                        ? animComponent.currentAnimationTrack
-                            .frames[animComponent.currentFrame]
-                        : null;
-                return GestureDetector(
-                  onPanStart: (details) {
-                    if (currentFrame != null) {
+      body: ChangeNotifierProvider.value(
+        value: entityManager.activeEntity,
+        child: Consumer<Entity>(builder: (context, activeEntity, child) {
+          var animationComponent =
+              activeEntity.getComponent<AnimationControllerComponent>();
+          if (animationComponent == null) {
+            return const Center(child: Text("No animation component"));
+          } else {
+            return ChangeNotifierProvider.value(
+              value: animationComponent,
+              child: Consumer<AnimationControllerComponent>(
+                builder: (context, animComponent, child) {
+                  var currentFrame =
+                      animComponent.currentAnimationTrack.frames.isNotEmpty
+                          ? animComponent.currentAnimationTrack
+                              .frames[animComponent.currentFrame]
+                          : null;
+                  return GestureDetector(
+                    onPanStart: (details) {
+                      if (currentFrame != null) {
+                        final tool = context.read<ToolSettings>();
+                        final sketch = SketchModel(
+                          points: [details.localPosition],
+                          color: tool.isEraser
+                              ? Colors.transparent
+                              : tool.currentColor,
+                          strokeWidth: tool.strokeWidth,
+                        );
+                        currentFrame.addSketch(sketch);
+                      }
+                    },
+                    onPanUpdate: (details) {
+                      if (currentFrame == null) return;
                       final tool = context.read<ToolSettings>();
-                      final sketch = SketchModel(
-                        points: [details.localPosition],
-                        color: tool.isEraser
-                            ? Colors.transparent
-                            : tool.currentColor,
-                        strokeWidth: tool.strokeWidth,
-                      );
-                      currentFrame.addSketch(sketch);
-                    }
-                  },
-                  onPanUpdate: (details) {
-                    if (currentFrame == null) return;
-                    final tool = context.read<ToolSettings>();
-
-                    if (tool.isEraser) {
-                      currentFrame.removePointFromSketch(details.localPosition);
-                    } else if (currentFrame.sketches.isNotEmpty) {
-                      currentFrame
-                          .addPointToCurrentSketch(details.localPosition);
-                    }
-                  },
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.6,
-                    width: MediaQuery.of(context).size.width,
-                    child: currentFrame != null
-                        ? ChangeNotifierProvider.value(
-                            value: currentFrame,
-                            child: Consumer<KeyFrame>(
-                              builder: (context, keyFrame, child) {
-                                return CustomPaint(
-                                  painter: AnimationPainter(
-                                    frames: animComponent
-                                        .currentAnimationTrack.frames,
-                                    currentIndex: animComponent.currentFrame,
-                                    prevFrames:
-                                        onion.enabled ? onion.prevFrames : 0,
-                                    nextFrames:
-                                        onion.enabled ? onion.nextFrames : 0,
-                                  ),
-                                  size: const Size(600, 600),
-                                );
-                              },
-                            ),
-                          )
-                        : const Center(child: Text("No frame")),
-                  ),
-                );
-              },
-            ),
-          );
-        }
-      }),
+        
+                      if (tool.isEraser) {
+                        currentFrame.removePointFromSketch(details.localPosition);
+                      } else if (currentFrame.sketches.isNotEmpty) {
+                        currentFrame
+                            .addPointToCurrentSketch(details.localPosition);
+                      }
+                    },
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      width: MediaQuery.of(context).size.width,
+                      child: currentFrame != null
+                          ? ChangeNotifierProvider.value(
+                              value: currentFrame,
+                              child: Consumer<KeyFrame>(
+                                builder: (context, keyFrame, child) {
+                                  return CustomPaint(
+                                    painter: AnimationPainter(
+                                      frames: animComponent
+                                          .currentAnimationTrack.frames,
+                                      currentIndex: animComponent.currentFrame,
+                                      prevFrames:
+                                          onion.enabled ? onion.prevFrames : 0,
+                                      nextFrames:
+                                          onion.enabled ? onion.nextFrames : 0,
+                                    ),
+                                    size: const Size(600, 600),
+                                  );
+                                },
+                              ),
+                            )
+                          : const Center(child: Text("No frame")),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+        }),
+      ),
     );
   }
 }

@@ -20,6 +20,7 @@ class DetectCollisionNode extends InputNode {
     super.position,
     this.hasError = false,
   }) : super(
+          image: '',
           color: Colors.deepOrange,
           width: 160,
           height: 60,

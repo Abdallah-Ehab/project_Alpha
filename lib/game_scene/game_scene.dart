@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:scratch_clone/entity/presentation/add_component_button.dart';
 import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
 import 'package:scratch_clone/entity/presentation/create_entity_button.dart';
+import 'package:scratch_clone/entity/presentation/entity_drop_down_button.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/ui_element/ui_elements_layer.dart';
 
@@ -14,7 +16,8 @@ class GameScene extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white), 
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [EntitySelectorDropdown()],
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.transparent,
       ),
@@ -23,7 +26,9 @@ class GameScene extends StatelessWidget {
         children: [
           CreateEntityButton(),
           SizedBox(height: 20,),
-          AddToPrefabsButton()
+          AddToPrefabsButton(),
+          SizedBox(height: 20,),
+          AddComponentButton()
         ],
       ),
       body: Column(

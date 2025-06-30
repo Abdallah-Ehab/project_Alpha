@@ -13,8 +13,5 @@ extension SpawnEntityNodeSerialization on SpawnEntityNode {
   static SpawnEntityNode fromJson(Map<String, dynamic> json) => SpawnEntityNode(
         prefabName: json['prefabName'] as String,
         position: OffsetJson.fromJson(json['position']),
-        color: Color(json['color']),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
       );
 }

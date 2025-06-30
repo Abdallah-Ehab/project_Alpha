@@ -21,6 +21,7 @@ class ConditionGroupNode extends InputNode {
     required this.logicSequence,
    
   }) : super(
+          image: 'assets/icons/condition',
           connectionPoints: [
             OutputConnectionPoint(position: Offset.zero, width: 50),
           ],

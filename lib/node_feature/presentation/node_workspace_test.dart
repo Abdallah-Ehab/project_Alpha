@@ -88,96 +88,99 @@ class _NodeWorkspaceTestState extends State<NodeWorkspaceTest> {
   @override
   Widget build(BuildContext context) {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
-
+    final entityManager = context.read<EntityManager>();
     return Scaffold(
-      body: Consumer<Entity>(
-        builder: (context, activeEntity, child) {
-          final nodeComponent = activeEntity.getComponent<NodeComponent>();
-
-          if (nodeComponent == null) {
-            return const Center(
-                child: Text("No NodeComponent on active entity."));
-          }
-
-          return ChangeNotifierProvider.value(
-            value: nodeComponent,
-            child: ChangeNotifierProvider.value(
-              value: _camera,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final viewportSize =
-                      Size(constraints.maxWidth, constraints.maxHeight);
-
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onScaleStart: (details) {
-                      _isPanning = false;
-                    },
-                    onScaleUpdate: (details) {
-                      if (details.pointerCount == 1) {
-                        // Single finger - pan
-                        if (!_isPanning) {
-                          _isPanning = true;
-                        }
-                        _camera.pan(-details.focalPointDelta / _camera.zoom);
-                      } else if (details.pointerCount == 2) {
-                        // Two fingers - zoom
-                        _camera.zoomAt(details.localFocalPoint, details.scale);
-                      }
-                    },
-                    child: Consumer2<NodeComponent, NodeWorkspaceCamera>(
-                      builder: (context, nodeComponent, camera, child) {
-                        return ClipRect(
-                          child: CustomPaint(
-                            size: viewportSize,
-                            painter: InfiniteGridPainter(
-                              camera: camera,
-                              viewportSize: viewportSize,
-                            ),
-                            child: Stack(
-                              children: [
-                                // Connection lines
-                                CustomPaint(
-                                  size: viewportSize,
-                                  painter: InfiniteArrowPainter(
-                                    nodes: nodeComponent.workspaceNodes,
-                                    connectionProvider: connectionProvider,
-                                    camera: camera,
-                                    viewportSize: viewportSize,
-                                  ),
-                                ),
-                                // Nodes
-                                ...nodeComponent.workspaceNodes
-                                    .where((node) => _camera.isRectVisible(
-                                          Rect.fromLTWH(
-                                            node.position.dx,
-                                            node.position.dy,
-                                            node.width,
-                                            node.height,
-                                          ),
-                                          viewportSize,
-                                        ))
-                                    .map((node) {
-                                  return InfiniteNodeRenderer(
-                                    key: ValueKey(node.id),
-                                    nodeModel: node,
-                                    camera: _camera,
-                                    viewportSize: viewportSize,
-                                    onDragStart: () => _isPanning = false,
-                                  );
-                                }),
-                              ],
-                            ),
-                          ),
-                        );
+      body: ChangeNotifierProvider.value(
+        value: entityManager.activeEntity,
+        child: Consumer<Entity>(
+          builder: (context, activeEntity, child) {
+            final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        
+            if (nodeComponent == null) {
+              return const Center(
+                  child: Text("No NodeComponent on active entity."));
+            }
+        
+            return ChangeNotifierProvider.value(
+              value: nodeComponent,
+              child: ChangeNotifierProvider.value(
+                value: _camera,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final viewportSize =
+                        Size(constraints.maxWidth, constraints.maxHeight);
+        
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onScaleStart: (details) {
+                        _isPanning = false;
                       },
-                    ),
-                  );
-                },
+                      onScaleUpdate: (details) {
+                        if (details.pointerCount == 1) {
+                          // Single finger - pan
+                          if (!_isPanning) {
+                            _isPanning = true;
+                          }
+                          _camera.pan(-details.focalPointDelta / _camera.zoom);
+                        } else if (details.pointerCount == 2) {
+                          // Two fingers - zoom
+                          _camera.zoomAt(details.localFocalPoint, details.scale);
+                        }
+                      },
+                      child: Consumer2<NodeComponent, NodeWorkspaceCamera>(
+                        builder: (context, nodeComponent, camera, child) {
+                          return ClipRect(
+                            child: CustomPaint(
+                              size: viewportSize,
+                              painter: InfiniteGridPainter(
+                                camera: camera,
+                                viewportSize: viewportSize,
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Connection lines
+                                  CustomPaint(
+                                    size: viewportSize,
+                                    painter: InfiniteArrowPainter(
+                                      nodes: nodeComponent.workspaceNodes,
+                                      connectionProvider: connectionProvider,
+                                      camera: camera,
+                                      viewportSize: viewportSize,
+                                    ),
+                                  ),
+                                  // Nodes
+                                  ...nodeComponent.workspaceNodes
+                                      .where((node) => _camera.isRectVisible(
+                                            Rect.fromLTWH(
+                                              node.position.dx,
+                                              node.position.dy,
+                                              node.width,
+                                              node.height,
+                                            ),
+                                            viewportSize,
+                                          ))
+                                      .map((node) {
+                                    return InfiniteNodeRenderer(
+                                      key: ValueKey(node.id),
+                                      nodeModel: node,
+                                      camera: _camera,
+                                      viewportSize: viewportSize,
+                                      onDragStart: () => _isPanning = false,
+                                    );
+                                  }),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

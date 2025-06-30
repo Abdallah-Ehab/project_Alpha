@@ -19,6 +19,7 @@ class GetPropertyFromEntityNode extends OutputNode {
     this.hasTwoOutputs = true,
     super.position,
   }) : super(
+    image: '',
           color: Colors.teal,
           width: 180,
           height: 120,

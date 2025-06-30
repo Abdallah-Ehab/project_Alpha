@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
@@ -17,7 +20,7 @@ class AddComponentButton extends StatelessWidget {
       callback: () async {
         final componentType = await showDialog<String>(
           context: context,
-          builder: (context) => const _ComponentSelectionDialog(),
+          builder: (context) => const ComponentSelectionDialog(),
         );
 
         if (componentType == null) return;
@@ -36,7 +39,7 @@ class AddComponentButton extends StatelessWidget {
             entity.addComponent(NodeComponent());
             break;
           case 'soundComponent':
-            entity.addComponent(SoundControllerComponent(tracks: {}));
+            entity.addComponent(SoundControllerComponent());
           default:
             debugPrint('Unknown component type: $componentType');
         }

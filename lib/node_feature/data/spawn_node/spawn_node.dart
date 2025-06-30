@@ -1,5 +1,7 @@
 
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -7,18 +9,19 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget/spawn_entity_node.dart';
+import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget/spawn_entity_node_widget.dart';
 
 class SpawnEntityNode extends NodeModel {
   String prefabName;
 
   SpawnEntityNode({
-    required this.prefabName,
-    required super.position,
-    required super.color,
-    required super.width,
-    required super.height,
+    this.prefabName = '',
+    super.position = Offset.zero,
+   
   }) : super(
+          width: 200,
+          height: 100,
+          color: Colors.black,
           connectionPoints: [
             ConnectConnectionPoint(
                 position: Offset.zero, isTop: true, width: 20),
@@ -44,6 +47,8 @@ class SpawnEntityNode extends NodeModel {
     final position = activeEntity.position;
 
     entityManager.spawnPrefab(prefabName, position);
+
+    log("Spawned prefab '$prefabName' at $position.");
 
     return Result.success(result: "Spawned prefab '$prefabName' at $position.");
   }
@@ -71,9 +76,6 @@ class SpawnEntityNode extends NodeModel {
     return SpawnEntityNode(
       prefabName: prefabName ?? this.prefabName,
       position: position ?? this.position,
-      color: color ?? this.color,
-      width: width ?? this.width,
-      height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()
