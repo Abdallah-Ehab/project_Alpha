@@ -11,7 +11,7 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
     this.entityName,
     this.variableName = '',
     this.valueToSet,
-    super.alignment = Alignment.centerRight,
+    super.alignment = Alignment.centerLeft,
   });
 
   void trigger({required bool down});

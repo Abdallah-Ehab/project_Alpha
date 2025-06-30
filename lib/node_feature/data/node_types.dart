@@ -3,7 +3,7 @@ import 'package:scratch_clone/node_feature/data/node_model.dart';
 
 mixin HasInput on NodeModel {
   NodeModel? input;
-
+  
   void connectInput(NodeModel node) {
     if (this == node) return;
     input = node;

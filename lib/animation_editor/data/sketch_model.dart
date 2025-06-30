@@ -11,21 +11,22 @@ class SketchModel {
     required this.strokeWidth,
   });
 
-   SketchModel copy() {
+  SketchModel copy() {
     return SketchModel(
-      points: List<Offset>.from(points), // deep copy
-      color: color,
-      strokeWidth: strokeWidth
-    );
+        points: points
+            .map((point) => Offset(point.dx, point.dy))
+            .toList(), // deep copy
+        color: color,
+        strokeWidth: strokeWidth);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'points': points
           .map((pt) => {
-        'x': pt.dx,
-        'y': pt.dy,
-      })
+                'x': pt.dx,
+                'y': pt.dy,
+              })
           .toList(),
       'color': color,
       'strokeWidth': strokeWidth,
@@ -36,9 +37,9 @@ class SketchModel {
     return SketchModel(
       points: (json['points'] as List<dynamic>)
           .map((e) => Offset(
-        (e['x'] as num).toDouble(),
-        (e['y'] as num).toDouble(),
-      ))
+                (e['x'] as num).toDouble(),
+                (e['y'] as num).toDouble(),
+              ))
           .toList(),
       color: Color(json['color'] as int),
       strokeWidth: (json['strokeWidth'] as num).toDouble(),

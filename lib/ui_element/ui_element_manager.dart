@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:scratch_clone/ui_element/joystick/data/joy_stick_element.dart';
-import 'package:scratch_clone/ui_element/ui_button/data/hold_button.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/two_button_config.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class UiElementManager extends ChangeNotifier {
   Map<String,UIElement> uiElements = {
     "joyStick": JoyStickElement(),
-    'HoldButton' : HoldButton(),
+    'TwoButtonConfig' : TwoButtonConfiguration(),
   };
   UIElement? _activeUIElement;
   static final UiElementManager _instance = UiElementManager._internal();

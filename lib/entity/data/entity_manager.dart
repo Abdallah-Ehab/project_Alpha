@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
@@ -35,7 +36,7 @@ void spawnPrefab(String name, Offset position) {
 
   final clone = prefab.copy();
   clone.position = position;
-  spawnEntityLater(prefab);
+  spawnEntityLater(clone);
 }
 
 
@@ -132,17 +133,32 @@ void spawnPrefab(String name, Offset position) {
       ..sort((a, b) => a.layerNumber.compareTo(b.layerNumber));
   }
 
-  void setActiveEntityByName(EntityType type, String name) {
+  void setActiveEntityByTypeAndName(EntityType type, String name) {
     if (_entities[type]?.containsKey(name) == true) {
       _activeEntity = _entities[type]![name];
       notifyListeners();
     }
   }
 
-  // void addComponentToActiveEntity(Component component) {
-  //   _activeEntity?.components[component.runtimeType] = component;
-  //   notifyListeners();
-  // }
+  void setActiveEntityByName(String name) {
+  for (var entry in entities.entries) {
+    final entity = entry.value.values.firstWhereOrNull(
+      (e) => e.name == name,
+    );
+
+    if (entity != null) {
+      activeEntity = entity;
+      notifyListeners();
+      return;
+    }
+  }
+}
+
+
+  void addComponentToActiveEntity(Component component) {
+    activeEntity.addComponent(component);
+    notifyListeners();
+  }
 
   void removeEntity(EntityType type, String name) {
     _entities[type]?.remove(name);

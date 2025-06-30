@@ -72,8 +72,8 @@ class MoveNode extends NodeModel {
       y: y ?? this.y,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child = null
+      ..parent = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(
               this.connectionPoints.map((cp) => cp.copy()));
@@ -81,15 +81,7 @@ class MoveNode extends NodeModel {
 
   @override
   MoveNode copy() {
-    return copyWith(
-      position: position,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      connectionPoints:
-          List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy())),
-      x: x,
-      y: y,
-    );
+    final moveNodeCopy =  copyWith();
+    return moveNodeCopy;
   }
 }

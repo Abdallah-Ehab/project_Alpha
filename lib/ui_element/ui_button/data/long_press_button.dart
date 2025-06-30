@@ -9,7 +9,7 @@ class LongPressButton extends UIButtonElement {
     super.entityName,
     super.variableName,
     super.valueToSet,
-    super.alignment = Alignment.center,
+    super.alignment = Alignment.centerLeft,
   });
 
   @override

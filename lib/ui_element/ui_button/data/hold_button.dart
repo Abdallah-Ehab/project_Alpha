@@ -9,7 +9,7 @@ class HoldButton extends UIButtonElement {
     super.entityName,
     super.variableName,
     super.valueToSet = true,
-    super.alignment = Alignment.centerRight,
+    super.alignment = Alignment.centerLeft,
   });
 
   @override
@@ -26,16 +26,13 @@ class HoldButton extends UIButtonElement {
                 onTapDown: (_) => triggerOnce(),
                 onTapUp: (_) => trigger(down: false),
                 onTapCancel: () => trigger(down: false),
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.redAccent
-                  ),),
-                )
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.redAccent
+                ),)
               )
             : GestureDetector(
                 onTap: () {
