@@ -25,12 +25,6 @@ class ElseNode extends InputOutputNode {
           ],
         );
 
-    static ElseNode fromJson(Map<String, dynamic> json) {
-    return ElseNode(
-      position: OffsetJson.fromJson(json['position']),
-      
-    )..id = json['id'];
-  }
 
 
   @override
@@ -68,23 +62,39 @@ class ElseNode extends InputOutputNode {
       position: position ?? this.position,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
-      ..output = output ?? this.output?.copy()
+      ..child = null
+      ..parent = null
+      ..output = null
       ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   ElseNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      output: output?.copy(),
-    ) as ElseNode;
+    return copyWith() as ElseNode;
+  }
+
+  static ElseNode fromJson(Map<String, dynamic> json) {
+    final node = ElseNode(
+      position: OffsetJson.fromJson(json['position']),
+    )
+      ..id = json['id']
+      ..width = (json['width'] as num).toDouble()
+      ..height = (json['height'] as num).toDouble()
+      ..isConnected = json['isConnected'] as bool
+      ..connectionPoints = (json['connectionPoints'] as List)
+          .map((e) => e['isTop'] == null
+              ? ConnectionPointModel.fromJson(e)
+              : ConnectionPointModel.fromJson(e))
+          .toList();
+
+    return node;
+  }
+
+  /// ✅ TO JSON
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'ElseNode';
+    return map;
   }
 }

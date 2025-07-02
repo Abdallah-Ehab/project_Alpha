@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:audioplayers/audioplayers.dart';
 
 class AudioManager {
@@ -7,8 +9,20 @@ class AudioManager {
     player = AudioPlayer();
   }
 
-  void play(String path,ReleaseMode releaseMode, {bool loop = false})async {
-    player.setReleaseMode(releaseMode);
-    await player.play(AssetSource(path));
-  }
+  Future<void> playAsset(String assetPath, ReleaseMode releaseMode, {bool loop = false}) async {
+  await player.setVolume(1.0); // Ensure volume
+  await player.setReleaseMode(releaseMode);
+  await player.play(AssetSource(assetPath));
+}
+
+void playFile(String filePath, ReleaseMode releaseMode, {bool loop = false}) async {
+  player.setReleaseMode(releaseMode);
+  await player.play(DeviceFileSource(filePath));
+}
+
+void playBytes(Uint8List data, ReleaseMode releaseMode, {bool loop = false}) async {
+  player.setReleaseMode(releaseMode);
+  await player.play(BytesSource(data));
+}
+
 }

@@ -5,6 +5,7 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/set_variable_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class SetVariableNode extends NodeModel {
   String variableName;
@@ -14,19 +15,15 @@ class SetVariableNode extends NodeModel {
     this.variableName = "x",
     this.value = 0,
 
-    
+    super.position = Offset.zero
   }) : super(
           connectionPoints: [
             ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
             ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20),
           ],
-          position: Offset.zero,color: Colors.orange,width: 200,height: 100
+        color: Colors.orange,width: 200,height: 100
         );
 
-    static SetVariableNode fromJson(Map<String, dynamic> json) => SetVariableNode(
-        variableName: json['variableName'] as String,
-        value: json['value'],
-      );
 
   void setVariableName(String newName) {
     variableName = newName;
@@ -78,28 +75,38 @@ class SetVariableNode extends NodeModel {
       value: value ?? this.value,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child = null
+      ..parent = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   SetVariableNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      variableName: variableName,
-      value: value,
-      connectionPoints: List<ConnectionPointModel>.from(
-        connectionPoints.map((cp) => cp.copy()),
-      ),
-    );
+    return copyWith();
   }
+
+  @override
+Map<String, dynamic> baseToJson() {
+  final map = super.baseToJson();
+  map['type'] = 'SetVariableNode';
+  map['variableName'] = variableName;
+  map['value'] = value;
+  return map;
+}
+
+static SetVariableNode fromJson(Map<String, dynamic> json) {
+  return SetVariableNode(
+    variableName: json['variableName'] as String,
+    value: json['value'],
+    position: OffsetJson.fromJson(json['position']),
+  )
+    ..id = json['id']
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+}
+
 }
   

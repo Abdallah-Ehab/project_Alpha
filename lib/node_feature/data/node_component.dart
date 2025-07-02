@@ -36,20 +36,60 @@ class NodeComponent extends Component {
   Map<String, dynamic> toJson() => {
         'type': 'NodeComponent',
         'isActive': isActive,
-        'workspaceNodes':
-            workspaceNodes.map((node) => node.baseToJson()).toList(),
+        'workspaceNodes': workspaceNodes.map((node) => node.baseToJson()).toList(),
         'startNodeId': startNode?.id,
       };
 
-  static NodeComponent fromJson(Map<String, dynamic> json) {
-    final workspaceNodesJson = json['workspaceNodes'] as List<dynamic>;
-    final nodes = workspaceNodesJson.map((e) => NodeModel.fromJson(e)).toList();
+ static NodeComponent fromJson(Map<String, dynamic> json) {
+  final workspaceNodesJson = json['workspaceNodes'] as List<dynamic>;
 
-    return NodeComponent(
-      isActive: json['isActive'] as bool,
-      workspaceNodes: nodes,
-    );
+  // First pass: deserialize all nodes
+  final nodeList = workspaceNodesJson
+      .map((nodeJson) => NodeModel.fromJson(nodeJson as Map<String, dynamic>))
+      .toList();
+
+  // Build id -> node map
+  final idToNode = <String, NodeModel>{
+    for (var node in nodeList) node.id: node,
+  };
+
+  // Read start node ID
+  final startNodeId = json['startNodeId'] as String?;
+  NodeModel? startNode = startNodeId != null ? idToNode[startNodeId] : null;
+
+  // Second pass: restore all connections except start node
+  for (int i = 0; i < nodeList.length; i++) {
+    final node = nodeList[i];
+    final nodeJson = workspaceNodesJson[i] as Map<String, dynamic>;
+
+    final childId = nodeJson['childId'];
+    if (node.id == startNodeId) continue; // delay start node
+
+    if (childId != null && idToNode.containsKey(childId)) {
+      node.connectNode(idToNode[childId]!);
+    }
   }
+
+  // Now connect start node’s child
+  if (startNode != null) {
+    final startJson = workspaceNodesJson
+        .firstWhere((e) => (e as Map<String, dynamic>)['id'] == startNodeId)
+        as Map<String, dynamic>;
+
+    final childId = startJson['childId'];
+    if (childId != null && idToNode.containsKey(childId)) {
+      startNode.connectNode(idToNode[childId]!);
+    }
+  }
+
+  return NodeComponent(
+    isActive: json['isActive'] as bool? ?? true,
+    startNode: startNode,
+    workspaceNodes: nodeList,
+  );
+}
+
+
 
   void addNodeToWorkspace(NodeModel node) {
     workspaceNodes.add(node);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 class SoundTransitionPage extends StatelessWidget {
@@ -9,30 +10,35 @@ class SoundTransitionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Entity>(
-      builder: (context, entity, _) {
-        final soundComp = entity.getComponent<SoundControllerComponent>();
-        if (soundComp == null) {
-          return const Center(child: Text("No animation component"));
-        }
+    final entityManager = context.read<EntityManager>();
+    return Scaffold(
+      body: ChangeNotifierProvider.value(
+        value: entityManager.activeEntity,
+        child: Consumer<Entity>(
+          builder: (context, entity, _) {
+            final soundComp = entity.getComponent<SoundControllerComponent>();
+            if (soundComp == null) {
+              return const Center(child: Text("No sound component"));
+            }
+        
+            return
+               ChangeNotifierProvider.value(
+                value: soundComp,
+                 child: Consumer<SoundControllerComponent>(
+                   builder: (context, value, child) {
+                    return ListView.builder(
+                    itemCount: soundComp.transitions.length,
+                    itemBuilder: (context, index) {
+                      final transition = soundComp.transitions[index];
+                      return _buildTransitionCard(context, soundComp, transition, index);
+                    },
+                             );
+                   } 
+                 ),
+               );}),
+      ),
+    );
 
-        return
-           ChangeNotifierProvider.value(
-            value: soundComp,
-             child: Consumer<SoundControllerComponent>(
-               builder: (context, value, child) {
-                return ListView.builder(
-                itemCount: soundComp.transitions.length,
-                itemBuilder: (context, index) {
-                  final transition = soundComp.transitions[index];
-                  return _buildTransitionCard(context, soundComp, transition, index);
-                },
-                         );
-               } 
-             ),
-           );});
-
-          // ✨ Dual Floating Buttons: Visualize (top), Add (bottom)
           
   }
 

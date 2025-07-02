@@ -72,6 +72,8 @@ class ToolPaletteDrawer extends StatelessWidget {
               ),
             ],
           ),
+
+          
         ],
       ),
     );

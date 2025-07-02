@@ -10,6 +10,7 @@ import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget/spawn_entity_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class SpawnEntityNode extends NodeModel {
   String prefabName;
@@ -78,8 +79,8 @@ class SpawnEntityNode extends NodeModel {
       position: position ?? this.position,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child = null
+      ..parent = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
@@ -87,17 +88,26 @@ class SpawnEntityNode extends NodeModel {
   @override
   SpawnEntityNode copy() {
     return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      prefabName: prefabName,
-      connectionPoints: List<ConnectionPointModel>.from(
-        connectionPoints.map((cp) => cp.copy()),
-      ),
     );
   }
+  @override
+Map<String, dynamic> baseToJson() {
+  final map = super.baseToJson();
+  map['type'] = 'SpawnEntityNode';
+  map['prefabName'] = prefabName;
+  return map;
+}
+
+static SpawnEntityNode fromJson(Map<String, dynamic> json) {
+  return SpawnEntityNode(
+    prefabName: json['prefabName'] ?? '',
+    position: OffsetJson.fromJson(json['position'])
+  )
+    ..id = json['id']
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+}
+
 }

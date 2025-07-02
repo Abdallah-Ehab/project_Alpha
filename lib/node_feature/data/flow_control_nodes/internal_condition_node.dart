@@ -21,81 +21,73 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
     required super.height,
   }) : super(connectionPoints: []);
 
-  static InternalConditionNode fromJson(Map<String, dynamic> json) {
-    return InternalConditionNode(
-      firstOperand: json['firstOperand'],
-      secondOperand: json['secondOperand'],
-      comparisonOperator: json['comparisonOperator'],
-      color: Color(json['color']),
-      width: (json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
-    )..id = json['id'];
-  }
-
   @override
-Result<bool> execute([Entity? entity]) {
-  if (firstOperand == null || secondOperand == null || comparisonOperator.isEmpty) {
-    return Result.failure(errorMessage: "Missing operand or operator.");
-  }
-
-  dynamic op1 = firstOperand;
-  dynamic op2 = secondOperand;
-
-  if (entity != null) {
-    if (entity.variables.containsKey(op1)) {
-      op1 = entity.variables[op1];
+  Result<bool> execute([Entity? entity]) {
+    if (firstOperand == null ||
+        secondOperand == null ||
+        comparisonOperator.isEmpty) {
+      return Result.failure(errorMessage: "Missing operand or operator.");
     }
-    if (entity.variables.containsKey(op2)) {
-      op2 = entity.variables[op2];
+
+    dynamic op1 = firstOperand;
+    dynamic op2 = secondOperand;
+
+    if (entity != null) {
+      if (entity.variables.containsKey(op1)) {
+        op1 = entity.variables[op1];
+      }
+      if (entity.variables.containsKey(op2)) {
+        op2 = entity.variables[op2];
+      }
     }
+
+    final parsed1 = _parseValue(op1);
+    final parsed2 = _parseValue(op2);
+
+    switch (comparisonOperator) {
+      case '==':
+        return Result.success(result: parsed1 == parsed2);
+      case '!=':
+        return Result.success(result: parsed1 != parsed2);
+      case '>':
+        if (parsed1 is num && parsed2 is num) {
+          return Result.success(result: parsed1 > parsed2);
+        }
+        break;
+      case '<':
+        if (parsed1 is num && parsed2 is num) {
+          return Result.success(result: parsed1 < parsed2);
+        }
+        break;
+      case '>=':
+        if (parsed1 is num && parsed2 is num) {
+          return Result.success(result: parsed1 >= parsed2);
+        }
+        break;
+      case '<=':
+        if (parsed1 is num && parsed2 is num) {
+          return Result.success(result: parsed1 <= parsed2);
+        }
+        break;
+    }
+
+    return Result.failure(
+        errorMessage: "Invalid comparison or incompatible types.");
   }
 
-  final parsed1 = _parseValue(op1);
-  final parsed2 = _parseValue(op2);
-
-  switch (comparisonOperator) {
-    case '==':
-      return Result.success(result: parsed1 == parsed2);
-    case '!=':
-      return Result.success(result: parsed1 != parsed2);
-    case '>':
-      if (parsed1 is num && parsed2 is num) {
-        return Result.success(result: parsed1 > parsed2);
-      }
-      break;
-    case '<':
-      if (parsed1 is num && parsed2 is num) {
-        return Result.success(result: parsed1 < parsed2);
-      }
-      break;
-    case '>=':
-      if (parsed1 is num && parsed2 is num) {
-        return Result.success(result: parsed1 >= parsed2);
-      }
-      break;
-    case '<=':
-      if (parsed1 is num && parsed2 is num) {
-        return Result.success(result: parsed1 <= parsed2);
-      }
-      break;
-  }
-
-  return Result.failure(errorMessage: "Invalid comparison or incompatible types.");
-}
-
-dynamic _parseValue(dynamic val) {
-  if (val is bool) return val;
-  if (val is String) {
-    final lower = val.toLowerCase();
-    if (lower == 'true') return true;
-    if (lower == 'false') return false;
-    final numVal = double.tryParse(val);
-    if (numVal != null) return numVal;
+  dynamic _parseValue(dynamic val) {
+    if (val is bool) return val;
+    if (val is String) {
+      final lower = val.toLowerCase();
+      if (lower == 'true') return true;
+      if (lower == 'false') return false;
+      final numVal = double.tryParse(val);
+      if (numVal != null) return numVal;
+      return val;
+    }
+    if (val is num) return val;
     return val;
   }
-  if (val is num) return val;
-  return val;
-}
 
   @override
   String toString() => "$firstOperand $comparisonOperator $secondOperand";
@@ -129,26 +121,38 @@ dynamic _parseValue(dynamic val) {
       height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
-      ..output = output ?? this.output?.copy()
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+      ..child = null
+      ..parent = null
+      ..output = null
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   NodeModel copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      output: output?.copy(),
-      firstOperand: firstOperand,
-      secondOperand: secondOperand,
-      comparisonOperator: comparisonOperator,
-    ) as InternalConditionNode;
+    return copyWith() as InternalConditionNode;
   }
+
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'InternalConditionNode';
+    map['firstOperand'] = firstOperand;
+    map['secondOperand'] = secondOperand;
+    map['comparisonOperator'] = comparisonOperator;
+    return map;
+  }
+
+  static InternalConditionNode fromJson(Map<String, dynamic> json) {
+  return InternalConditionNode(
+    firstOperand: json['firstOperand'],
+    secondOperand: json['secondOperand'],
+    comparisonOperator: json['comparisonOperator'],
+    color: Color(json['color']),
+    width: (json['width'] as num).toDouble(),
+    height: (json['height'] as num).toDouble(),
+  )..id = json['id'];
+}
+
 }

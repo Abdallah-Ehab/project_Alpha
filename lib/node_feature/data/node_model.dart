@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -33,18 +34,18 @@ abstract class NodeModel with ChangeNotifier {
   NodeModel? parent;
   List<ConnectionPointModel> connectionPoints;
 
-  NodeModel(
+  NodeModel({
+    this.position = Offset.zero,
+    this.isStatement = false,
+    this.image = '',
+    required this.color,
+    required this.width,
+    required this.height,
+    this.isConnected = false,
+    required this.connectionPoints,
+  }) : id = const Uuid().v4();
 
-      {this.position = Offset.zero,
-      this.isStatement= false,
-      this.image = '',
-      required this.color,
-      required this.width,
-      required this.height,
-      this.isConnected = false,
-      required this.connectionPoints})
-      : id = const Uuid().v4();
-
+  /// Serializes the common base fields
   Map<String, dynamic> baseToJson() {
     final map = {
       'id': id,
@@ -57,6 +58,8 @@ abstract class NodeModel with ChangeNotifier {
       'childId': child?.id,
       'parentId': parent?.id,
     };
+  
+    
 
     if (this is HasInput) {
       map['inputId'] = (this as HasInput).input?.id;
@@ -71,39 +74,59 @@ abstract class NodeModel with ChangeNotifier {
     return map;
   }
 
-  void restoreConnections(Map<String, NodeModel> nodeMap, Map<String, dynamic> json) {
-  if (json['childId'] != null) child = nodeMap[json['childId']];
-  if (json['parentId'] != null) parent = nodeMap[json['parentId']];
-
-  if (this is HasInput && json['inputId'] != null) {
-    (this as HasInput).input = nodeMap[json['inputId']];
-  }
-  if (this is HasOutput && json['outputId'] != null) {
-    (this as HasOutput).output = nodeMap[json['outputId']];
-  }
-  if (this is HasValue && json['sourceNodeId'] != null) {
-    (this as HasValue).sourceNode = nodeMap[json['sourceNodeId']];
-  }
-}
-
-
+  /// Factory to deserialize the correct subclass
   static NodeModel fromJson(Map<String, dynamic> json) {
-    final type = json['type'];
+    final type = json['type'] as String;
+
     switch (type) {
-      case 'IfNode':
-        return IfNode.fromJson(json);
-      case 'WhileNode':
-        return WhileNode.fromJson(json);
-      case 'DeclareVariableNode':
-        return DeclareVariableNode.fromJson(json);
-      case 'ElseNode':
-        return ElseNode.fromJson(json);
-      // Add other node types here...
+      case 'StartNode':
+        return StartNode.fromJson(json);
+
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
     }
   }
 
+  // /// Restores references after deserializing
+  // void restoreConnections(Map<String, NodeModel> nodeMap, Map<String, dynamic> json) {
+  //   if (json['childId'] != null) child = nodeMap[json['childId']];
+  //   if (json['parentId'] != null) parent = nodeMap[json['parentId']];
+
+  //   if (this is HasInput && json['inputId'] != null) {
+  //     (this as HasInput).input = nodeMap[json['inputId']];
+  //   }
+  //   if (this is HasOutput && json['outputId'] != null) {
+  //     (this as HasOutput).output = nodeMap[json['outputId']];
+  //   }
+  //   if (this is HasValue && json['sourceNodeId'] != null) {
+  //     (this as HasValue).sourceNode = nodeMap[json['sourceNodeId']];
+  //   }
+  // }
+
+  // /// Factory to deserialize the correct subclass
+  // static NodeModel fromJson(Map<String, dynamic> json) {
+  //   final type = json['type'] as String;
+
+  //   switch (type) {
+  //     case 'StartNode':
+  //       return StartNode.fromJson(json);
+  //     case 'MoveNode':
+  //       return MoveNode.fromJson(json);
+  //     case 'IfNode':
+  //       return IfNode.fromJson(json);
+  //     case 'ElseNode':
+  //       return ElseNode.fromJson(json);
+  //     case 'DeclareVariableNode':
+  //       return DeclareVariableNode.fromJson(json);
+  //     case 'AddToListNode':
+  //       return AddToListNode.fromJson(json);
+  //     // Add other node types here...
+  //     default:
+  //       throw UnimplementedError('Unknown NodeModel type: $type');
+  //   }
+  // }
+
+  /// Implemented in subclasses
   NodeModel copy();
 
   NodeModel copyWith({
@@ -114,42 +137,22 @@ abstract class NodeModel with ChangeNotifier {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
+    List<ConnectionPointModel>? connectionPoints,
   });
 
-  void connectNode(NodeModel childNode) {
-    child = childNode;
-    childNode.parent = this;
-    log('$this is connected to $childNode');
-    notifyListeners();
-  }
+  /// Used for actual node logic
+  Result execute([Entity? activeEntity]);
 
-  void disconnectIfTop() {
-    if (child != null) {
-      child!.parent = null;
-      child!.notifyListeners();
-      child = null;
-      notifyListeners();
-    }
-  }
+  /// For rendering in the UI
+  Widget buildNode();
 
-  void disconnectIfBottom() {
-    if (parent != null) {
-      parent!.child = null;
-      parent!.notifyListeners();
-      parent = null;
-      notifyListeners();
-    }
-  }
-
+  /// Position update helper
   void updatePosition(Offset newPosition) {
     position = newPosition;
     notifyListeners();
   }
 
-  Result execute([Entity? activeEntity]);
-
-  Widget buildNode();
-
+  /// Visual config helpers
   void setWidth(double width) {
     this.width = width;
     notifyListeners();
@@ -159,17 +162,39 @@ abstract class NodeModel with ChangeNotifier {
     this.height = height;
     notifyListeners();
   }
+
+  /// Linking helper
+  void connectNode(NodeModel childNode) {
+    child = childNode;
+    childNode.parent = this;
+    notifyListeners();
+  }
+
+  void disconnectIfTop() {
+    if (child != null) {
+      child!.parent = null;
+      child = null;
+      notifyListeners();
+    }
+  }
+
+  void disconnectIfBottom() {
+    if (parent != null) {
+      parent!.child = null;
+      parent = null;
+      notifyListeners();
+    }
+  }
 }
 
 //Todo this will have only one connection point which is 'connect' aka the 'grey' one
 class StartNode extends NodeModel {
-  StartNode(
-   {
-     super.position = Offset.zero,
-   }
-  ): super(color: Colors.orange,width: 200,height: 100, connectionPoints: [
-    ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
-  ]);
+  StartNode({
+    super.position = Offset.zero,
+  }) : super(color: Colors.orange, width: 200, height: 100, connectionPoints: [
+          ConnectConnectionPoint(
+              position: Offset.zero, isTop: false, width: 30),
+        ]);
 
   @override
   NodeModel copyWith({
@@ -182,15 +207,39 @@ class StartNode extends NodeModel {
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return StartNode(
-      position: position ?? this.position
-    )
-      .. connectionPoints = connectionPoints ?? this.connectionPoints.map((e)=>e.copy()).toList()
+    return StartNode(position: position ?? this.position)
+      ..connectionPoints = connectionPoints ??
+          this.connectionPoints.map((e) => e.copy()).toList()
       ..isConnected = isConnected ?? this.isConnected
       ..child = null
       ..parent = null;
   }
 
+  @override
+  Map<String, dynamic> baseToJson() {
+    final base = super.baseToJson();
+    base['type'] = 'StartNode';
+    return base;
+  }
+
+  static StartNode fromJson(Map<String, dynamic> json) {
+    final positionMap = json['position'] as Map<String, dynamic>;
+    final position = Offset(positionMap['dx'], positionMap['dy']);
+
+    final connectionPointsJson = json['connectionPoints'] as List<dynamic>;
+    final connectionPoints = connectionPointsJson
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+
+    return StartNode(
+      position: position,
+    )
+      ..id = json['id']
+      ..width = (json['width'] as num).toDouble()
+      ..height = (json['height'] as num).toDouble()
+      ..isConnected = json['isConnected'] as bool
+      ..connectionPoints = connectionPoints;
+  }
 
   @override
   Result<String> execute([Entity? activeEntity]) {
@@ -204,7 +253,7 @@ class StartNode extends NodeModel {
 
   @override
   NodeModel copy() {
-    final startNodeCopy =  copyWith();
+    final startNodeCopy = copyWith();
     return startNodeCopy;
   }
 }

@@ -8,6 +8,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/teleport_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class TeleportNode extends InputOutputNode {
   TeleportNode({super.position = Offset.zero})
@@ -75,22 +76,35 @@ class TeleportNode extends InputOutputNode {
   }) {
     return TeleportNode(position: position ?? this.position)
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child =null
+      ..parent = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   TeleportNode copy() {
-    return copyWith(
-      position: position,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      connectionPoints:
-          List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy())),
-    );
+    return copyWith();
   }
+
+  @override
+Map<String, dynamic> baseToJson() {
+  final map = super.baseToJson();
+  map['type'] = 'TeleportNode';
+  return map;
+}
+
+static TeleportNode fromJson(Map<String, dynamic> json) {
+  return TeleportNode(
+    position: OffsetJson.fromJson(json['position']),
+  )
+    ..id = json['id']
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+}
+
+
 }
 

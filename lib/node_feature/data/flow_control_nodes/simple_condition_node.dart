@@ -6,6 +6,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/simple_condition_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class SimpleConditionNode extends NodeModel with HasOutput {
   dynamic firstOperand;
@@ -18,20 +19,22 @@ class SimpleConditionNode extends NodeModel with HasOutput {
     this.secondOperand,
     this.comparisonOperator,
   }) : super(
-            color: Colors.yellow,
-            width: 200,
-            height: 100,
-            connectionPoints: [
-              OutputConnectionPoint(position: Offset.zero, width: 20),
-            ],
-          );
+          color: Colors.yellow,
+          width: 200,
+          height: 100,
+          connectionPoints: [
+            OutputConnectionPoint(position: Offset.zero, width: 20),
+          ],
+        );
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
     double? op1;
     double? op2;
 
-    if (firstOperand == null || secondOperand == null || comparisonOperator == null) {
+    if (firstOperand == null ||
+        secondOperand == null ||
+        comparisonOperator == null) {
       return Result.failure(errorMessage: "Missing operand or operator");
     }
 
@@ -104,48 +107,40 @@ class SimpleConditionNode extends NodeModel with HasOutput {
       ..secondOperand = secondOperand ?? this.secondOperand
       ..comparisonOperator = comparisonOperator ?? this.comparisonOperator
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
-      ..output = output ?? this.output?.copy()
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+      ..child = null
+      ..parent = null
+      ..output = null
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   SimpleConditionNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      firstOperand: firstOperand,
-      secondOperand: secondOperand,
-      comparisonOperator: comparisonOperator,
-      output: output?.copy(),
-    ) as SimpleConditionNode;
+    return copyWith() as SimpleConditionNode;
   }
 
-  
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'firstOperand': firstOperand,
-      'secondOperand': secondOperand,
-      'comparisonOperator': comparisonOperator,
-    };
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'SimpleConditionNode';
+    map['firstOperand'] = firstOperand;
+    map['secondOperand'] = secondOperand;
+    map['comparisonOperator'] = comparisonOperator;
+    return map;
   }
 
-  factory SimpleConditionNode.fromMap(Map<String, dynamic> map) {
+  static SimpleConditionNode fromJson(Map<String, dynamic> json) {
     return SimpleConditionNode(
-      firstOperand: map['firstOperand'] as dynamic,
-      secondOperand: map['secondOperand'] as dynamic,
-      comparisonOperator: map['comparisonOperator'] != null ? map['comparisonOperator'] as String : null,
-    );
+      position: OffsetJson.fromJson(json['position']),
+      firstOperand: json['firstOperand'],
+      secondOperand: json['secondOperand'],
+      comparisonOperator: json['comparisonOperator'],
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false
+      ..connectionPoints = (json['connectionPoints'] as List)
+          .map((e) => ConnectionPointModel.fromJson(e))
+          .toList();
   }
-
-
-
-  
 }

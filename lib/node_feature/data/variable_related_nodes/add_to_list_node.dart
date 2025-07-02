@@ -1,29 +1,32 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/presentation/variable_related_node_widgets/declare_variable_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/variable_related_node_widgets/add_to_list_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class DeclareVariableNode extends NodeModel {
-  String variableName;
+class AddToListNode extends NodeModel {
+  String listName;
   dynamic value;
 
-  DeclareVariableNode({
-    this.variableName = "x",
-    this.value = 0,
+  AddToListNode({
+    this.listName = '',
+    this.value,
     super.position = Offset.zero
-    
   }) : super(
           connectionPoints: [],
-          color: Colors.orange,width: 200,height: 100
+          color: Colors.green,
+          width: 220,
+          height: 120,
         );
 
 
-  void setVariableName(String newName) {
-    variableName = newName;
+  void setListName(String newName) {
+    listName = newName;
     notifyListeners();
   }
 
@@ -34,19 +37,27 @@ class DeclareVariableNode extends NodeModel {
 
   @override
   Result execute([Entity? activeEntity]) {
-    return Result.success(result: "Variable '$variableName' updated to $value.");
+    if (activeEntity == null) return Result.failure(errorMessage: "No entity found");
+
+    final list = activeEntity.lists[listName];
+    if (list == null) {
+      return Result.failure(errorMessage: "List '$listName' does not exist.");
+    }
+
+    list.add(value);
+    return Result.success(result: "Value '$value' added to list '$listName'");
   }
 
   @override
   Widget buildNode() {
     return ChangeNotifierProvider.value(
       value: this,
-      child: DeclareVarableNodeWidget(node: this),
+      child: AddToListNodeWidget(node: this),
     );
   }
 
   @override
-  DeclareVariableNode copyWith({
+  AddToListNode copyWith({
     Offset? position,
     Color? color,
     double? width,
@@ -54,12 +65,12 @@ class DeclareVariableNode extends NodeModel {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
-    String? variableName,
+    String? listName,
     dynamic value,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return DeclareVariableNode(
-      variableName: variableName ?? this.variableName,
+    return AddToListNode(
+      listName: listName ?? this.listName,
       value: value ?? this.value,
     )
       ..isConnected = isConnected ?? this.isConnected
@@ -70,26 +81,24 @@ class DeclareVariableNode extends NodeModel {
   }
 
   @override
-  DeclareVariableNode copy() {
-    return copyWith(
-     
-    );
+  AddToListNode copy() {
+    return copyWith();
   }
 
   @override
 Map<String, dynamic> baseToJson() {
   final map = super.baseToJson();
-  map['type'] = 'DeclareVariableNode';
-  map['variableName'] = variableName;
+  map['type'] = 'AddToListNode';
+  map['listName'] = listName;
   map['value'] = value;
   return map;
 }
 
-static DeclareVariableNode fromJson(Map<String, dynamic> json) {
-  return DeclareVariableNode(
-    variableName: json['variableName'] as String,
+static AddToListNode fromJson(Map<String, dynamic> json) {
+  return AddToListNode(
+    listName: json['listName'] ?? '',
     value: json['value'],
-    position: OffsetJson.fromJson(json['position']),
+    position: OffsetJson.fromJson(json['position'])
   )
     ..id = json['id']
     ..isConnected = json['isConnected'] ?? false
@@ -99,7 +108,3 @@ static DeclareVariableNode fromJson(Map<String, dynamic> json) {
 }
 
 }
-
-
-
-
