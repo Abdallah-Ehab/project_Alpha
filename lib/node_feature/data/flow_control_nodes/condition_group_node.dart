@@ -19,7 +19,7 @@ class ConditionGroupNode extends InputNode {
 
   ConditionGroupNode({
     required this.logicSequence,
-   
+    super.position = Offset.zero
   }) : super(
           image: 'assets/icons/condition',
           connectionPoints: [
@@ -137,25 +137,54 @@ class ConditionGroupNode extends InputNode {
     List<ConnectionPointModel>? connectionPoints,
   }) {
     return ConditionGroupNode(
+      position: position ?? this.position,
       logicSequence: logicSequence ?? List<LogicElementNode>.from(this.logicSequence.map((e) => e.copy() as LogicElementNode)),
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child = null
+      ..parent = null
       ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   ConditionGroupNode copy() {
-    return copyWith(
-      logicSequence: logicSequence.map((e) => e.copy() as LogicElementNode).toList(),
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-    ) as ConditionGroupNode;
+    final conditionGroupCopy = copyWith() as ConditionGroupNode;
+    return conditionGroupCopy;
   }
+
+  @override
+Map<String, dynamic> baseToJson() {
+  final map = super.baseToJson();
+  map['type'] = 'ConditionGroupNode';
+  map['logicSequence'] = logicSequence.map((node) => node.baseToJson()).toList();
+  return map;
+}
+
+static ConditionGroupNode fromJson(Map<String, dynamic> json) {
+  final positionJson = json['position'];
+  final position = Offset(positionJson['dx'], positionJson['dy']);
+
+  final logicSequenceJson = json['logicSequence'] as List;
+  final logicSequence = logicSequenceJson
+      .map((e) => LogicElementNode.fromJson(e)) // You'll need a factory here
+      .toList();
+
+  final connectionPointsJson = json['connectionPoints'] as List;
+  final connectionPoints = connectionPointsJson
+      .map((e) => ConnectionPointModel.fromJson(e))
+      .toList();
+
+  final node = ConditionGroupNode(
+    logicSequence: logicSequence,
+    position: position,
+  )
+    ..id = json['id']
+    ..width = (json['width'] as num).toDouble()
+    ..height = (json['height'] as num).toDouble()
+    ..isConnected = json['isConnected'] as bool
+    ..connectionPoints = connectionPoints;
+
+  return node;
+}
+
 }
