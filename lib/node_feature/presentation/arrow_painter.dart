@@ -6,7 +6,6 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
-import 'package:scratch_clone/node_feature/presentation/node_work_space.dart';
 
 class ArrowPainter extends CustomPainter {
   final List<NodeModel> nodes;

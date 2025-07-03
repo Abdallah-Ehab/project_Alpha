@@ -12,7 +12,7 @@ class CustomZoomPan extends StatefulWidget {
 
 class _CustomZoomPanState extends State<CustomZoomPan> {
   Offset _offset = Offset.zero;
-  double _scale = 1.0;
+  final double _scale = 1.0;
 
   Offset? _startFocalPoint;
   Offset? _startOffset;

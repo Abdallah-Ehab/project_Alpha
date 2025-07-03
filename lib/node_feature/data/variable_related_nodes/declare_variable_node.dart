@@ -17,6 +17,7 @@ class DeclareVariableNode extends NodeModel {
     super.position = Offset.zero
     
   }) : super(
+          image: 'assets/icons/CreateVariableNode.png',
           connectionPoints: [],
           color: Colors.orange,width: 200,height: 100
         );

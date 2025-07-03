@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 
@@ -21,25 +20,20 @@ class NodeIconWidget extends StatelessWidget {
           width: 50,
           height: 50,
           color: nodeModel.color.withAlpha(200),
-          child: Center(
-            child: Text(
-              label,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-            ),
-          ),
+          child: Center(child: Image.asset(nodeModel.image)),
         ),
       ),
       child: Container(
         width: 50,
         height: 50,
         color: nodeModel.color,
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-          ),
-        ),
+        child: Center(child: Image.asset(nodeModel.image)),
       ),
+      onDragStarted: () {
+        if (Scaffold.of(context).isDrawerOpen) {
+          Scaffold.of(context).closeDrawer();
+        }
+      },
     );
   }
 }

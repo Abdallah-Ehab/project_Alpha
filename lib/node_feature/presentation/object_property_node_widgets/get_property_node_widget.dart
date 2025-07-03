@@ -99,24 +99,13 @@ class GetPropertyFromEntityNodeWidget extends StatelessWidget {
   List<Widget> _buildConnectionPoints(BuildContext context) {
     if (nodeModel.hasTwoOutputs) {
       return [
-        Positioned(
-          right: -15,
-          top: 20,
-          child: ConnectionPointWidget(connectionPoint: nodeModel.connectionPoints[0], node: nodeModel),
-        ),
-        Positioned(
-          right: -15,
-          bottom: 20,
-          child: ConnectionPointWidget(connectionPoint: nodeModel.connectionPoints[1], node: nodeModel),
-        ),
+        for(final cp in nodeModel.connectionPoints)
+        cp.build(context, nodeModel)
       ];
     } else {
       return [
-        Positioned(
-          right: -15,
-          top: nodeModel.height / 2 - 10,
-          child: ConnectionPointWidget(connectionPoint: nodeModel.connectionPoints[0], node: nodeModel),
-        ),
+       nodeModel.connectionPoints[0].build(context, nodeModel)
+       ,nodeModel.connectionPoints[1].build(context, nodeModel)
       ];
     }
   }

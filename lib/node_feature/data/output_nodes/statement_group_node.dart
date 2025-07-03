@@ -16,7 +16,7 @@ class StatementGroupNode extends OutputNode {
     required this.statements,
     super.position = Offset.zero
   }) : super(
-            image: '',
+            image: 'assets/icons/StatementGroupNode.png',
             connectionPoints: [
               InputConnectionPoint(position: Offset.zero, width: 20),
             ],

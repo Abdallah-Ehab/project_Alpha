@@ -38,8 +38,9 @@ class _AddAnimationTransitionDialogState
 
                 final animationComponent =
                     entity.getComponent<AnimationControllerComponent>();
-                if (animationComponent == null)
+                if (animationComponent == null) {
                   return const Text("No Animation Component");
+                }
 
                 return ChangeNotifierProvider.value(
                   value: animationComponent,

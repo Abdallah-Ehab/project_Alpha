@@ -24,6 +24,9 @@ abstract class Entity with ChangeNotifier {
   Map<String, dynamic> variables;
   Map<String, List<dynamic>> lists;
   int layerNumber;
+  bool onTapVariable;
+  bool onLongPressVariable;
+  bool onDoubleTapVariable;
 
   Entity({
     required this.name,
@@ -34,6 +37,9 @@ abstract class Entity with ChangeNotifier {
     this.width = 100,
     this.height = 100,
     this.layerNumber = 0,
+    this.onDoubleTapVariable = false,
+    this.onTapVariable = false,
+    this.onLongPressVariable = false
   }):components = {},variables = {},lists = {};
 
   dynamic getProperty(Property property) {
@@ -59,7 +65,22 @@ abstract class Entity with ChangeNotifier {
     return {
       'x': offset.dx,
       'y': offset.dy,
-    };
+  };
+  }
+
+  void setOnTapVariable(bool value){
+    onTapVariable = value;
+    notifyListeners();
+  }
+
+  void setOnDoubleTapVariable(bool value){
+    onDoubleTapVariable = value;
+    notifyListeners();
+  }
+
+  void setOnLongPressVariable(bool value){
+    onLongPressVariable = value;
+    notifyListeners();
   }
 
   // Convert the 'ui.Offset' from a Map during deserialization

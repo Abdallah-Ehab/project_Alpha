@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/entity/presentation/add_component_button.dart';
 import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';

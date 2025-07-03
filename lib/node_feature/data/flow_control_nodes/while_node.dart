@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -14,7 +13,7 @@ class WhileNode extends InputOutputNode {
     super.position,
    
   }) : super(
-          image: '',
+          image: 'assets/icons/while_node.png',
           color: Colors.cyan,
           width: 200,
           height: 200,

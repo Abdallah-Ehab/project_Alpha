@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -17,7 +16,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class IfNode extends InputOutputNode {
   IfNode({super.position = Offset.zero})
       : super(
-          image: '',
+          image: 'assets/icons/ifNode.png',
           color: Colors.green,
           width: 200,
           height: 200,

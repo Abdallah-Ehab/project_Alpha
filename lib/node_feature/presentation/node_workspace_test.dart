@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
@@ -12,7 +11,7 @@ import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
-import 'package:scratch_clone/node_feature/presentation/arrow_painter.dart';
+import 'package:scratch_clone/node_feature/presentation/node_deck.dart';
 
 class NodeWorkspaceCamera extends ChangeNotifier {
   Offset _position = Offset.zero;
@@ -90,17 +89,21 @@ class _NodeWorkspaceTestState extends State<NodeWorkspaceTest> {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
     final entityManager = context.read<EntityManager>();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ),
+      drawer: NodeDeck(),
       body: ChangeNotifierProvider.value(
         value: entityManager.activeEntity,
         child: Consumer<Entity>(
           builder: (context, activeEntity, child) {
             final nodeComponent = activeEntity.getComponent<NodeComponent>();
-        
+
             if (nodeComponent == null) {
               return const Center(
                   child: Text("No NodeComponent on active entity."));
             }
-        
+
             return ChangeNotifierProvider.value(
               value: nodeComponent,
               child: ChangeNotifierProvider.value(
@@ -109,7 +112,7 @@ class _NodeWorkspaceTestState extends State<NodeWorkspaceTest> {
                   builder: (context, constraints) {
                     final viewportSize =
                         Size(constraints.maxWidth, constraints.maxHeight);
-        
+
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onScaleStart: (details) {
@@ -124,51 +127,57 @@ class _NodeWorkspaceTestState extends State<NodeWorkspaceTest> {
                           _camera.pan(-details.focalPointDelta / _camera.zoom);
                         } else if (details.pointerCount == 2) {
                           // Two fingers - zoom
-                          _camera.zoomAt(details.localFocalPoint, details.scale);
+                          _camera.zoomAt(
+                              details.localFocalPoint, details.scale);
                         }
                       },
                       child: Consumer2<NodeComponent, NodeWorkspaceCamera>(
                         builder: (context, nodeComponent, camera, child) {
-                          return ClipRect(
-                            child: CustomPaint(
-                              size: viewportSize,
-                              painter: InfiniteGridPainter(
-                                camera: camera,
-                                viewportSize: viewportSize,
-                              ),
-                              child: Stack(
-                                children: [
-                                  // Connection lines
-                                  CustomPaint(
-                                    size: viewportSize,
-                                    painter: InfiniteArrowPainter(
-                                      nodes: nodeComponent.workspaceNodes,
-                                      connectionProvider: connectionProvider,
-                                      camera: camera,
-                                      viewportSize: viewportSize,
+                          return DragTarget<NodeModel>(
+                            onAcceptWithDetails: (details){
+                              nodeComponent.addNodeToWorkspace(details.data.copyWith(position: camera.screenToWorld(details.offset, viewportSize)));
+                            },
+                            builder: (context, candidateData, rejectedData) =>  ClipRect(
+                              child: CustomPaint(
+                                size: viewportSize,
+                                painter: InfiniteGridPainter(
+                                  camera: camera,
+                                  viewportSize: viewportSize,
+                                ),
+                                child: Stack(
+                                  children: [
+                                    // Connection lines
+                                    CustomPaint(
+                                      size: viewportSize,
+                                      painter: InfiniteArrowPainter(
+                                        nodes: nodeComponent.workspaceNodes,
+                                        connectionProvider: connectionProvider,
+                                        camera: camera,
+                                        viewportSize: viewportSize,
+                                      ),
                                     ),
-                                  ),
-                                  // Nodes
-                                  ...nodeComponent.workspaceNodes
-                                      .where((node) => _camera.isRectVisible(
-                                            Rect.fromLTWH(
-                                              node.position.dx,
-                                              node.position.dy,
-                                              node.width,
-                                              node.height,
-                                            ),
-                                            viewportSize,
-                                          ))
-                                      .map((node) {
-                                    return InfiniteNodeRenderer(
-                                      key: ValueKey(node.id),
-                                      nodeModel: node,
-                                      camera: _camera,
-                                      viewportSize: viewportSize,
-                                      onDragStart: () => _isPanning = false,
-                                    );
-                                  }),
-                                ],
+                                    // Nodes
+                                    ...nodeComponent.workspaceNodes
+                                        .where((node) => _camera.isRectVisible(
+                                              Rect.fromLTWH(
+                                                node.position.dx,
+                                                node.position.dy,
+                                                node.width,
+                                                node.height,
+                                              ),
+                                              viewportSize,
+                                            ))
+                                        .map((node) {
+                                      return InfiniteNodeRenderer(
+                                        key: ValueKey(node.id),
+                                        nodeModel: node,
+                                        camera: _camera,
+                                        viewportSize: viewportSize,
+                                        onDragStart: () => _isPanning = false,
+                                      );
+                                    }),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -454,10 +463,10 @@ class InfiniteArrowPainter extends CustomPainter {
       final endPoint = camera.worldToScreen(
           connectionProvider.currentPosition!, viewportSize);
       paint.color = Colors.grey;
-      _drawArrow(canvas, paint, startPoint,endPoint,dashed: true);
+      _drawArrow(canvas, paint, startPoint, endPoint, dashed: true);
     }
 
-    for(final node in nodes){
+    for (final node in nodes) {
       if (node.child != null) {
         final child = node.child!;
         final bottomPoint = node.connectionPoints
@@ -469,8 +478,8 @@ class InfiniteArrowPainter extends CustomPainter {
           final start = node.position + bottomPoint.computeOffset(node);
           final end = child.position + topPoint.computeOffset(child);
           final startPoint = camera.worldToScreen(start, viewportSize);
-          final endPoint  = camera.worldToScreen(end, viewportSize);
-      
+          final endPoint = camera.worldToScreen(end, viewportSize);
+
           paint.color = Colors.blueGrey;
           _drawArrow(canvas, paint, startPoint, endPoint, dashed: false);
         }
@@ -483,11 +492,41 @@ class InfiniteArrowPainter extends CustomPainter {
             .firstWhereOrNull((p) => p is InputConnectionPoint);
 
         if (outputPoint != null && inputPoint != null) {
-          final start = camera.worldToScreen(node.position,viewportSize) + outputPoint.computeOffset(node);
+          final start = camera.worldToScreen(node.position, viewportSize) +
+              outputPoint.computeOffset(node);
           final end =
-              camera.worldToScreen(node.output!.position,viewportSize) + inputPoint.computeOffset(node.output!);
-              paint.color = Colors.red;
+              camera.worldToScreen(node.output!.position, viewportSize) +
+                  inputPoint.computeOffset(node.output!);
+          paint.color = Colors.red;
           _drawArrow(canvas, paint, start, end, dashed: false);
+        }
+      }
+
+      if (node is OutputNodeWithValue && node.sourceNode != null) {
+        final sourceNode = node.sourceNode!;
+        final sourcePoints =
+            sourceNode.connectionPoints.whereType<ValueConnectionPoint>();
+        final targetPoints =
+            node.connectionPoints.whereType<ValueConnectionPoint>();
+
+        for (final targetCp in targetPoints) {
+          if (!targetCp.isConnected) continue;
+
+          final int? targetSourceIndex = targetCp.sourceIndex;
+          if (targetSourceIndex == null) continue;
+
+          // Find the ValueConnectionPoint in the source node that matches the sourceIndex
+          final sourceCp = sourcePoints
+              .firstWhereOrNull((cp) => cp.valueIndex == targetSourceIndex);
+
+          if (sourceCp != null) {
+            final start =
+                camera.worldToScreen(sourceNode.position + sourceCp.computeOffset(sourceNode),viewportSize);
+            final end = camera.worldToScreen(node.position + targetCp.computeOffset(node),viewportSize);
+            paint.color = Colors.orange;
+            _drawArrow(canvas, paint, start, end,
+                dashed: false); // Your custom arrow-drawing logic
+          }
         }
       }
     }

@@ -73,6 +73,7 @@ abstract class ConnectionPointModel {
         )..isConnected = isConnected;
       case 'ValueConnectionPoint':
         return ValueConnectionPoint(
+          isLeft: json['isLeft'] as bool,
           position: position,
           width: width,
           valueIndex: json['valueIndex'] as int,
@@ -345,10 +346,12 @@ class ConnectConnectionPoint extends ConnectionPointModel {
 }
 
 class ValueConnectionPoint extends ConnectionPointModel {
-  NodeModel? sourceNode; // Single source node to prevent multiple connections
-  int valueIndex; // 0 for dx, 1 for dy
-
+  NodeModel? sourceNode;
+  int valueIndex;
+  int? sourceIndex;
+  bool isLeft;
   ValueConnectionPoint({
+    required this.isLeft,
     required super.position,
     required this.valueIndex,
     required super.width,
@@ -363,8 +366,10 @@ class ValueConnectionPoint extends ConnectionPointModel {
     bool? isConnected,
     NodeModel? sourceNode,
     int? valueIndex,
+    bool? isLeft
   }) {
     return ValueConnectionPoint(
+      isLeft: isLeft ?? this.isLeft,
       position: position ?? this.position,
       valueIndex: valueIndex ?? this.valueIndex,
       width: width ?? this.width,
@@ -397,7 +402,7 @@ class ValueConnectionPoint extends ConnectionPointModel {
 
   @override
   Offset computeOffset(NodeModel owner) {
-    return Offset(owner.width / 2 - width / 2, owner.height / 4 - width / 2 + valueIndex * (owner.height / 2));
+    return isLeft ? Offset(width / 2, owner.height / 4 - width / 2 + valueIndex * (owner.height / 2)) : Offset(owner.width / 2 - width / 2, owner.height / 4 - width / 2 + valueIndex * (owner.height / 2));
     // Positions: first value at top (height/4), second at bottom (3*height/4)
   }
 
@@ -424,15 +429,16 @@ class ValueConnectionPoint extends ConnectionPointModel {
     for (var targetNode in nodes) {
       if (targetNode.id == fromNode.id) continue;
 
-      for (var point in targetNode.connectionPoints) {
-        if (point is! ValueConnectionPoint) continue; // Only connect to ValueConnectionPoint
+      for (var targetPoint in targetNode.connectionPoints) {
+        if (targetPoint is! ValueConnectionPoint) continue; // Only connect to ValueConnectionPoint
 
-        final pointPos = targetNode.position + point.computeOffset(targetNode);
-        if ((endPos - pointPos).distance <= 20) {
-          if (fromNode is HasOutput && point.sourceNode == null) {
-            // Ensure no existing connection and valid source
-            point.sourceNode = fromNode;
-            point.isConnected = true;
+        final targetPointPos = targetNode.position + targetPoint.computeOffset(targetNode);
+        if ((endPos - targetPointPos).distance <= 20) {
+          if (targetNode is OutputNodeWithValue && targetPoint.sourceNode == null) {
+           
+            targetPoint.isConnected = true;
+            targetPoint.sourceIndex = valueIndex;
+            targetNode.connectValue(fromNode);
             log('ValueConnectionPoint $valueIndex on $targetNode connected to $fromNode');
             provider.clear();
             return;
@@ -444,15 +450,15 @@ class ValueConnectionPoint extends ConnectionPointModel {
     provider.clear();
   }
 
-  dynamic processValue(dynamic result, NodeModel input) {
+  dynamic processValue(dynamic result) {
     if (sourceNode == null || !isConnected) return null;
-    if (sourceNode!.id != input.id) return null;
     if (result.errorMessage != null) return null;
     final value = result.result;
-    if (value is List && value.length > valueIndex) {
-      return value[valueIndex]; // Extract dx (0) or dy (1) from position
+    if (value is List && sourceIndex != null && value.length > sourceIndex!) {
+      return value[sourceIndex!];
     }
-    return value; // Fallback for single-value outputs
+
+    return value;
   }
   
   @override

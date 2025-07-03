@@ -1,6 +1,5 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
-import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
