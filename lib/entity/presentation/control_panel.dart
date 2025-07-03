@@ -241,7 +241,7 @@ class _ControlPanelState extends State<ControlPanel> {
       children: [
       
         const SizedBox(height: 8),
-        Text('Block Components (${nodeComponents?.length})',
+        Text('Block Components (${nodeComponents.length})',
             style: TextStyle(fontFamily: 'PressStart2P',fontSize: 15)),
         const SizedBox(height: 8),
         ...List.generate(nodeComponents.length, (index) {
@@ -264,7 +264,7 @@ class _ControlPanelState extends State<ControlPanel> {
                   }
                 },
                 checkColor: Colors.white,
-                fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                fillColor: WidgetStateProperty.resolveWith<Color>((states) {
                   return Colors.transparent;
                 }),
                 side: const BorderSide(color: Colors.white, width: 2.0),

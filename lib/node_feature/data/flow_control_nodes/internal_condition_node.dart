@@ -22,72 +22,82 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
   }) : super(connectionPoints: []);
 
   @override
-  Result<bool> execute([Entity? entity]) {
-    if (firstOperand == null ||
-        secondOperand == null ||
-        comparisonOperator.isEmpty) {
-      return Result.failure(errorMessage: "Missing operand or operator.");
-    }
+  @override
+Result<bool> execute([Entity? entity]) {
+  if (firstOperand == null || secondOperand == null || comparisonOperator.isEmpty) {
+    return Result.failure(errorMessage: "Missing operand or operator.");
+  }
 
-    dynamic op1 = firstOperand;
-    dynamic op2 = secondOperand;
+  final parsed1 = _parseValue(firstOperand, entity);
+  final parsed2 = _parseValue(secondOperand, entity);
 
+  switch (comparisonOperator) {
+    case '==':
+      return Result.success(result: parsed1 == parsed2);
+    case '!=':
+      return Result.success(result: parsed1 != parsed2);
+    case '>':
+      if (parsed1 is num && parsed2 is num) {
+        return Result.success(result: parsed1 > parsed2);
+      }
+      break;
+    case '<':
+      if (parsed1 is num && parsed2 is num) {
+        return Result.success(result: parsed1 < parsed2);
+      }
+      break;
+    case '>=':
+      if (parsed1 is num && parsed2 is num) {
+        return Result.success(result: parsed1 >= parsed2);
+      }
+      break;
+    case '<=':
+      if (parsed1 is num && parsed2 is num) {
+        return Result.success(result: parsed1 <= parsed2);
+      }
+      break;
+  }
+
+  return Result.failure(errorMessage: "Invalid comparison or incompatible types.");
+}
+
+  dynamic _parseValue(dynamic val, Entity? entity) {
+  if (val is bool) return val;
+
+  if (val is String) {
+    final lower = val.trim().toLowerCase();
+
+    if (lower == 'true') return true;
+    if (lower == 'false') return false;
+
+    // Built-in gesture variables
     if (entity != null) {
-      if (entity.variables.containsKey(op1)) {
-        op1 = entity.variables[op1];
+      switch (lower) {
+        case 'ontap':
+          return entity.onTapVariable;
+        case 'onlongpress':
+          return entity.onLongPressVariable;
+        case 'ondoubletap':
+          return entity.onDoubleTapVariable;
       }
-      if (entity.variables.containsKey(op2)) {
-        op2 = entity.variables[op2];
+
+      // Normal variable lookup
+      if (entity.variables.containsKey(val)) {
+        return entity.variables[val];
       }
     }
 
-    final parsed1 = _parseValue(op1);
-    final parsed2 = _parseValue(op2);
+    final numVal = double.tryParse(lower);
+    if (numVal != null) return numVal;
 
-    switch (comparisonOperator) {
-      case '==':
-        return Result.success(result: parsed1 == parsed2);
-      case '!=':
-        return Result.success(result: parsed1 != parsed2);
-      case '>':
-        if (parsed1 is num && parsed2 is num) {
-          return Result.success(result: parsed1 > parsed2);
-        }
-        break;
-      case '<':
-        if (parsed1 is num && parsed2 is num) {
-          return Result.success(result: parsed1 < parsed2);
-        }
-        break;
-      case '>=':
-        if (parsed1 is num && parsed2 is num) {
-          return Result.success(result: parsed1 >= parsed2);
-        }
-        break;
-      case '<=':
-        if (parsed1 is num && parsed2 is num) {
-          return Result.success(result: parsed1 <= parsed2);
-        }
-        break;
-    }
-
-    return Result.failure(
-        errorMessage: "Invalid comparison or incompatible types.");
+    return val; // Fallback: return raw string
   }
 
-  dynamic _parseValue(dynamic val) {
-    if (val is bool) return val;
-    if (val is String) {
-      final lower = val.toLowerCase();
-      if (lower == 'true') return true;
-      if (lower == 'false') return false;
-      final numVal = double.tryParse(val);
-      if (numVal != null) return numVal;
-      return val;
-    }
-    if (val is num) return val;
-    return val;
-  }
+  if (val is num) return val;
+
+  return val;
+}
+
 
   @override
   String toString() => "$firstOperand $comparisonOperator $secondOperand";

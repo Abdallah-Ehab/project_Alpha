@@ -10,17 +10,17 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/teleport_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class TeleportNode extends InputOutputNode {
+class TeleportNode extends OutputNodeWithValue {
   TeleportNode({super.position = Offset.zero})
       : super(
-          image: '',
+          image: 'assets/icons/TeleportNode.png',
           color: Colors.orange,
           width: 180,
           height: 160,
           connectionPoints: [
             InputConnectionPoint(position: Offset.zero, width: 30),
-            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 0),
-            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 1),
+            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 0,isLeft: true),
+            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 1,isLeft: true),
             ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30),
             ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
           ],
@@ -41,18 +41,19 @@ class TeleportNode extends InputOutputNode {
     }
 
     dynamic dx = (connectionPoints[1] as ValueConnectionPoint)
-        .processValue(inputResult, input ?? this);
+        .processValue(inputResult);
     dynamic dy = (connectionPoints[2] as ValueConnectionPoint)
-        .processValue(inputResult, input ?? this);
+        .processValue(inputResult);
 
     if (dx == null && dy == null) {
       return Result.failure(errorMessage: "No dx or dy input connected");
     }
-
+    log('dx is $dx');
+    log('dy is $dy');
     activeEntity.teleport(dx: dx as double, dy: dy as double);
     log("Teleported entity to $dx, $dy");
 
-    return output?.execute(activeEntity) ?? Result.success(result: null);
+    return Result.success(result: null);
   }
 
   @override
@@ -78,6 +79,8 @@ class TeleportNode extends InputOutputNode {
       ..isConnected = isConnected ?? this.isConnected
       ..child =null
       ..parent = null
+      ..input = null
+      ..sourceNode = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
   }

@@ -9,13 +9,13 @@ class PixelatedSlider extends StatelessWidget {
   final int? divisions;
 
   const PixelatedSlider({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.min = 0.0,
     this.max = 1.0,
     this.divisions, required this.label,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

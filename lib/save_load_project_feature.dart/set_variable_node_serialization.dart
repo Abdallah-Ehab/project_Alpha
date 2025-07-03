@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';

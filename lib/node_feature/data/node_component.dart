@@ -6,8 +6,10 @@ import 'package:scratch_clone/node_feature/data/flow_control_nodes/condition_gro
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
+import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 
@@ -23,12 +25,8 @@ class NodeComponent extends Component {
     this.workspaceNodes = workspaceNodes ??
         [
           this.startNode!,
-          IfNode(),
-          ConditionGroupNode(logicSequence: []),
-          StatementGroupNode(statements: []),
-          MoveNode(),
-          DeclareVariableNode(),
-          SpawnEntityNode()
+          TeleportNode(),
+          GetPropertyFromEntityNode()
         ];
   }
 

@@ -15,13 +15,6 @@ class AddToPrefabsButton extends StatelessWidget {
     return PixelArtButton(
       text: 'Add to Prefabs',
       callback: () {
-        if (activeEntity == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No active entity selected')),
-          );
-          return;
-        }
-
         showDialog(
           context: context,
           builder: (context) => PrefabNameDialog(

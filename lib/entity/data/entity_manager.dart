@@ -17,6 +17,7 @@ extension EntityTypeExtension on EntityType {
 
 class EntityManager extends ChangeNotifier {
   late Map<EntityType, Map<String, Entity>> _entities;
+
   Entity? _activeEntity;
   CameraEntity? _activeCamera;
   static final EntityManager _instance = EntityManager._internal();
@@ -27,6 +28,8 @@ class EntityManager extends ChangeNotifier {
   final _entitiesToRemove = <Entity>[];
 
   final Map<String, Entity> prefabs = {};
+
+  final Map<String,dynamic> globalVariables = {};
 
 void addPrefab(String name, Entity entity) {
   entities[EntityType.actors]?.removeWhere((key, value) => value.name == entity.name);
@@ -44,6 +47,10 @@ void spawnPrefab(String name, Offset position) {
   spawnEntityLater(clone);
 }
 
+void addGlobalVariable(String name,dynamic value){
+  globalVariables[name] = value;
+  notifyListeners();
+}
 
   EntityManager._internal() {
     _entities = {

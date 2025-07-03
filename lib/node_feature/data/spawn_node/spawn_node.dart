@@ -16,10 +16,12 @@ class SpawnEntityNode extends NodeModel {
   String prefabName;
 
   SpawnEntityNode({
+    
     this.prefabName = '',
     super.position = Offset.zero,
    
   }) : super(
+    image: 'assets/icons/SpawnEntityNode.png',
           width: 200,
           height: 100,
           color: Colors.black,

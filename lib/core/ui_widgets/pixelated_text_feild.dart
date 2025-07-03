@@ -7,12 +7,12 @@ class PixelatedTextField extends StatelessWidget {
   final TextInputType keyboardType;
 
   const PixelatedTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     required this.onChanged,
     this.keyboardType = const TextInputType.numberWithOptions(),  // default to numbers
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

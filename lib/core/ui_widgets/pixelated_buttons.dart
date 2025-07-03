@@ -5,10 +5,10 @@ class PixelArtButton extends StatelessWidget {
   final VoidCallback callback;
 
   const PixelArtButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.callback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

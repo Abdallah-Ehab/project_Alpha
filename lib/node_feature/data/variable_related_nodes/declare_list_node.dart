@@ -21,8 +21,9 @@ class DeclareListNode extends NodeModel {
 
   @override
   Result execute([Entity? activeEntity]) {
-    if (activeEntity == null)
+    if (activeEntity == null) {
       return Result.failure(errorMessage: "No entity found");
+    }
     if (activeEntity.lists.containsKey(listName)) {
       return Result.failure(errorMessage: "List '$listName' already exists");
     }

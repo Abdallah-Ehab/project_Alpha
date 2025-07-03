@@ -65,7 +65,7 @@ class _SoundControllerWidgetState extends State<SoundControllerWidget>
                       },
                       checkColor: Colors.white,
                       fillColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
+                      WidgetStateProperty.resolveWith<Color>((states) {
                         return Colors.transparent;
                       }),
                       side: const BorderSide(color: Colors.white, width: 2.0),
