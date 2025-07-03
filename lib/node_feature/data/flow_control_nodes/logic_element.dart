@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/internal_condition_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logical_operator_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/data/node_types.dart';
 
 abstract class LogicElementNode extends NodeModel {
   LogicElementNode({

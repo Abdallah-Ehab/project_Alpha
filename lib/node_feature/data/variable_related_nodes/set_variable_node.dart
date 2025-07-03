@@ -17,6 +17,7 @@ class SetVariableNode extends NodeModel {
 
     super.position = Offset.zero
   }) : super(
+          image: 'assets/icons/setVariable.png',
           connectionPoints: [
             ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
             ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20),

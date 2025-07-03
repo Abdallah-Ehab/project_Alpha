@@ -9,13 +9,13 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/object_property_node_widgets/get_property_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class GetPropertyFromEntityNode extends OutputNode {
+class GetPropertyFromEntityNode extends InputNodeWithValue {
   String entityName;
   Property selectedProperty;
   bool hasTwoOutputs;
 
   GetPropertyFromEntityNode({
-    this.entityName = '',
+    this.entityName = 'assets/icons/GetPropertyFromEntityNode.png',
     this.selectedProperty = Property.position,
     this.hasTwoOutputs = true,
     super.position,
@@ -26,7 +26,8 @@ class GetPropertyFromEntityNode extends OutputNode {
           height: 120,
           connectionPoints: [
             OutputConnectionPoint(position: Offset.zero, width: 30),
-            OutputConnectionPoint(position: Offset.zero, width: 30),
+            ValueConnectionPoint(position: Offset.zero, valueIndex: 0, width: 30,isLeft: false),
+            ValueConnectionPoint(position: Offset.zero, valueIndex: 1, width: 30,isLeft: false),
           ],
         );
 
@@ -73,7 +74,7 @@ class GetPropertyFromEntityNode extends OutputNode {
     String? entityName,
     Property? selectedProperty,
     bool? hasTwoOutputs,
-    NodeModel? input,
+    NodeModel? sourceNode,
     List<ConnectionPointModel>? connectionPoints,
   }) {
     return GetPropertyFromEntityNode(
@@ -85,7 +86,8 @@ class GetPropertyFromEntityNode extends OutputNode {
       ..isConnected = isConnected ?? this.isConnected
       ..child = null
       ..parent = null
-      ..input = null
+      ..sourceNode = null
+      ..output = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(
               this.connectionPoints.map((cp) => cp.copy()));
@@ -93,16 +95,7 @@ class GetPropertyFromEntityNode extends OutputNode {
 
   @override
   NodeModel copy() {
-    return copyWith(
-      position: position,
-      entityName: entityName,
-      selectedProperty: selectedProperty,
-      hasTwoOutputs: hasTwoOutputs,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      input: input?.copy(),
-    ) as GetPropertyFromEntityNode;
+    return copyWith() as GetPropertyFromEntityNode;
   }
 
   @override

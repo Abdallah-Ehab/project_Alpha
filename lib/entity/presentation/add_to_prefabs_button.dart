@@ -17,6 +17,7 @@ class AddToPrefabsButton extends StatelessWidget {
       fontsize: 12,
       text: 'Add to Prefabs',
       callback: () {
+
         if (activeEntity == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('No active entity selected',style: TextStyle(
@@ -24,6 +25,7 @@ class AddToPrefabsButton extends StatelessWidget {
           ));
           return;
         }
+
 
         showDialog(
           context: context,

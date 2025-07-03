@@ -16,6 +16,8 @@ class PixelatedTextField extends StatelessWidget {
     this.keyboardType = const TextInputType.numberWithOptions(),Color? borderColor  // default to numbers
   }) :borderColor=borderColor ?? Colors.black, super(key: key);
 
+ 
+
   @override
   Widget build(BuildContext context) {
     return TextField(

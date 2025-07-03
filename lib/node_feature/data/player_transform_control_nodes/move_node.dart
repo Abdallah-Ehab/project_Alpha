@@ -18,7 +18,9 @@ class MoveNode extends NodeModel {
     this.x = 0.0,
     this.y = 0.0,
     super.position = Offset.zero
-  }) : super(connectionPoints: [
+  }) : super(
+    image: 'assets/icons/moveNode.png',
+    connectionPoints: [
           ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
           ConnectConnectionPoint(
               position: Offset.zero, isTop: false, width: 20),

@@ -6,10 +6,12 @@ class PixelArtButton extends StatelessWidget {
   final double fontsize;
 
   const PixelArtButton({
-    Key? key,
+    super.key,
     required this.text,
+
     required this.callback, required this.fontsize,
   }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {

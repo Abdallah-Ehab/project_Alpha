@@ -9,6 +9,7 @@ class PixelatedSlider extends StatelessWidget {
   final int? divisions;
   final Color color;
 
+
    PixelatedSlider({
     Key? key,
     required this.value,
@@ -18,6 +19,7 @@ class PixelatedSlider extends StatelessWidget {
     this.divisions, required this.label,
     Color?color
   }):color = color ?? Color(0xFF222222) , super(key: key);
+
 
   @override
   Widget build(BuildContext context) {

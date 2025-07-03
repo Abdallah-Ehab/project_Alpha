@@ -6,6 +6,7 @@ import 'package:scratch_clone/camera_feature/presentation/editor_camera_wrapper.
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/entity/presentation/entity_renderer.dart';
+import 'package:scratch_clone/game_state/game_state.dart';
 
 class GameView extends StatelessWidget {
   const GameView({super.key});
@@ -14,7 +15,7 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     final entityManager = context.watch<EntityManager>();
     final camera = entityManager.activeCamera;
-
+    final gameState = context.watch<GameState>();
     return ChangeNotifierProvider.value(
       value: camera,
       child: Consumer<CameraEntity>(
@@ -33,13 +34,22 @@ class GameView extends StatelessWidget {
                       (e) => ChangeNotifierProvider.value(
                         value: e,
                         child: Consumer<Entity>(
-                          builder: (context, entity, _) => Transform(
-                            transform: Matrix4.identity()
-                              ..translate(
-                                  entity.position.dx, entity.position.dy)
-                              ..scale(entity.widthScale, entity.heigthScale)
-                              ..rotateY(entity.rotation),
-                            child: EntityRenderer(entity: entity),
+                          builder: (context, entity, _) => GestureDetector(
+                            onTap:() {
+                              if(gameState.isPlaying){
+                                entity.setOnTapVariable(true);
+                              }else{
+                                entityManager.activeEntity = entity;
+                              }
+                            },
+                            child: Transform(
+                              transform: Matrix4.identity()
+                                ..translate(
+                                    entity.position.dx, entity.position.dy)
+                                ..scale(entity.widthScale, entity.heigthScale)
+                                ..rotateY(entity.rotation),
+                              child: EntityRenderer(entity: entity),
+                            ),
                           ),
                         ),
                       ),
