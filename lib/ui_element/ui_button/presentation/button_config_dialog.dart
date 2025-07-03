@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/ui_element/ui_button/data/abstract_button.dart';
 
@@ -60,17 +62,35 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Configure Button"),
+      backgroundColor: Color(0xFF222222),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.white, width: 2),
+      ),
+      title: const Text("Configure Button", style: TextStyle(
+        fontFamily: 'PressStart2P',
+        fontSize: 18,
+        color: Colors.white
+      ),),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
+          PixelatedTextField(
+            borderColor: Colors.white,
+            onChanged: (value) {
+
+            },hintText:'Entity Name' ,
             controller: entityController,
-            decoration: const InputDecoration(labelText: 'Entity Name'),
+
           ),
-          TextField(
+          SizedBox(height: 16,),
+          PixelatedTextField(
+            borderColor: Colors.white,
+            onChanged: (value) {
+
+            },hintText:'Variable Name' ,
             controller: variableController,
-            decoration: const InputDecoration(labelText: 'Variable Name'),
+
           ),
           if (error != null)
             Padding(
@@ -80,14 +100,10 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text("Submit"),
-        ),
+        PixelArtButton(text:"Cancel", callback: () => Navigator.pop(context), fontsize: 14),
+        PixelArtButton(text:"Submit", callback: _submit, fontsize: 14)
+
+
       ],
     );
   }

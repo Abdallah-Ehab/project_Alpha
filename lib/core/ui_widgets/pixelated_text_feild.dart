@@ -5,14 +5,16 @@ class PixelatedTextField extends StatelessWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
   final TextInputType keyboardType;
+  final Color borderColor;
+ 
 
-  const PixelatedTextField({
+   PixelatedTextField({
     Key? key,
     required this.controller,
     required this.hintText,
     required this.onChanged,
-    this.keyboardType = const TextInputType.numberWithOptions(),  // default to numbers
-  }) : super(key: key);
+    this.keyboardType = const TextInputType.numberWithOptions(),Color? borderColor  // default to numbers
+  }) :borderColor=borderColor ?? Colors.black, super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +43,8 @@ class PixelatedTextField extends StatelessWidget {
         counterText: '',
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Colors.black,
+          borderSide:  BorderSide(
+            color: borderColor,
             width: 2,
           ),
         ),

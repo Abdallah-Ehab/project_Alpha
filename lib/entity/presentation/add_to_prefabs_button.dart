@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 class AddToPrefabsButton extends StatelessWidget {
@@ -13,12 +14,14 @@ class AddToPrefabsButton extends StatelessWidget {
     final activeEntity = entityManager.activeEntity;
 
     return PixelArtButton(
+      fontsize: 12,
       text: 'Add to Prefabs',
       callback: () {
         if (activeEntity == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No active entity selected')),
-          );
+            const SnackBar(content: Text('No active entity selected',style: TextStyle(
+              fontFamily: 'PressStart2P', fontSize: 8, color: Colors.white)),
+          ));
           return;
         }
 
@@ -69,20 +72,41 @@ class _PrefabNameDialogState extends State<PrefabNameDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Enter Prefab Name'),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(labelText: 'Prefab Name'),
-        autofocus: true,
+      backgroundColor: const Color(0xFF222222),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: Colors.white, width: 2),
+      ),
+      title: const Text(
+        'Enter Prefab Name',
+        style: TextStyle(
+          fontFamily: 'PressStart2P',
+          fontSize: 18,
+          color: Colors.white,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          PixelatedTextField(
+            borderColor: Colors.white,
+            controller: _controller,
+            hintText: 'Prefab Name',
+            onChanged: (_) {},
+          ),
+        ],
       ),
       actions: [
-        TextButton(
-          onPressed: Navigator.of(context).pop,
-          child: const Text('Cancel'),
+        PixelArtButton(
+          fontsize: 12,
+          callback: () => Navigator.of(context).pop(),
+          text: 'Cancel',
         ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Save'),
+        const SizedBox(width: 16),
+        PixelArtButton(
+          fontsize: 12,
+          callback: _submit,
+          text: 'Save',
         ),
       ],
     );

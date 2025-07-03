@@ -7,28 +7,30 @@ class PixelatedSlider extends StatelessWidget {
   final double min;
   final double max;
   final int? divisions;
+  final Color color;
 
-  const PixelatedSlider({
+   PixelatedSlider({
     Key? key,
     required this.value,
     required this.onChanged,
     this.min = 0.0,
     this.max = 1.0,
     this.divisions, required this.label,
-  }) : super(key: key);
+    Color?color
+  }):color = color ?? Color(0xFF222222) , super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         trackHeight: 2.0,
-        activeTrackColor: const Color(0xFF222222),
+        activeTrackColor: color,
         inactiveTrackColor: Colors.white,
 
-        thumbColor: const Color(0xFF222222),
+        thumbColor: color,
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
 
-        overlayColor: const Color(0xFF222222).withOpacity(0.12),
+        overlayColor: color.withOpacity(0.12),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 12.0),
       ),
       child: Slider(

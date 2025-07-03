@@ -17,12 +17,14 @@ class GameScene extends StatelessWidget {
       backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [EntitySelectorDropdown()],
+        actions: [EntitySelectorArrows()],
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.transparent,
       ),
       
       drawer: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CreateEntityButton(),
           SizedBox(height: 20,),
