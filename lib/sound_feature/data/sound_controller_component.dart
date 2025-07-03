@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -11,9 +12,12 @@ class SoundControllerComponent extends Component {
 
   SoundControllerComponent({
    
-    this.currentlyPlaying,
+    this.currentlyPlaying = '',
     super.isActive,
-  }): tracks = {},transitions = [];
+  }): tracks = {},transitions = [
+    Transition(startTrackName: 'breath', condition: Condition(entityVariable: 'breath', secondOperand: 'true', operator: '=='), targetTrackName: 'boost'),
+    Transition(startTrackName: 'boost', condition: Condition(entityVariable: 'breath', secondOperand: 'true', operator: '=='), targetTrackName: 'breath')
+  ];
 
   @override
   void update(Duration dt, {required Entity activeEntity}) {
@@ -27,16 +31,28 @@ class SoundControllerComponent extends Component {
     notifyListeners();
   }
 
+  void addTrack(String name, SoundTrack track){
+    tracks[name] = track;
+    notifyListeners();
+  }
+
+  void setTrack(String trackName){
+    if (trackName == currentlyPlaying) return;
+    final track = tracks[trackName];
+    if (track == null) return;
+    currentlyPlaying = trackName;
+    notifyListeners();
+  }
   
 
-  void play(String trackName) {
+  void play(String trackName) async{
     if (trackName == currentlyPlaying) return;
     final track = tracks[trackName];
     if (track == null) return;
 
-    // trigger playback (delegate to audio manager)
-    AudioManager.instance.play(track.filePath,track.releaseMode, loop: track.loop);
+    await AudioManager.instance.playAsset(track.filePath, track.releaseMode, loop: track.loop);
     currentlyPlaying = trackName;
+    notifyListeners();
   }
 
   @override

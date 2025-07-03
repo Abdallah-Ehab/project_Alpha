@@ -6,12 +6,16 @@ import 'package:scratch_clone/animation_editor/presentation/full_animation_page.
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_slider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
+import 'package:scratch_clone/core/ui_widgets/sound_component_widget.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_card_widget.dart';
+import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
+import 'package:scratch_clone/sound_feature/presentation/full_sound_page.dart';
+import 'package:scratch_clone/sound_feature/presentation/sound_transition_page.dart';
 
 import '../../core/ui_widgets/animation_component.dart';
 
@@ -149,6 +153,7 @@ class _ControlPanelState extends State<ControlPanel> {
   }
 
   Widget _buildComponentPanels(BuildContext context, Entity entity) {
+
     return SizedBox(
       width: double.infinity,
       child: Card(
@@ -162,15 +167,20 @@ class _ControlPanelState extends State<ControlPanel> {
                 'Components',
                 style: TextStyle(fontFamily: 'PressStart2P', fontSize: 18),
               ),
-              const SizedBox(height: 10),
-              if (entity.getComponent<AnimationControllerComponent>() != null)
-                _buildAnimationComponentPanel(context, entity),
-              if (entity.getAllComponents<NodeComponent>() != null)
-                _buildNodeComponentPanel(context, entity),
-              if (entity.getComponent<ColliderComponent>() != null)
-                const ColliderCardWidget(),
+               const SizedBox(height: 10),
+            const SizedBox(height: 10),
+            if (entity.getComponent<AnimationControllerComponent>() != null)
+              _buildAnimationComponentPanel(context, entity),
+            if (entity.getAllComponents<NodeComponent>() != null)
+              _buildNodeComponentPanel(context, entity),
+            if (entity.getComponent<ColliderComponent>() != null)
+              const ColliderCardWidget(),
+            if(entity.getComponent<SoundControllerComponent>() != null)
+              _buildSoundComponentControl(context, entity)
+            
             ],
           ),
+
         ),
       ),
     );
@@ -196,6 +206,33 @@ class _ControlPanelState extends State<ControlPanel> {
           context,
           MaterialPageRoute(
             builder: (_) => const FullAnimationEditorPage(),
+          ),
+        );
+      },
+    );
+  }
+
+
+  Widget _buildSoundComponentControl(BuildContext context, Entity entity) {
+    final comp = entity.getComponent<SoundControllerComponent>()!;
+    final trackNames = comp.tracks.keys.toList();
+
+    return SoundControllerWidget(
+      options: trackNames,
+      initiallyChecked: comp.isActive,
+      initiallySelection: comp.currentlyPlaying,
+      onToggleChecked: (isActive) {
+        // toggles the component on/off
+        entity.toggleComponent(AnimationControllerComponent, 0);
+      },
+      onTrackChanged: (trackName) {
+        comp.setTrack(trackName);
+      },
+      onOpenEditor: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const FullSoundPage(),
           ),
         );
       },

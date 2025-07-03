@@ -7,6 +7,7 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/move_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 // Todo the move node will have 2 connection points (connect, connect) it doesn't have an input or output it will just be connected
 class MoveNode extends NodeModel {
@@ -16,25 +17,23 @@ class MoveNode extends NodeModel {
   MoveNode({
     this.x = 0.0,
     this.y = 0.0,
-  }) : super(
-          connectionPoints: [
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 20),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 20),
-          ],
-        position: Offset.zero,color: Colors.blue,width: 200, height: 100);
+    super.position = Offset.zero
+  }) : super(connectionPoints: [
+          ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
+          ConnectConnectionPoint(
+              position: Offset.zero, isTop: false, width: 20),
+        ], color: Colors.blue, width: 200, height: 100);
 
   @override
   Result<String> execute([Entity? activeEntity]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "Active entity not provided");
     }
-    if(activeEntity.name == 'fire'){
+    if (activeEntity.name == 'fire') {
       log("Iam fire and Iam moving baby");
     }
     activeEntity.move(x: x, y: y);
-   
+
     return Result.success(
         result: "Moved by $x horizontally and by $y vertically");
   }
@@ -76,6 +75,7 @@ class MoveNode extends NodeModel {
       x: x ?? this.x,
       y: y ?? this.y,
     )
+      ..position = position ?? this.position
       ..isConnected = isConnected ?? this.isConnected
       ..child = null
       ..parent = null
@@ -86,7 +86,30 @@ class MoveNode extends NodeModel {
 
   @override
   MoveNode copy() {
-    final moveNodeCopy =  copyWith();
+    final moveNodeCopy = copyWith();
     return moveNodeCopy;
   }
+
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'MoveNode';
+    map['x'] = x;
+    map['y'] = y;
+    return map;
+  }
+
+  static MoveNode fromJson(Map<String, dynamic> json) {
+  return MoveNode(
+    x: (json['x'] as num).toDouble(),
+    y: (json['y'] as num).toDouble(),
+    position: OffsetJson.fromJson(json['position'])
+  )
+    ..id = json['id']
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+}
+
 }

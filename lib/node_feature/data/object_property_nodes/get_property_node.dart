@@ -7,6 +7,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/object_property_node_widgets/get_property_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class GetPropertyFromEntityNode extends OutputNode {
   String entityName;
@@ -19,7 +20,7 @@ class GetPropertyFromEntityNode extends OutputNode {
     this.hasTwoOutputs = true,
     super.position,
   }) : super(
-    image: '',
+          image: '',
           color: Colors.teal,
           width: 180,
           height: 120,
@@ -82,10 +83,12 @@ class GetPropertyFromEntityNode extends OutputNode {
       position: position ?? this.position,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
-      ..input = input ?? this.input?.copy()
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+      ..child = null
+      ..parent = null
+      ..input = null
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
@@ -100,5 +103,32 @@ class GetPropertyFromEntityNode extends OutputNode {
       parent: parent?.copy(),
       input: input?.copy(),
     ) as GetPropertyFromEntityNode;
+  }
+
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'GetPropertyFromEntityNode';
+    map['entityName'] = entityName;
+    map['selectedProperty'] = selectedProperty.name; // Save as string
+    map['hasTwoOutputs'] = hasTwoOutputs;
+    return map;
+  }
+
+  static GetPropertyFromEntityNode fromJson(Map<String, dynamic> json) {
+    return GetPropertyFromEntityNode(
+      entityName: json['entityName'] ?? '',
+      selectedProperty: Property.values.firstWhere(
+        (e) => e.name == json['selectedProperty'],
+        orElse: () => Property.position,
+      ),
+      hasTwoOutputs: json['hasTwoOutputs'] ?? false,
+      position: OffsetJson.fromJson(json['position'])
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false
+      ..connectionPoints = (json['connectionPoints'] as List)
+          .map((e) => ConnectionPointModel.fromJson(e))
+          .toList();
   }
 }

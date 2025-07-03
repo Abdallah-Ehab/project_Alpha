@@ -65,12 +65,15 @@ class LogicOperatorNode extends LogicElementNode {
       height: height ?? this.height,
     )
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
+      ..child = null
+      ..parent = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(
               this.connectionPoints.map((cp) => cp.copy()));
   }
+
+  @override
+  LogicOperatorNode copy() => copyWith() as LogicOperatorNode;
 
   static LogicOperatorNode fromJson(Map<String, dynamic> json) {
     return LogicOperatorNode(
@@ -83,16 +86,10 @@ class LogicOperatorNode extends LogicElementNode {
   }
 
   @override
-  LogicOperatorNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      operator: operator,
-    ) as LogicOperatorNode;
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'LogicOperatorNode';
+    map['operator'] = operator.toString(); // Store enum as string
+    return map;
   }
 }

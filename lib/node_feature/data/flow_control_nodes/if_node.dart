@@ -17,7 +17,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class IfNode extends InputOutputNode {
   IfNode({super.position = Offset.zero})
       : super(
-        image: '',
+          image: '',
           color: Colors.green,
           width: 200,
           height: 200,
@@ -69,37 +69,44 @@ class IfNode extends InputOutputNode {
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
-    NodeModel? input,
-    NodeModel? output,
+    List<ConnectionPointModel>? connectionPoints,
   }) {
     return IfNode(position: position ?? this.position)
       ..isConnected = isConnected ?? this.isConnected
-      ..child = child
-      ..parent = parent
-      ..input = input ?? this.input?.copy()
-      ..output = output ?? this.output?.copy()
-      ..connectionPoints = List<ConnectionPointModel>.from(
-          connectionPoints.map((cp) => cp.copy()));
+      ..child = null
+      ..parent = null
+      ..input = null
+      ..output = null
+      ..connectionPoints = connectionPoints != null
+          ? List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy()))
+          : List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+  }
+
+  @override
+  IfNode copy() {
+    return copyWith() as IfNode;
   }
 
   static IfNode fromJson(Map<String, dynamic> json) {
     return IfNode(
       position: OffsetJson.fromJson(json['position']),
-    )..id = json['id']; // preserve id for linking
+    )
+      ..id = json['id']
+      ..width = (json['width'] as num).toDouble()
+      ..height = (json['height'] as num).toDouble()
+      ..isConnected = json['isConnected'] as bool
+      ..connectionPoints = (json['connectionPoints'] as List)
+          .map((e) {
+            if (e['isTop'] == null) return ConnectionPointModel.fromJson(e);
+            return ConnectionPointModel.fromJson(e);
+          })
+          .toList();
   }
 
   @override
-  IfNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      input: input?.copy(),
-      output: output?.copy(),
-    ) as IfNode;
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'IfNode';
+    return map;
   }
 }

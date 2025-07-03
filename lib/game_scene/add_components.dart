@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
@@ -8,6 +9,8 @@ import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
+import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
+import 'package:scratch_clone/sound_feature/data/sound_track.dart';
 
 class AddComponents extends StatelessWidget {
   const AddComponents({super.key});
@@ -21,13 +24,14 @@ class AddComponents extends StatelessWidget {
   activeEntity.addComponent(NodeComponent());
   activeEntity.addComponent(ColliderComponent());
   activeEntity.addComponent(RigidBodyComponent());
+  activeEntity.addComponent(SoundControllerComponent());
 
   // add collider component to ground :
   ground.addComponent(ColliderComponent());
   ground.addComponent(RigidBodyComponent(isStatic: true));
 
   var animComponent = activeEntity.getComponent<AnimationControllerComponent>();
-
+  
  
   animComponent!.addTrack("idle", track: AnimationTrack("idle", [],false,true));
   animComponent.addTrack("walk", track: AnimationTrack("walk", [],false,false));
@@ -42,6 +46,13 @@ class AddComponents extends StatelessWidget {
     var keyFrames = value.map((e) => KeyFrame(image: e, sketches: [])).toList();
     animComponent.addFramesToAnimationTracK(trackName: "walk", frames : keyFrames);
   });
+
+  var soundComponent = activeEntity.getComponent<SoundControllerComponent>();
+
+  soundComponent?.addTrack('breath', SoundTrack(name: 'breath', filePath: 'assets/sounds/breath.mp3', loop: true, releaseMode: ReleaseMode.loop));
+  soundComponent?.addTrack('boost', SoundTrack(name: 'boost', filePath:'assets/sounds/boost.mp3', loop:true, releaseMode:ReleaseMode.loop));
+
+
 
 
     return const TestGameLoop();

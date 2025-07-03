@@ -65,7 +65,7 @@ class _ComponentSelectionDialogState extends State<ComponentSelectionDialog> {
     'AnimationController',
     'Collider',
     'NodeComponent',
-    // Add more types here
+    'soundComponent'
   ];
 
   @override

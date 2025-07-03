@@ -6,6 +6,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/output_node_widgets/statements_group_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class StatementGroupNode extends OutputNode {
   final List<NodeModel> statements;
@@ -13,7 +14,15 @@ class StatementGroupNode extends OutputNode {
   StatementGroupNode({
     this.isHighlighted = false,
     required this.statements,
-  }) : super(image:'',connectionPoints: [InputConnectionPoint(position: Offset.zero, width:20),], position: Offset.zero,color: Colors.green,width: 200, height: 200);
+    super.position = Offset.zero
+  }) : super(
+            image: '',
+            connectionPoints: [
+              InputConnectionPoint(position: Offset.zero, width: 20),
+            ],
+            color: Colors.green,
+            width: 200,
+            height: 200);
 
   void addStatement(NodeModel node) {
     statements.add(node);
@@ -51,7 +60,7 @@ class StatementGroupNode extends OutputNode {
     );
   }
 
-  void highlightNode(bool highlight){
+  void highlightNode(bool highlight) {
     isHighlighted = highlight;
     notifyListeners();
   }
@@ -70,22 +79,45 @@ class StatementGroupNode extends OutputNode {
   }) {
     return StatementGroupNode(
       statements: statements ?? this.statements,
-    )..position = position ?? this.position
-      ..parent = parent ?? this.parent
-      ..child = child ?? this.child
+    )
+      ..position = position ?? this.position
+      ..parent = null
+      ..child = null
       ..isConnected = isConnected ?? this.isConnected
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+      ..connectionPoints = connectionPoints ??
+          List<ConnectionPointModel>.from(
+              this.connectionPoints.map((cp) => cp.copy()));
   }
 
   @override
   StatementGroupNode copy() {
-    return StatementGroupNode(
-      isHighlighted: isHighlighted,
-      statements: statements.map((s) => s.copy()).toList(),
-    )
-      ..isConnected = isConnected
-      ..child = child
-      ..parent = parent
-      ..connectionPoints = List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy()));
+    return copyWith();
   }
+
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'StatementGroupNode';
+    map['isHighlighted'] = isHighlighted;
+    map['statements'] =
+        statements.map((node) => node.baseToJson()).toList(); // store IDs only
+    return map;
+  }
+
+  static StatementGroupNode fromJson(Map<String, dynamic> json) {
+  return StatementGroupNode(
+    isHighlighted: json['isHighlighted'] ?? false,
+    statements: (json['statements'] as List<Map<String,dynamic>>).map((e)=>NodeModel.fromJson(e)).toList(),
+    position : OffsetJson.fromJson(json['position']) // we'll restore this later using IDs
+  )
+    ..id = json['id']
+    
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+    
+}
+
+
 }

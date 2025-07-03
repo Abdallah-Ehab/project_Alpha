@@ -14,21 +14,11 @@ abstract class LogicElementNode extends NodeModel {
     required super.connectionPoints,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'type': 'LogicElementNode', // Used as fallback; subclasses override it
-      'position': {'dx': position.dx, 'dy': position.dy},
-      'color': color.toARGB32(),
-      'width': width,
-      'height': height,
-      'isConnected': isConnected,
-      'childId': child?.id,
-      'parentId': parent?.id,
-      if (this is HasOutput) 'outputId': (this as HasOutput).output?.id,
-      if (this is HasInput) 'inputId': (this as HasInput).input?.id,
-      if (this is HasValue) 'sourceNodeId': (this as HasValue).sourceNode?.id,
-    };
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'LogicElementNode'; // fallback for unknown or base usage
+    return map;
   }
 
   static LogicElementNode fromJson(Map<String, dynamic> json) {
@@ -38,7 +28,7 @@ abstract class LogicElementNode extends NodeModel {
         return InternalConditionNode.fromJson(json);
       case 'LogicOperatorNode':
         return LogicOperatorNode.fromJson(json);
-      // Add more subclasses here
+      // Add more subclasses here as needed
       default:
         throw UnimplementedError('Unknown LogicElementNode type: $type');
     }

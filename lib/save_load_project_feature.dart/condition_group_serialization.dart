@@ -8,7 +8,7 @@ extension ConditionGroupNodeSerialization on ConditionGroupNode {
   Map<String, dynamic> toJson() => baseToJson()
     ..addAll({
       'type': 'ConditionGroupNode',
-      'logicSequence': logicSequence.map((e) => e.toJson()).toList(),
+      'logicSequence': logicSequence.map((e) => e.baseToJson()).toList(),
     });
 
   static ConditionGroupNode fromJson(Map<String, dynamic> json) {

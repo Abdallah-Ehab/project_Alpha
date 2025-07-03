@@ -22,6 +22,7 @@ abstract class Entity with ChangeNotifier {
   double heigthScale;
   Map<Type, List<Component>> components;
   Map<String, dynamic> variables;
+  Map<String, List<dynamic>> lists;
   int layerNumber;
 
   Entity({
@@ -33,7 +34,7 @@ abstract class Entity with ChangeNotifier {
     this.width = 100,
     this.height = 100,
     this.layerNumber = 0,
-  }):components = {},variables = {};
+  }):components = {},variables = {},lists = {};
 
   dynamic getProperty(Property property) {
     switch (property) {
@@ -205,6 +206,27 @@ abstract class Entity with ChangeNotifier {
     layerNumber = newLayerNumber;
     notifyListeners();
   }
+
+  void addList(String name, [List<dynamic>? initial = const []]) {
+  lists[name] = [...initial!];
+  notifyListeners();
+}
+
+void addToList(String name, dynamic value) {
+  lists[name]?.add(value);
+  notifyListeners();
+}
+
+void removeFromListAt(String name, int index) {
+  lists[name]?.removeAt(index);
+  notifyListeners();
+}
+
+void insertToListAt(String name, int index, dynamic value) {
+  lists[name]?.insert(index, value);
+  notifyListeners();
+}
+
 }
 
 class OffsetConverter
@@ -223,4 +245,6 @@ class OffsetConverter
       'y': offset.dy,
     };
   }
+
+  
 }

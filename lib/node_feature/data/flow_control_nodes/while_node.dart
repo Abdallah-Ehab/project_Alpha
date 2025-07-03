@@ -28,11 +28,6 @@ class WhileNode extends InputOutputNode {
           ],
         );
 
-  static WhileNode fromJson(Map<String, dynamic> json) => WhileNode(
-        position: OffsetJson.fromJson(json['position']),
-     
-      );
-
   @override
   Result<bool> execute([Entity? activeEntity]) {
     if (input == null) {
@@ -96,9 +91,9 @@ class WhileNode extends InputOutputNode {
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = child ?? this.child?.copy()
-      ..parent = parent ?? this.parent?.copy()
-      ..input = input ?? this.input?.copy()
-      ..output = output ?? this.output?.copy()
+      ..parent = null
+      ..input = null
+      ..output = null
       ..connectionPoints = connectionPoints ??
           List<ConnectionPointModel>.from(
               this.connectionPoints.map((cp) => cp.copy()));
@@ -106,16 +101,26 @@ class WhileNode extends InputOutputNode {
 
   @override
   WhileNode copy() {
-    return copyWith(
-      position: position,
-      color: color,
-      width: width,
-      height: height,
-      isConnected: isConnected,
-      child: child?.copy(),
-      parent: parent?.copy(),
-      input: input?.copy(),
-      output: output?.copy(),
-    ) as WhileNode;
+    return copyWith() as WhileNode;
   }
+
+  @override
+Map<String, dynamic> baseToJson() {
+  final map = super.baseToJson();
+  map['type'] = 'WhileNode';
+  return map;
+}
+
+static WhileNode fromJson(Map<String, dynamic> json) {
+  return WhileNode(
+    position: OffsetJson.fromJson(json['position']),
+  )
+    ..id = json['id']
+    ..isConnected = json['isConnected'] ?? false
+    ..connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e))
+        .toList();
+}
+
+
 }
