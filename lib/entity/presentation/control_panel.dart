@@ -153,17 +153,21 @@ class _ControlPanelState extends State<ControlPanel> {
   }
 
   Widget _buildComponentPanels(BuildContext context, Entity entity) {
-    return Card(
-      color: Color(0xffE8E8E8),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Components',
-              style: TextStyle(fontFamily: 'PressStart2P', fontSize: 18),
-            ),
+
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Color(0xffE8E8E8),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Components',
+                style: TextStyle(fontFamily: 'PressStart2P', fontSize: 18),
+              ),
+               const SizedBox(height: 10),
             const SizedBox(height: 10),
             if (entity.getComponent<AnimationControllerComponent>() != null)
               _buildAnimationComponentPanel(context, entity),
@@ -174,7 +178,9 @@ class _ControlPanelState extends State<ControlPanel> {
             if(entity.getComponent<SoundControllerComponent>() != null)
               _buildSoundComponentControl(context, entity)
             
-          ],
+            ],
+          ),
+
         ),
       ),
     );
@@ -239,10 +245,11 @@ class _ControlPanelState extends State<ControlPanel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      
         const SizedBox(height: 8),
-        Text('Block Components (${nodeComponents.length})',
-            style: TextStyle(fontFamily: 'PressStart2P',fontSize: 15)),
+
+        Text('Block Components (${nodeComponents?.length})',
+            style: TextStyle(fontFamily: 'PressStart2P', fontSize: 15)),
+
         const SizedBox(height: 8),
         ...List.generate(nodeComponents.length, (index) {
           final nodeComponent = nodeComponents[index];
@@ -273,7 +280,10 @@ class _ControlPanelState extends State<ControlPanel> {
                 ),
               ),
               trailing: IconButton(
-                icon: const Icon(Icons.open_in_new,color: Colors.white,),
+                icon: const Icon(
+                  Icons.open_in_new,
+                  color: Colors.white,
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -291,50 +301,81 @@ class _ControlPanelState extends State<ControlPanel> {
   }
 
   Widget _buildVariablesDisplay(BuildContext context, Entity entity) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Variables', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 10),
-        if (entity.variables.isEmpty)
-          const Text('No variables declared')
-        else
-          ...entity.variables.entries.map((entry) {
-            final key = entry.key;
-            final value = entry.value;
-            if (value is bool) {
-              return CheckboxListTile(
-                title: Text(key),
-                value: value,
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    entity.setVariableXToValueY(key, newValue);
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+      
+        color: Color(0xffE8E8E8),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Variables',
+                  style: TextStyle(
+                      fontFamily: 'PressStart2P',
+                      color: Colors.black,
+                      fontSize: 18)),
+              const SizedBox(height: 10),
+              if (entity.variables.isEmpty)
+                const Text('No variables declared',
+                    style: TextStyle(
+                        fontFamily: 'PressStart2P',
+                        color: Colors.black,
+                        fontSize: 12))
+              else
+                ...entity.variables.entries.map((entry) {
+                  final key = entry.key;
+                  final value = entry.value;
+                  if (value is bool) {
+                    return CheckboxListTile(
+                      checkColor: Colors.white,
+                      fillColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
+                        return Colors.transparent;
+                      }),
+                      side: const BorderSide(color: Colors.white, width: 2.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      title: Text(key,
+                          style: TextStyle(
+                              fontFamily: 'PressStart2P',
+                              color: Colors.black,
+                              fontSize: 12)),
+                      value: value,
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          entity.setVariableXToValueY(key, newValue);
+                        }
+                      },
+                    );
+                  } else if (value is int || value is double) {
+                    return PixelatedSlider(
+                      value: (value as num).toDouble(),
+                      min: -1.0,
+                      max: 1.0,
+                      onChanged: (newValue) {
+                        entity.setVariableXToValueY(
+                            key, value is int ? newValue.round() : newValue);
+                      },
+                      label: '$key: $value',
+                      divisions: 100,
+                    );
+                  } else {
+                    return PixelatedTextField(
+                      controller: TextEditingController(text: value.toString()),
+                      hintText: key,
+                      onChanged: (newValue) {
+                        entity.setVariableXToValueY(key, newValue);
+                      },
+                    );
                   }
-                },
-              );
-            } else if (value is int || value is double) {
-              return Slider(
-                value: (value as num).toDouble(),
-                min: -1.0,
-                max: 1.0,
-                divisions: 100,
-                label: '$key: $value',
-                onChanged: (newValue) {
-                  entity.setVariableXToValueY(
-                      key, value is int ? newValue.round() : newValue);
-                },
-              );
-            } else {
-              return TextField(
-                decoration: InputDecoration(labelText: key),
-                controller: TextEditingController(text: value.toString()),
-                onChanged: (newValue) {
-                  entity.setVariableXToValueY(key, newValue);
-                },
-              );
-            }
-          }),
-      ],
+                }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 class PixelArtButton extends StatelessWidget {
   final String text;
   final VoidCallback callback;
+  final double fontsize;
 
   const PixelArtButton({
     super.key,
     required this.text,
-    required this.callback,
-  });
+
+    required this.callback, required this.fontsize,
+  }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +32,9 @@ class PixelArtButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               text,
-              style: const TextStyle(
+              style:  TextStyle(
                 fontFamily: 'PressStart2P',
-                fontSize: 16,
+                fontSize: fontsize,
                 color: Colors.white,
               ),
             ),

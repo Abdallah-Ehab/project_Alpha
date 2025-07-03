@@ -15,6 +15,7 @@ class AddComponentButton extends StatelessWidget {
     final entityManager = context.read<EntityManager>();
 
     return PixelArtButton(
+      fontsize: 12,
       text: 'Add Component',
       callback: () async {
         final componentType = await showDialog<String>(
@@ -69,27 +70,69 @@ class _ComponentSelectionDialogState extends State<ComponentSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Select Component Type'),
-      content: DropdownButton<String>(
-        value: selectedType,
-        isExpanded: true,
-        hint: const Text('Select a component'),
-        items: componentTypes
-            .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-            .toList(),
-        onChanged: (value) => setState(() => selectedType = value),
+      backgroundColor: const Color(0xFF222222),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.white, width: 2),
+      ),
+      title: const Text(
+        'Select Component Type',
+        style: TextStyle(
+          fontFamily: 'PressStart2P',
+          fontSize: 18,
+          color: Colors.white,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownButton<String>(
+
+            borderRadius: BorderRadius.circular(16),
+            value: selectedType,
+            isExpanded: true,
+            dropdownColor: const Color(0xFF333333),
+            hint: const Text(
+              'Select a component',
+               style: TextStyle(
+          fontFamily: 'PressStart2P',
+          fontSize: 12,
+          color: Colors.white,
+        ),
+            ),
+            items: componentTypes.map((type) {
+              return DropdownMenuItem(
+                value: type,
+                child: Text(
+                  type,
+                  style: TextStyle(
+          fontFamily: 'PressStart2P',
+          fontSize: 12,
+          color: Colors.white,
+        ),
+                ),
+              );
+            }).toList(),
+            onChanged: (value) => setState(() => selectedType = value),
+          ),
+        ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+        PixelArtButton(
+          fontsize: 12,
+          callback: () => Navigator.of(context).pop(),
+          text: 'Cancel',
         ),
-        TextButton(
-          onPressed: selectedType != null
-              ? () => Navigator.of(context).pop(selectedType)
-              : null,
-          child: const Text('Add'),
-        ),
+        const SizedBox(width: 16),
+        PixelArtButton(
+  fontsize: 12,
+  callback: () {
+    if (selectedType != null) {
+      Navigator.of(context).pop(selectedType);
+    }
+  },
+  text: 'Add',
+),
       ],
     );
   }
