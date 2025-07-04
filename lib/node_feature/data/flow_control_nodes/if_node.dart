@@ -20,15 +20,17 @@ class IfNode extends InputOutputNode {
           color: Colors.green,
           width: 200,
           height: 200,
-          connectionPoints: [
-            InputConnectionPoint(position: Offset.zero, width: 20),
-            OutputConnectionPoint(position: Offset.zero, width: 20),
+          connectionPoints: []){
+          connectionPoints= [
+            InputConnectionPoint(position: Offset.zero, width: 20,ownerNode: this),
+            OutputConnectionPoint(position: Offset.zero, width: 20,ownerNode: this),
             ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 20),
+                position: Offset.zero, isTop: true, width: 20,ownerNode: this),
             ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 20),
-          ],
-        );
+                position: Offset.zero, isTop: false, width: 20,ownerNode: this),
+          ];
+          }
+          
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
@@ -59,27 +61,32 @@ class IfNode extends InputOutputNode {
         value: this, child: IfNodeWidget(nodeModel: this));
   }
 
-  @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return IfNode(position: position ?? this.position)
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..input = null
-      ..output = null
-      ..connectionPoints = connectionPoints != null
-          ? List<ConnectionPointModel>.from(connectionPoints.map((cp) => cp.copy()))
-          : List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+ @override
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = IfNode(position: position ?? this.position);
+
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.input = null;
+  newNode.output = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   IfNode copy() {
@@ -87,19 +94,22 @@ class IfNode extends InputOutputNode {
   }
 
   static IfNode fromJson(Map<String, dynamic> json) {
-    return IfNode(
+    final ifNode = IfNode(
       position: OffsetJson.fromJson(json['position']),
     )
       ..id = json['id']
       ..width = (json['width'] as num).toDouble()
       ..height = (json['height'] as num).toDouble()
-      ..isConnected = json['isConnected'] as bool
-      ..connectionPoints = (json['connectionPoints'] as List)
-          .map((e) {
-            if (e['isTop'] == null) return ConnectionPointModel.fromJson(e);
-            return ConnectionPointModel.fromJson(e);
-          })
-          .toList();
+      ..isConnected = json['isConnected'] as bool;
+
+    ifNode.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) {
+          if (e['isTop'] == null) return ConnectionPointModel.fromJson(e, ifNode);
+          return ConnectionPointModel.fromJson(e, ifNode);
+        })
+        .toList();
+
+    return ifNode;
   }
 
   @override

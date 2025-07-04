@@ -20,11 +20,16 @@ class MoveNode extends NodeModel {
     super.position = Offset.zero
   }) : super(
     image: 'assets/icons/moveNode.png',
-    connectionPoints: [
-          ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20),
-          ConnectConnectionPoint(
-              position: Offset.zero, isTop: false, width: 20),
-        ], color: Colors.blue, width: 200, height: 100);
+    connectionPoints: [],
+    color: Colors.blue,
+    width: 200,
+    height: 100,
+  ) {
+    connectionPoints = [
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 20, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 20, ownerNode: this),
+    ];
+  }
 
   @override
   Result<String> execute([Entity? activeEntity]) {
@@ -61,30 +66,34 @@ class MoveNode extends NodeModel {
   }
 
   @override
-  MoveNode copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-    double? x,
-    double? y,
-  }) {
-    return MoveNode(
-      x: x ?? this.x,
-      y: y ?? this.y,
-    )
-      ..position = position ?? this.position
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+MoveNode copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+  double? x,
+  double? y,
+}) {
+  final newNode = MoveNode(
+    x: x ?? this.x,
+    y: y ?? this.y,
+  )
+    ..position = position ?? this.position
+    ..isConnected = isConnected ?? this.isConnected
+    ..child = null
+    ..parent = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   MoveNode copy() {
@@ -101,17 +110,20 @@ class MoveNode extends NodeModel {
     return map;
   }
 
-  static MoveNode fromJson(Map<String, dynamic> json) {
-  return MoveNode(
+static MoveNode fromJson(Map<String, dynamic> json) {
+  final moveNode = MoveNode(
     x: (json['x'] as num).toDouble(),
     y: (json['y'] as num).toDouble(),
     position: OffsetJson.fromJson(json['position'])
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  moveNode.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, moveNode))
+      .toList();
+
+  return moveNode;
 }
 
 }

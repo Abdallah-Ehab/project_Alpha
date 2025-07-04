@@ -39,7 +39,7 @@ class ElseNodeWidget extends StatelessWidget {
 
         // Connection Points
         ...nodeModel.connectionPoints.map((point) {
-          return point.build(context, nodeModel);
+          return point.build(context);
         }),
       ],
     );

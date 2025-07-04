@@ -17,14 +17,28 @@ class TeleportNode extends OutputNodeWithValue {
           color: Colors.orange,
           width: 180,
           height: 160,
-          connectionPoints: [
-            InputConnectionPoint(position: Offset.zero, width: 30),
-            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 0,isLeft: true),
-            ValueConnectionPoint(position: Offset.zero, width: 30, valueIndex: 1,isLeft: true),
-            ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30),
-            ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
+      ValueConnectionPoint(
+          position: Offset.zero,
+          width: 30,
+          valueIndex: 0,
+          isLeft: true,
+          ownerNode: this),
+      ValueConnectionPoint(
+          position: Offset.zero,
+          width: 30,
+          valueIndex: 1,
+          isLeft: true,
+          ownerNode: this),
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+    ];
+  }
 
   @override
   Result execute([Entity? activeEntity]) {
@@ -40,20 +54,31 @@ class TeleportNode extends OutputNodeWithValue {
       inputResult = Result.success(result: null);
     }
 
-    dynamic dx = (connectionPoints[1] as ValueConnectionPoint)
-        .processValue(inputResult);
-    dynamic dy = (connectionPoints[2] as ValueConnectionPoint)
-        .processValue(inputResult);
+    final dxPoint = connectionPoints[1] as ValueConnectionPoint;
+    final dyPoint = connectionPoints[2] as ValueConnectionPoint;
 
-    if (dx == null && dy == null) {
-      return Result.failure(errorMessage: "No dx or dy input connected");
+    final sourceNode = dxPoint.sourcePoint?.ownerNode;
+    if (sourceNode == null) {
+      return Result.failure(errorMessage: "No source node for teleport dx");
     }
-    log('dx is $dx');
-    log('dy is $dy');
-    activeEntity.teleport(dx: dx as double, dy: dy as double);
-    log("Teleported entity to $dx, $dy");
 
-    return Result.success(result: null);
+    final result = sourceNode.execute(activeEntity);
+    if (result.errorMessage != null || result.result == null) {
+      return Result.failure(errorMessage: result.errorMessage ?? "Null result");
+    }
+
+    final value = result.result;
+    double? dx, dy;
+
+    if (value is Offset) {
+      dx = dxPoint.sourcePoint?.valueIndex == 0 ? value.dx : value.dy;
+      dy = dyPoint.sourcePoint?.valueIndex == 1 ? value.dy : value.dx;
+    }
+
+    if (dx == null || dy == null) {
+      return Result.failure(errorMessage: "dx or dy could not be extracted");
+    }
+    return Result.success();
   }
 
   @override
@@ -65,25 +90,28 @@ class TeleportNode extends OutputNodeWithValue {
   }
 
   @override
-  TeleportNode copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return TeleportNode(position: position ?? this.position)
-      ..isConnected = isConnected ?? this.isConnected
-      ..child =null
-      ..parent = null
-      ..input = null
-      ..sourceNode = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+TeleportNode copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = TeleportNode(position: position ?? this.position)
+    ..isConnected = isConnected ?? this.isConnected
+    ..child = null
+    ..parent = null
+    ..input = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
 
   @override
   TeleportNode copy() {
@@ -91,23 +119,23 @@ class TeleportNode extends OutputNodeWithValue {
   }
 
   @override
-Map<String, dynamic> baseToJson() {
-  final map = super.baseToJson();
-  map['type'] = 'TeleportNode';
-  return map;
-}
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'TeleportNode';
+    return map;
+  }
 
-static TeleportNode fromJson(Map<String, dynamic> json) {
-  return TeleportNode(
-    position: OffsetJson.fromJson(json['position']),
-  )
-    ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
+  static TeleportNode fromJson(Map<String, dynamic> json) {
+    final node = TeleportNode(
+      position: OffsetJson.fromJson(json['position']),
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
         .toList();
+
+    return node;
+  }
 }
-
-
-}
-

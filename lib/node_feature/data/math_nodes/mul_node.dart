@@ -16,15 +16,17 @@ class MultiplyNode extends MultipleInputNode {
           color: Colors.green,
           width: 160,
           height: 120,
-          connectionPoints: [
-            InputConnectionPoint(position: Offset.zero, width: 30),
-            InputConnectionPoint(position: Offset.zero, width: 30),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 30),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 30),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
+      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+    ];
+  }
 
   @override
   Result execute([Entity? activeEntity]) {
@@ -54,31 +56,36 @@ class MultiplyNode extends MultipleInputNode {
         child: MathNodeWidget(node: this, label: '×'),
       );
 
+ 
   @override
-  @override
-  MultiplyNode copyWith({
-    NodeModel? child,
-    Color? color,
-    List<ConnectionPointModel>? connectionPoints,
-    double? height,
-    bool? isConnected,
-    NodeModel? parent,
-    Offset? position,
-    double? width,
-  }) {
-    return MultiplyNode(
-      position: position ?? this.position,
-    )
-      ..child = null
-      ..parent = null
-      ..isConnected = isConnected ?? this.isConnected
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()))
-      ..color = color ?? this.color
-      ..width = width ?? this.width
-      ..height = height ?? this.height;
-  }
+MultiplyNode copyWith({
+  NodeModel? child,
+  Color? color,
+  List<ConnectionPointModel>? connectionPoints,
+  double? height,
+  bool? isConnected,
+  NodeModel? parent,
+  Offset? position,
+  double? width,
+}) {
+  final newNode = MultiplyNode(
+    position: position ?? this.position,
+  );
+
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.color = color ?? this.color;
+  newNode.width = width ?? this.width;
+  newNode.height = height ?? this.height;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   MultiplyNode copy() => copyWith();

@@ -17,12 +17,14 @@ class StatementGroupNode extends OutputNode {
     super.position = Offset.zero
   }) : super(
             image: 'assets/icons/StatementGroupNode.png',
-            connectionPoints: [
-              InputConnectionPoint(position: Offset.zero, width: 20),
-            ],
+            connectionPoints: [],
             color: Colors.green,
             width: 200,
-            height: 200);
+            height: 200) {
+    connectionPoints = [
+      InputConnectionPoint(position: Offset.zero, width: 20, ownerNode: this),
+    ];
+  }
 
   void addStatement(NodeModel node) {
     statements.add(node);
@@ -66,28 +68,32 @@ class StatementGroupNode extends OutputNode {
   }
 
   @override
-  StatementGroupNode copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    NodeModel? parent,
-    NodeModel? child,
-    bool? isConnected,
-    List<NodeModel>? statements,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return StatementGroupNode(
-      statements: statements ?? this.statements,
-    )
-      ..position = position ?? this.position
-      ..parent = null
-      ..child = null
-      ..isConnected = isConnected ?? this.isConnected
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+StatementGroupNode copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  NodeModel? parent,
+  NodeModel? child,
+  bool? isConnected,
+  List<NodeModel>? statements,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = StatementGroupNode(
+    statements: statements ?? List<NodeModel>.from(this.statements.map((s) => s.copy())),
+  )
+    ..position = position ?? this.position
+    ..parent = null
+    ..child = null
+    ..isConnected = isConnected ?? this.isConnected;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   StatementGroupNode copy() {
@@ -104,19 +110,22 @@ class StatementGroupNode extends OutputNode {
     return map;
   }
 
-  static StatementGroupNode fromJson(Map<String, dynamic> json) {
-  return StatementGroupNode(
+static StatementGroupNode fromJson(Map<String, dynamic> json) {
+  final node = StatementGroupNode(
     isHighlighted: json['isHighlighted'] ?? false,
-    statements: (json['statements'] as List<Map<String,dynamic>>).map((e)=>NodeModel.fromJson(e)).toList(),
-    position : OffsetJson.fromJson(json['position']) // we'll restore this later using IDs
+    statements: (json['statements'] as List<dynamic>)
+        .map((e) => NodeModel.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    position: OffsetJson.fromJson(json['position']),
   )
     ..id = json['id']
-    
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
-    
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 

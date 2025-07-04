@@ -101,7 +101,7 @@ class _DeclareVarableNodeWidget extends State<DeclareVarableNodeWidget> {
             ),
           ),
           for (final cp in widget.node.connectionPoints)
-            cp.build(context, widget.node),
+            cp.build(context),
         ],
       ),
     );

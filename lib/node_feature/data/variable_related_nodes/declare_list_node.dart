@@ -75,14 +75,16 @@ class DeclareListNode extends NodeModel {
   }
 
   static DeclareListNode fromJson(Map<String, dynamic> json) {
-  return DeclareListNode(
-    listName: json['listName'] ?? 'myList',
-  )
-    ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
+    final node = DeclareListNode(
+      listName: json['listName'] ?? 'myList',
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
         .toList();
+    return node;
 }
 
 }

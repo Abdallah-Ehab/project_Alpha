@@ -16,22 +16,22 @@ class SpawnEntityNode extends NodeModel {
   String prefabName;
 
   SpawnEntityNode({
-    
     this.prefabName = '',
     super.position = Offset.zero,
-   
   }) : super(
-    image: 'assets/icons/SpawnEntityNode.png',
+          image: 'assets/icons/SpawnEntityNode.png',
           width: 200,
           height: 100,
           color: Colors.black,
-          connectionPoints: [
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 20),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 20),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: true, width: 20, ownerNode: this),
+      ConnectConnectionPoint(
+          position: Offset.zero, isTop: false, width: 20, ownerNode: this),
+    ];
+  }
 
   void setPrefabName(String name) {
     prefabName = name;
@@ -65,27 +65,31 @@ class SpawnEntityNode extends NodeModel {
   }
 
   @override
-  SpawnEntityNode copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-    String? prefabName,
-  }) {
-    return SpawnEntityNode(
-      prefabName: prefabName ?? this.prefabName,
-      position: position ?? this.position,
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+SpawnEntityNode copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+  String? prefabName,
+}) {
+  final newNode = SpawnEntityNode(
+    prefabName: prefabName ?? this.prefabName,
+    position: position ?? this.position,
+  )
+    ..isConnected = isConnected ?? this.isConnected
+    ..child = null
+    ..parent = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
 
   @override
   SpawnEntityNode copy() {
@@ -101,15 +105,18 @@ Map<String, dynamic> baseToJson() {
 }
 
 static SpawnEntityNode fromJson(Map<String, dynamic> json) {
-  return SpawnEntityNode(
+  final node = SpawnEntityNode(
     prefabName: json['prefabName'] ?? '',
     position: OffsetJson.fromJson(json['position'])
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 }

@@ -458,7 +458,7 @@ class InfiniteArrowPainter extends CustomPainter {
         connectionProvider.currentPosition != null) {
       final ownernode = _findOwnerOfPoint(connectionProvider.fromPoint!, nodes);
       final startPosition = ownernode!.position +
-          connectionProvider.fromPoint!.computeOffset(ownernode);
+          connectionProvider.fromPoint!.computeOffset();
       final startPoint = camera.worldToScreen(startPosition, viewportSize);
       final endPoint = camera.worldToScreen(
           connectionProvider.currentPosition!, viewportSize);
@@ -475,8 +475,8 @@ class InfiniteArrowPainter extends CustomPainter {
             .firstWhereOrNull((p) => p is ConnectConnectionPoint && p.isTop);
 
         if (bottomPoint != null && topPoint != null) {
-          final start = node.position + bottomPoint.computeOffset(node);
-          final end = child.position + topPoint.computeOffset(child);
+          final start = node.position + bottomPoint.computeOffset();
+          final end = child.position + topPoint.computeOffset();
           final startPoint = camera.worldToScreen(start, viewportSize);
           final endPoint = camera.worldToScreen(end, viewportSize);
 
@@ -493,40 +493,36 @@ class InfiniteArrowPainter extends CustomPainter {
 
         if (outputPoint != null && inputPoint != null) {
           final start = camera.worldToScreen(node.position, viewportSize) +
-              outputPoint.computeOffset(node);
+              outputPoint.computeOffset();
           final end =
               camera.worldToScreen(node.output!.position, viewportSize) +
-                  inputPoint.computeOffset(node.output!);
+                  inputPoint.computeOffset();
           paint.color = Colors.red;
           _drawArrow(canvas, paint, start, end, dashed: false);
         }
       }
 
-      if (node is OutputNodeWithValue && node.sourceNode != null) {
-        final sourceNode = node.sourceNode!;
-        final sourcePoints =
-            sourceNode.connectionPoints.whereType<ValueConnectionPoint>();
+      if (node is OutputNodeWithValue) {
+       
         final targetPoints =
             node.connectionPoints.whereType<ValueConnectionPoint>();
-
+        
         for (final targetCp in targetPoints) {
           if (!targetCp.isConnected) continue;
 
-          final int? targetSourceIndex = targetCp.sourceIndex;
-          if (targetSourceIndex == null) continue;
+          final sourcePoint = targetCp.sourcePoint;
 
-          // Find the ValueConnectionPoint in the source node that matches the sourceIndex
-          final sourceCp = sourcePoints
-              .firstWhereOrNull((cp) => cp.valueIndex == targetSourceIndex);
+          if(sourcePoint == null) continue;
+          
 
-          if (sourceCp != null) {
+          
             final start =
-                camera.worldToScreen(sourceNode.position + sourceCp.computeOffset(sourceNode),viewportSize);
-            final end = camera.worldToScreen(node.position + targetCp.computeOffset(node),viewportSize);
+                camera.worldToScreen(sourcePoint.ownerNode.position + sourcePoint.computeOffset(),viewportSize);
+            final end = camera.worldToScreen(node.position + targetCp.computeOffset(),viewportSize);
             paint.color = Colors.orange;
             _drawArrow(canvas, paint, start, end,
                 dashed: false); // Your custom arrow-drawing logic
-          }
+          
         }
       }
     }

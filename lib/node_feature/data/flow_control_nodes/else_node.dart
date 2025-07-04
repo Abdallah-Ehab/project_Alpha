@@ -11,18 +11,19 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class ElseNode extends InputOutputNode {
   ElseNode({
     super.position,
-    
   }) : super(
     image: 'assets/icons/ELSE.png',
-          color: Colors.blue,
-          width: 200,
-          height: 200,
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 50),
-            ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 50),
-            ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 50),
-          ],
-        );
+    color: Colors.blue,
+    width: 200,
+    height: 200,
+    connectionPoints: [],
+  ) {
+    connectionPoints = [
+      OutputConnectionPoint(position: Offset.zero, width: 50, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 50, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 50, ownerNode: this),
+    ];
+  }
 
 
 
@@ -46,26 +47,33 @@ class ElseNode extends InputOutputNode {
   }
 
   @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    NodeModel? output,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return ElseNode(
-      position: position ?? this.position,
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..output = null
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  NodeModel? output,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = ElseNode(
+    position: position ?? this.position,
+  );
+
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.output = null;
+
+  newNode.connectionPoints = connectionPoints ??
+      this.connectionPoints
+          .map((cp) => cp.copyWith(ownerNode: newNode))
+          .toList();
+
+  return newNode;
+}
 
   @override
   ElseNode copy() {
@@ -79,11 +87,11 @@ class ElseNode extends InputOutputNode {
       ..id = json['id']
       ..width = (json['width'] as num).toDouble()
       ..height = (json['height'] as num).toDouble()
-      ..isConnected = json['isConnected'] as bool
-      ..connectionPoints = (json['connectionPoints'] as List)
+      ..isConnected = json['isConnected'] as bool;
+      node.connectionPoints = (json['connectionPoints'] as List)
           .map((e) => e['isTop'] == null
-              ? ConnectionPointModel.fromJson(e)
-              : ConnectionPointModel.fromJson(e))
+              ? ConnectionPointModel.fromJson(e,node)
+              : ConnectionPointModel.fromJson(e,node))
           .toList();
 
     return node;

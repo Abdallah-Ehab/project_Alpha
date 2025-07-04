@@ -52,7 +52,7 @@ class SpawnEntityNodeWidget extends StatelessWidget {
         ),
 
         // Render connection points
-        for (final cp in node.connectionPoints) cp.build(context, node),
+        for (final cp in node.connectionPoints) cp.build(context),
       ],
     );
   }

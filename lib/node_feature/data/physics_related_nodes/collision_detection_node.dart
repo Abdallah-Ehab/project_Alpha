@@ -25,10 +25,12 @@ class DetectCollisionNode extends InputNode {
           color: Colors.deepOrange,
           width: 160,
           height: 60,
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 50),
-          ],
-        );
+          connectionPoints:[]
+        ){
+          connectionPoints =  [
+            OutputConnectionPoint(position: Offset.zero, width: 50,ownerNode:this ),
+          ];
+        }
 
   void setEntities(String name1, String name2) {
     entity1Name = name1;
@@ -74,29 +76,33 @@ class DetectCollisionNode extends InputNode {
   }
 
   @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return DetectCollisionNode(
-      entity1Name: entity1Name,
-      entity2Name: entity2Name,
-      position: position ?? this.position,
-      hasError: hasError,
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = DetectCollisionNode(
+    entity1Name: entity1Name,
+    entity2Name: entity2Name,
+    position: position ?? this.position,
+    hasError: hasError,
+  )
+    ..isConnected = isConnected ?? this.isConnected
+    ..child = null
+    ..parent = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   DetectCollisionNode copy() {
@@ -113,18 +119,21 @@ class DetectCollisionNode extends InputNode {
     return map;
   }
 
-  static DetectCollisionNode fromJson(Map<String, dynamic> json) {
-  return DetectCollisionNode(
+static DetectCollisionNode fromJson(Map<String, dynamic> json) {
+  final node = DetectCollisionNode(
     entity1Name: json['entity1Name'] ?? '',
     entity2Name: json['entity2Name'] ?? '',
     hasError: json['hasError'] ?? false,
     position: OffsetJson.fromJson(json['position'])
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 }

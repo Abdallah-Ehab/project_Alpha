@@ -64,7 +64,7 @@ class _StatementGroupNodeWidgetState extends State<StatementGroupNodeWidget> {
 
           // Connection points (top/bottom)
           for (final cp in widget.node.connectionPoints)
-            cp.build(context, widget.node),
+            cp.build(context),
         ],
       ),
     );

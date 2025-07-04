@@ -26,10 +26,10 @@ class ConnectionPointWidget extends StatelessWidget {
         connectionProvider.updatePosition(details.globalPosition);
       },
       onPanEnd: (details) {
-        connectionPoint.handlePanEndBehaviour(context, node);
+        connectionPoint.handlePanEndBehaviour(context);
       },
       onLongPress: () {
-        connectionPoint.disconnect(node);
+        connectionPoint.disconnect();
         log('Disconnected connections for node ${node.id}');
       },
       child: Container(

@@ -65,7 +65,7 @@ class MoveNodeWidget extends StatelessWidget {
           ),
 
           // Connection Points
-          for (var point in node.connectionPoints) point.build(context, node),
+          for (var point in node.connectionPoints) point.build(context),
         ],
       ),
     );

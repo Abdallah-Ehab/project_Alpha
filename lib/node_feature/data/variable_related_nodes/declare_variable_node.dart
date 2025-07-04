@@ -87,16 +87,19 @@ Map<String, dynamic> baseToJson() {
 }
 
 static DeclareVariableNode fromJson(Map<String, dynamic> json) {
-  return DeclareVariableNode(
+  final node = DeclareVariableNode(
     variableName: json['variableName'] as String,
     value: json['value'],
     position: OffsetJson.fromJson(json['position']),
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 }

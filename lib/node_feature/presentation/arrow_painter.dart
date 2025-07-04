@@ -33,8 +33,8 @@ class ArrowPainter extends CustomPainter {
             .firstWhereOrNull((p) => p is ConnectConnectionPoint && p.isTop);
 
         if (bottomPoint != null && topPoint != null) {
-          final start = node.position + bottomPoint.computeOffset(node);
-          final end = child.position + topPoint.computeOffset(child);
+          final start = node.position + bottomPoint.computeOffset();
+          final end = child.position + topPoint.computeOffset();
       
           paint.color = Colors.blueGrey;
           _drawArrow(canvas, paint, start, end, dashed: false);
@@ -49,9 +49,9 @@ class ArrowPainter extends CustomPainter {
             .firstWhereOrNull((p) => p is InputConnectionPoint);
 
         if (outputPoint != null && inputPoint != null) {
-          final start = node.position + outputPoint.computeOffset(node);
+          final start = node.position + outputPoint.computeOffset();
           final end =
-              node.output!.position + inputPoint.computeOffset(node.output!);
+              node.output!.position + inputPoint.computeOffset();
               paint.color = Colors.red;
           _drawArrow(canvas, paint, start, end, dashed: false);
         }
@@ -65,7 +65,7 @@ class ArrowPainter extends CustomPainter {
           _findOwnerOfPoint(connectionProvider.fromPoint!, nodes);
       if (sourceNode != null) {
         final start = sourceNode.position +
-            connectionProvider.fromPoint!.computeOffset(sourceNode);
+            connectionProvider.fromPoint!.computeOffset();
         final end = connectionProvider.currentPosition!;
         paint.color = Colors.black.withAlpha(100);
         _drawArrow(canvas, paint, start, end, dashed: true);
