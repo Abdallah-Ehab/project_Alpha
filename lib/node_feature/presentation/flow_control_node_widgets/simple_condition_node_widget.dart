@@ -19,7 +19,7 @@ class SimpleConditionNodeWidget extends StatelessWidget {
       child: Stack(
         children: [
           // Output connection point
-          ...node.connectionPoints.map((point) => point.build(context, node)),
+          ...node.connectionPoints.map((point) => point.build(context)),
 
           // Content
           Center(

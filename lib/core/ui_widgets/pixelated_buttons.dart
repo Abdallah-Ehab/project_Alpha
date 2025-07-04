@@ -10,7 +10,7 @@ class PixelArtButton extends StatelessWidget {
     required this.text,
 
     required this.callback, required this.fontsize,
-  }) : super(key: key);
+  }) : super();
 
 
   @override

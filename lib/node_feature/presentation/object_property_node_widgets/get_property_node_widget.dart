@@ -100,12 +100,12 @@ class GetPropertyFromEntityNodeWidget extends StatelessWidget {
     if (nodeModel.hasTwoOutputs) {
       return [
         for(final cp in nodeModel.connectionPoints)
-        cp.build(context, nodeModel)
+        cp.build(context)
       ];
     } else {
       return [
-       nodeModel.connectionPoints[0].build(context, nodeModel)
-       ,nodeModel.connectionPoints[1].build(context, nodeModel)
+       nodeModel.connectionPoints[0].build(context)
+       ,nodeModel.connectionPoints[1].build(context)
       ];
     }
   }

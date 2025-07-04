@@ -17,15 +17,15 @@ class WhileNode extends InputOutputNode {
           color: Colors.cyan,
           width: 200,
           height: 200,
-          connectionPoints: [
-            InputConnectionPoint(position: Offset.zero, width: 50),
-            OutputConnectionPoint(position: Offset.zero, width: 50),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 50),
-            ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 50),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      InputConnectionPoint(position: Offset.zero, width: 50, ownerNode: this),
+      OutputConnectionPoint(position: Offset.zero, width: 50, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 50, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 50, ownerNode: this),
+    ];
+  }
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
@@ -72,31 +72,35 @@ class WhileNode extends InputOutputNode {
   }
 
   @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    NodeModel? input,
-    NodeModel? output,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return WhileNode(
-      position: position ?? this.position,
-     
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = child ?? this.child?.copy()
-      ..parent = null
-      ..input = null
-      ..output = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  NodeModel? input,
+  NodeModel? output,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = WhileNode(
+    position: position ?? this.position,
+  );
+
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = child ?? this.child?.copy();
+  newNode.parent = null;
+  newNode.input = null;
+  newNode.output = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
+
 
   @override
   WhileNode copy() {
@@ -111,14 +115,17 @@ Map<String, dynamic> baseToJson() {
 }
 
 static WhileNode fromJson(Map<String, dynamic> json) {
-  return WhileNode(
+  final node = WhileNode(
     position: OffsetJson.fromJson(json['position']),
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 

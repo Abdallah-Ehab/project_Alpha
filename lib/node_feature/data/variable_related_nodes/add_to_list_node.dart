@@ -74,9 +74,7 @@ class AddToListNode extends NodeModel {
     )
       ..isConnected = isConnected ?? this.isConnected
       ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
+      ..parent = null;
   }
 
   @override
@@ -94,16 +92,19 @@ Map<String, dynamic> baseToJson() {
 }
 
 static AddToListNode fromJson(Map<String, dynamic> json) {
-  return AddToListNode(
+  final node = AddToListNode(
     listName: json['listName'] ?? '',
     value: json['value'],
     position: OffsetJson.fromJson(json['position'])
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false
-    ..connectionPoints = (json['connectionPoints'] as List)
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
+    ..isConnected = json['isConnected'] ?? false;
+
+  node.connectionPoints = (json['connectionPoints'] as List)
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+
+  return node;
 }
 
 }

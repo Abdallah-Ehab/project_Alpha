@@ -89,7 +89,7 @@ class _SetVariableNodeWidgetState extends State<SetVariableNodeWidget> {
             ),
           ),
           for (final cp in widget.node.connectionPoints)
-            cp.build(context, widget.node),
+            cp.build(context),
         ],
       ),
     );

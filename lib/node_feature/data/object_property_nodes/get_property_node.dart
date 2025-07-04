@@ -24,12 +24,13 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
           color: Colors.teal,
           width: 180,
           height: 120,
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 30),
-            ValueConnectionPoint(position: Offset.zero, valueIndex: 0, width: 30,isLeft: false),
-            ValueConnectionPoint(position: Offset.zero, valueIndex: 1, width: 30,isLeft: false),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      ValueConnectionPoint(position: Offset.zero, valueIndex: 0, width: 30, isLeft: false, ownerNode: this),
+      ValueConnectionPoint(position: Offset.zero, valueIndex: 1, width: 30, isLeft: false, ownerNode: this),
+    ];
+  }
 
   void setEntityName(String name) {
     entityName = name;
@@ -62,36 +63,39 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
     );
   }
 
-  @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    String? entityName,
-    Property? selectedProperty,
-    bool? hasTwoOutputs,
-    NodeModel? sourceNode,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return GetPropertyFromEntityNode(
-      entityName: entityName ?? this.entityName,
-      selectedProperty: selectedProperty ?? this.selectedProperty,
-      hasTwoOutputs: hasTwoOutputs ?? this.hasTwoOutputs,
-      position: position ?? this.position,
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..sourceNode = null
-      ..output = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+@override
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  String? entityName,
+  Property? selectedProperty,
+  bool? hasTwoOutputs,
+  NodeModel? sourceNode,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = GetPropertyFromEntityNode(
+    entityName: entityName ?? this.entityName,
+    selectedProperty: selectedProperty ?? this.selectedProperty,
+    hasTwoOutputs: hasTwoOutputs ?? this.hasTwoOutputs,
+    position: position ?? this.position,
+  );
+
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.output = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
 
   @override
   NodeModel copy() {
@@ -109,7 +113,7 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
   }
 
   static GetPropertyFromEntityNode fromJson(Map<String, dynamic> json) {
-    return GetPropertyFromEntityNode(
+    final node = GetPropertyFromEntityNode(
       entityName: json['entityName'] ?? '',
       selectedProperty: Property.values.firstWhere(
         (e) => e.name == json['selectedProperty'],
@@ -119,9 +123,12 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
       position: OffsetJson.fromJson(json['position'])
     )
       ..id = json['id']
-      ..isConnected = json['isConnected'] ?? false
-      ..connectionPoints = (json['connectionPoints'] as List)
-          .map((e) => ConnectionPointModel.fromJson(e))
-          .toList();
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
+
+    return node;
   }
 }

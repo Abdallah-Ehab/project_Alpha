@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 
 
@@ -32,15 +34,16 @@ mixin HasOutput on NodeModel {
 }
 
 mixin HasValue on NodeModel{
-  NodeModel? sourceNode;
-  void connectValue(NodeModel node) {
-    if (this == node) return;
-    sourceNode = node;
+  
+
+  void connectValue(ValueConnectionPoint sourcePoint,ValueConnectionPoint destinationPoint) {
+   destinationPoint.sourcePoint = sourcePoint;
+   sourcePoint.destinationPoint = destinationPoint;
+   isConnected = true;
     notifyListeners();
   }
 
   void disconnect() {
-    sourceNode = null;
     notifyListeners();
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -50,8 +49,6 @@ abstract class NodeModel with ChangeNotifier {
       'childId': child?.id,
       'parentId': parent?.id,
     };
-  
-    
 
     if (this is HasInput) {
       map['inputId'] = (this as HasInput).input?.id;
@@ -59,9 +56,9 @@ abstract class NodeModel with ChangeNotifier {
     if (this is HasOutput) {
       map['outputId'] = (this as HasOutput).output?.id;
     }
-    if (this is HasValue) {
-      map['sourceNodeId'] = (this as HasValue).sourceNode?.id;
-    }
+    // if (this is HasValue) {
+    //   map['sourceNodeId'] = (this as HasValue).sourceNode?.id;
+    // }
 
     return map;
   }
@@ -183,10 +180,20 @@ abstract class NodeModel with ChangeNotifier {
 class StartNode extends NodeModel {
   StartNode({
     super.position = Offset.zero,
-  }) : super(color: Colors.orange, width: 200, height: 100, connectionPoints: [
-          ConnectConnectionPoint(
-              position: Offset.zero, isTop: false, width: 30),
-        ]);
+  }) : super(
+            color: Colors.orange,
+            width: 200,
+            height: 100,
+            connectionPoints: []) {
+    connectionPoints = [
+      ConnectConnectionPoint(
+        position: Offset.zero,
+        isTop: false,
+        width: 30,
+        ownerNode: this,
+      ),
+    ];
+  }
 
   @override
   NodeModel copyWith({
@@ -199,12 +206,15 @@ class StartNode extends NodeModel {
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    return StartNode(position: position ?? this.position)
-      ..connectionPoints = connectionPoints ??
-          this.connectionPoints.map((e) => e.copy()).toList()
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null;
+    final newNode = StartNode(position: position ?? this.position);
+    newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.child = null;
+    newNode.parent = null;
+
+    newNode.connectionPoints = connectionPoints ??
+        this.connectionPoints.map((e) => e.copyWith(ownerNode:newNode)).toList();
+
+    return newNode;
   }
 
   @override
@@ -219,18 +229,20 @@ class StartNode extends NodeModel {
     final position = Offset(positionMap['dx'], positionMap['dy']);
 
     final connectionPointsJson = json['connectionPoints'] as List<dynamic>;
-    final connectionPoints = connectionPointsJson
-        .map((e) => ConnectionPointModel.fromJson(e))
-        .toList();
-
-    return StartNode(
+    final startNode = StartNode(
       position: position,
     )
       ..id = json['id']
       ..width = (json['width'] as num).toDouble()
       ..height = (json['height'] as num).toDouble()
-      ..isConnected = json['isConnected'] as bool
-      ..connectionPoints = connectionPoints;
+      ..isConnected = json['isConnected'] as bool;
+
+    final connectionPoints = connectionPointsJson
+        .map((e) => ConnectionPointModel.fromJson(e, startNode))
+        .toList();
+
+    startNode.connectionPoints = connectionPoints;
+    return startNode;
   }
 
   @override

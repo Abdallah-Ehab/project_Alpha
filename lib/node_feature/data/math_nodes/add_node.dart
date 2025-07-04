@@ -14,13 +14,15 @@ class AddNode extends MultipleInputNode {
           color: Colors.blue,
           width: 160,
           height: 120,
-          connectionPoints: [
-            InputConnectionPoint(position: Offset.zero, width: 30),
-            InputConnectionPoint(position: Offset.zero, width: 30),
-            ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30),
-            ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
+      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+    ];
+  }
 
   @override
   Result execute([Entity? activeEntity]) {
@@ -53,23 +55,26 @@ class AddNode extends MultipleInputNode {
   }
 
   @override
-  AddNode copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return AddNode(position: position ?? this.position)
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+AddNode copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = AddNode(position: position ?? this.position);
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+  return newNode;
+}
+
 
   @override
   AddNode copy() => copyWith();

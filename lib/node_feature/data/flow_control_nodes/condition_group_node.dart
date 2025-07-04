@@ -21,11 +21,13 @@ class ConditionGroupNode extends InputNode {
     super.position = Offset.zero
   }) : super(
           image: 'assets/icons/condition',
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 50),
-          ],
-          width: 300, height: 300,color: Colors.redAccent
-        );
+          connectionPoints: [],
+          width: 300, height: 300, color: Colors.redAccent
+        ) {
+    connectionPoints = [
+      OutputConnectionPoint(position: Offset.zero, width: 50, ownerNode: this),
+    ];
+  }
 
   void addLogicNode(LogicElementNode node) {
     logicSequence.add(node);
@@ -124,26 +126,37 @@ class ConditionGroupNode extends InputNode {
   }
 
   @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    List<LogicElementNode>? logicSequence,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return ConditionGroupNode(
-      position: position ?? this.position,
-      logicSequence: logicSequence ?? List<LogicElementNode>.from(this.logicSequence.map((e) => e.copy() as LogicElementNode)),
-    )
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..connectionPoints = connectionPoints ?? List<ConnectionPointModel>.from(this.connectionPoints.map((cp) => cp.copy()));
-  }
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  List<LogicElementNode>? logicSequence,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = ConditionGroupNode(
+    position: position ?? this.position,
+    logicSequence: logicSequence ??
+        List<LogicElementNode>.from(
+          this.logicSequence.map((e) => e.copy() as LogicElementNode),
+        ),
+  );
+
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+
+  newNode.connectionPoints = connectionPoints ??
+      this.connectionPoints
+          .map((cp) => cp.copyWith(ownerNode: newNode))
+          .toList();
+
+  return newNode;
+}
+
 
   @override
   ConditionGroupNode copy() {
@@ -169,9 +182,6 @@ static ConditionGroupNode fromJson(Map<String, dynamic> json) {
       .toList();
 
   final connectionPointsJson = json['connectionPoints'] as List;
-  final connectionPoints = connectionPointsJson
-      .map((e) => ConnectionPointModel.fromJson(e))
-      .toList();
 
   final node = ConditionGroupNode(
     logicSequence: logicSequence,
@@ -180,8 +190,12 @@ static ConditionGroupNode fromJson(Map<String, dynamic> json) {
     ..id = json['id']
     ..width = (json['width'] as num).toDouble()
     ..height = (json['height'] as num).toDouble()
-    ..isConnected = json['isConnected'] as bool
-    ..connectionPoints = connectionPoints;
+    ..isConnected = json['isConnected'] as bool;
+
+  final connectionPoints = connectionPointsJson
+      .map((e) => ConnectionPointModel.fromJson(e, node))
+      .toList();
+  node.connectionPoints = connectionPoints;
 
   return node;
 }

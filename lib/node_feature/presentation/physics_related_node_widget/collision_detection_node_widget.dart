@@ -28,7 +28,7 @@ class DetectCollisionNodeWidget extends StatelessWidget {
               ),
             ),
           ),
-          ...nodeModel.connectionPoints.map((cp) => cp.build(context, nodeModel)),
+          ...nodeModel.connectionPoints.map((cp) => cp.build(context)),
         ],
       ),
     );

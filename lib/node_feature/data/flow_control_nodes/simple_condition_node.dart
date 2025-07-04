@@ -22,10 +22,12 @@ class SimpleConditionNode extends NodeModel with HasOutput {
           color: Colors.yellow,
           width: 200,
           height: 100,
-          connectionPoints: [
-            OutputConnectionPoint(position: Offset.zero, width: 20),
-          ],
-        );
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      OutputConnectionPoint(position: Offset.zero, width: 20, ownerNode: this),
+    ];
+  }
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
@@ -86,34 +88,38 @@ class SimpleConditionNode extends NodeModel with HasOutput {
   }
 
   @override
-  NodeModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    double? height,
-    bool? isConnected,
-    NodeModel? child,
-    NodeModel? parent,
-    dynamic firstOperand,
-    dynamic secondOperand,
-    String? comparisonOperator,
-    NodeModel? output,
-    List<ConnectionPointModel>? connectionPoints,
-  }) {
-    return SimpleConditionNode(
-      position: position ?? this.position,
-    )
-      ..firstOperand = firstOperand ?? this.firstOperand
-      ..secondOperand = secondOperand ?? this.secondOperand
-      ..comparisonOperator = comparisonOperator ?? this.comparisonOperator
-      ..isConnected = isConnected ?? this.isConnected
-      ..child = null
-      ..parent = null
-      ..output = null
-      ..connectionPoints = connectionPoints ??
-          List<ConnectionPointModel>.from(
-              this.connectionPoints.map((cp) => cp.copy()));
-  }
+NodeModel copyWith({
+  Offset? position,
+  Color? color,
+  double? width,
+  double? height,
+  bool? isConnected,
+  NodeModel? child,
+  NodeModel? parent,
+  dynamic firstOperand,
+  dynamic secondOperand,
+  String? comparisonOperator,
+  NodeModel? output,
+  List<ConnectionPointModel>? connectionPoints,
+}) {
+  final newNode = SimpleConditionNode(
+    position: position ?? this.position,
+  );
+
+  newNode.firstOperand = firstOperand ?? this.firstOperand;
+  newNode.secondOperand = secondOperand ?? this.secondOperand;
+  newNode.comparisonOperator = comparisonOperator ?? this.comparisonOperator;
+  newNode.isConnected = isConnected ?? this.isConnected;
+  newNode.child = null;
+  newNode.parent = null;
+  newNode.output = null;
+
+  newNode.connectionPoints = connectionPoints != null
+      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+
+  return newNode;
+}
 
   @override
   SimpleConditionNode copy() {
@@ -131,16 +137,19 @@ class SimpleConditionNode extends NodeModel with HasOutput {
   }
 
   static SimpleConditionNode fromJson(Map<String, dynamic> json) {
-    return SimpleConditionNode(
+    final node = SimpleConditionNode(
       position: OffsetJson.fromJson(json['position']),
       firstOperand: json['firstOperand'],
       secondOperand: json['secondOperand'],
       comparisonOperator: json['comparisonOperator'],
     )
       ..id = json['id']
-      ..isConnected = json['isConnected'] ?? false
-      ..connectionPoints = (json['connectionPoints'] as List)
-          .map((e) => ConnectionPointModel.fromJson(e))
-          .toList();
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
+
+    return node;
   }
 }

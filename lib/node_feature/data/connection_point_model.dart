@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
@@ -23,9 +24,15 @@ abstract class ConnectionPointModel {
   final Color color;
   final double width;
   bool isConnected;
-  ConnectionPointModel(
-      {required this.position, required this.color, required this.width,this.isConnected = false})
-      : id = const Uuid().v4();
+  final NodeModel ownerNode;
+
+  ConnectionPointModel({
+    required this.position,
+    required this.color,
+    required this.width,
+    required this.ownerNode,
+    this.isConnected = false,
+  }) : id = const Uuid().v4();
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,6 +41,7 @@ abstract class ConnectionPointModel {
       'position': {'dx': position.dx, 'dy': position.dy},
       'width': width,
       'isConnected': isConnected,
+      // Note: We don't serialize ownerNode to avoid circular references
       ..._extraData(),
     };
   }
@@ -44,13 +52,14 @@ abstract class ConnectionPointModel {
     } else if (this is ValueConnectionPoint) {
       return {
         'valueIndex': (this as ValueConnectionPoint).valueIndex,
-        'sourceNodeId': (this as ValueConnectionPoint).sourceNode?.id,
+        'isLeft': (this as ValueConnectionPoint).isLeft,
       };
     }
     return {};
   }
 
-  static ConnectionPointModel fromJson(Map<String, dynamic> json) {
+  static ConnectionPointModel fromJson(
+      Map<String, dynamic> json, NodeModel ownerNode) {
     final position = Offset(
       (json['position']['dx'] as num).toDouble(),
       (json['position']['dy'] as num).toDouble(),
@@ -60,16 +69,23 @@ abstract class ConnectionPointModel {
 
     switch (json['type']) {
       case 'InputConnectionPoint':
-        return InputConnectionPoint(position: position, width: width)
-          ..isConnected = isConnected;
+        return InputConnectionPoint(
+          position: position,
+          width: width,
+          ownerNode: ownerNode,
+        )..isConnected = isConnected;
       case 'OutputConnectionPoint':
-        return OutputConnectionPoint(position: position, width: width)
-          ..isConnected = isConnected;
+        return OutputConnectionPoint(
+          position: position,
+          width: width,
+          ownerNode: ownerNode,
+        )..isConnected = isConnected;
       case 'ConnectConnectionPoint':
         return ConnectConnectionPoint(
           position: position,
           width: width,
           isTop: json['isTop'] as bool,
+          ownerNode: ownerNode,
         )..isConnected = isConnected;
       case 'ValueConnectionPoint':
         return ValueConnectionPoint(
@@ -77,6 +93,7 @@ abstract class ConnectionPointModel {
           position: position,
           width: width,
           valueIndex: json['valueIndex'] as int,
+          ownerNode: ownerNode,
           isConnected: isConnected,
         );
       default:
@@ -86,27 +103,50 @@ abstract class ConnectionPointModel {
     }
   }
 
-  Widget build(BuildContext context, NodeModel owner);
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: computeOffset().dy,
+      left: computeOffset().dx,
+      child: ConnectionPointWidget(
+        connectionPoint: this,
+        node: ownerNode,
+      ),
+    );
+  }
 
-  Offset computeOffset(NodeModel owner);
+  Offset computeOffset();
+  void handlePanEndBehaviour(BuildContext context);
+  void disconnect();
+  ConnectionPointModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    bool? isConnected,
+    NodeModel? ownerNode,
+  });
 
-  void handlePanEndBehaviour(BuildContext context, NodeModel fromNode);
-
-  void disconnect(NodeModel owner);
-
-  ConnectionPointModel copyWith({Offset? position,Color? color,double? width, bool? isConnected});
   ConnectionPointModel copy();
 }
 
 class InputConnectionPoint extends ConnectionPointModel {
-  InputConnectionPoint({required super.position, required super.width})
-      : super(color: Colors.redAccent);
+  InputConnectionPoint({
+    required super.position,
+    required super.width,
+    required super.ownerNode,
+  }) : super(color: Colors.redAccent);
 
   @override
-  ConnectionPointModel copyWith({Offset? position, Color? color, double? width, bool? isConnected}) {
+  ConnectionPointModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    bool? isConnected,
+    NodeModel? ownerNode,
+  }) {
     return InputConnectionPoint(
       position: position ?? this.position,
       width: width ?? this.width,
+      ownerNode: ownerNode ?? this.ownerNode,
     )..isConnected = isConnected ?? this.isConnected;
   }
 
@@ -120,37 +160,31 @@ class InputConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  Widget build(BuildContext context, NodeModel owner) {
-    return Positioned(
-      top: computeOffset(owner).dy,
-      left: computeOffset(owner).dx,
-      child: ConnectionPointWidget(
-        connectionPoint: this,
-        node: owner,
-      ),
-    );
+  Offset computeOffset() {
+    return Offset(-width / 2, ownerNode.height / 2 - width / 2);
   }
 
   @override
-  Offset computeOffset(NodeModel owner) {
-    return Offset(-width / 2, owner.height / 2 - width / 2);
-  }
-
-  @override
-  void handlePanEndBehaviour(BuildContext context, NodeModel fromNode) {
+  void handlePanEndBehaviour(BuildContext context) {
+    // Input points don't initiate connections
     return;
   }
-  
+
   @override
-  void disconnect(NodeModel owner) {
-    if (owner is HasOutput) {
-      owner.disconnectOutput();
+  void disconnect() {
+    if (ownerNode is HasOutput) {
+      (ownerNode as HasOutput).disconnectOutput();
     }
+    isConnected = false;
   }
 }
+
 class OutputConnectionPoint extends ConnectionPointModel {
-  OutputConnectionPoint({required super.position, required super.width})
-      : super(color: Colors.greenAccent);
+  OutputConnectionPoint({
+    required super.position,
+    required super.width,
+    required super.ownerNode,
+  }) : super(color: Colors.greenAccent);
 
   @override
   ConnectionPointModel copyWith({
@@ -158,10 +192,12 @@ class OutputConnectionPoint extends ConnectionPointModel {
     Color? color,
     double? width,
     bool? isConnected,
+    NodeModel? ownerNode,
   }) {
     return OutputConnectionPoint(
       position: position ?? this.position,
       width: width ?? this.width,
+      ownerNode: ownerNode ?? this.ownerNode,
     )..isConnected = isConnected ?? this.isConnected;
   }
 
@@ -175,239 +211,21 @@ class OutputConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  Widget build(BuildContext context, NodeModel owner) {
-    return Positioned(
-      left: computeOffset(owner).dx,
-      top: computeOffset(owner).dy,
-      child: ConnectionPointWidget(connectionPoint: this, node: owner),
-    );
+  Offset computeOffset() {
+    return Offset(
+        ownerNode.width - width / 2, ownerNode.height / 2 - width / 2);
   }
 
   @override
-  Offset computeOffset(NodeModel owner) {
-    return Offset(owner.width - width / 2, owner.height / 2 - width / 2);
-  }
-
-  @override
-  void disconnect(NodeModel owner) {
-    if (owner is HasInput) {
-      owner.disconnectInput();
+  void disconnect() {
+    if (ownerNode is HasInput) {
+      (ownerNode as HasInput).disconnectInput();
     }
+    isConnected = false;
   }
 
   @override
-  void handlePanEndBehaviour(BuildContext context, NodeModel fromNode) {
-    final entityManager = Provider.of<EntityManager>(context, listen: false);
-    final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity.getComponent<NodeComponent>();
-
-    if (nodeComponent == null) {
-      log("No NodeComponent found");
-      return;
-    }
-
-    final provider = Provider.of<ConnectionProvider>(context, listen: false);
-    final endPos = provider.currentPosition;
-    final nodes = nodeComponent.workspaceNodes;
-
-    for (var targetNode in nodes) {
-      if (targetNode.id == fromNode.id) continue;
-
-      for (var point in targetNode.connectionPoints) {
-        if (point is! InputConnectionPoint) continue;
-
-        final pointPos = targetNode.position + point.computeOffset(targetNode);
-        if (endPos == null) return;
-        if ((endPos - pointPos).distance <= 20) {
-          if (fromNode is HasOutput && targetNode is HasInput) {
-            fromNode.connectOutput(targetNode);
-            targetNode.connectInput(fromNode);
-            log('output node $fromNode is connected to input node $targetNode');
-            provider.clear();
-            return;
-          }
-        }
-      }
-    }
-
-    provider.clear();
-  }
-}
-
-
-class ConnectConnectionPoint extends ConnectionPointModel {
-  final bool isTop;
-
-  ConnectConnectionPoint(
-      {required super.position, required this.isTop, required super.width})
-      : super(color: Colors.grey);
-
-  @override
-  ConnectionPointModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    bool? isConnected,
-    bool? isTop,
-  }) {
-    return ConnectConnectionPoint(
-      position: position ?? this.position,
-      isTop: isTop ?? this.isTop,
-      width: width ?? this.width,
-    )..isConnected = isConnected ?? this.isConnected;
-  }
-
-  @override
-  ConnectionPointModel copy() {
-    return copyWith(
-      position: position,
-      isTop: isTop,
-      width: width,
-      isConnected: isConnected,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, NodeModel owner) {
-    return Positioned(
-      left: computeOffset(owner).dx,
-      top: computeOffset(owner).dy,
-      child: ConnectionPointWidget(
-        connectionPoint: this,
-        node: owner,
-      ),
-    );
-  }
-
-  @override
-  Offset computeOffset(NodeModel owner) {
-    return isTop
-        ? Offset(owner.width / 2 - width / 2, -width / 2)
-        : Offset(owner.width / 2 - width / 2, owner.height - width / 2);
-  }
-
-  @override
-  void handlePanEndBehaviour(BuildContext context, NodeModel fromNode) {
-    log("handleConnectPanEnd called");
-
-    final entityManager = Provider.of<EntityManager>(context, listen: false);
-    final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity.getComponent<NodeComponent>();
-
-    if (nodeComponent == null) {
-      log("No NodeComponent found");
-      return;
-    }
-
-    final provider = Provider.of<ConnectionProvider>(context, listen: false);
-    final endPos = provider.currentPosition;
-    final nodes = nodeComponent.workspaceNodes;
-
-    for (var targetNode in nodes) {
-      if (targetNode.id == fromNode.id) continue;
-
-      for (var point in targetNode.connectionPoints) {
-        if (point is! ConnectConnectionPoint) continue;
-
-        final pointPos = targetNode.position + point.computeOffset(targetNode);
-        if ((endPos! - pointPos).distance <= 20) {
-          bool isTopTarget = point.isTop;
-
-          if (isTop == isTopTarget) continue;
-
-          NodeModel parent, child;
-
-          if (!isTop && isTopTarget) {
-            parent = fromNode;
-            child = targetNode;
-          } else {
-            parent = targetNode;
-            child = fromNode;
-          }
-
-          parent.connectNode(child);
-          provider.clear();
-          return;
-        }
-      }
-    }
-
-    provider.clear();
-  }
-  
-  @override
-  void disconnect(NodeModel owner) {
-    if (isTop) {
-      owner.disconnectIfTop();
-    } else {
-      owner.disconnectIfBottom();
-    }
-  }
-}
-
-class ValueConnectionPoint extends ConnectionPointModel {
-  NodeModel? sourceNode;
-  int valueIndex;
-  int? sourceIndex;
-  bool isLeft;
-  ValueConnectionPoint({
-    required this.isLeft,
-    required super.position,
-    required this.valueIndex,
-    required super.width,
-    super.isConnected,
-  }) : super(color: Colors.purple);
-
-  @override
-  ConnectionPointModel copyWith({
-    Offset? position,
-    Color? color,
-    double? width,
-    bool? isConnected,
-    NodeModel? sourceNode,
-    int? valueIndex,
-    bool? isLeft
-  }) {
-    return ValueConnectionPoint(
-      isLeft: isLeft ?? this.isLeft,
-      position: position ?? this.position,
-      valueIndex: valueIndex ?? this.valueIndex,
-      width: width ?? this.width,
-      isConnected: isConnected ?? this.isConnected,
-    )..sourceNode = sourceNode ?? this.sourceNode;
-  }
-
-  @override
-  ConnectionPointModel copy() {
-    return copyWith(
-      position: position,
-      valueIndex: valueIndex,
-      width: width,
-      isConnected: isConnected,
-      sourceNode: sourceNode?.copy(), // Deep copy the source node if present
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, NodeModel owner) {
-    return Positioned(
-      left: computeOffset(owner).dx,
-      top: computeOffset(owner).dy,
-      child: ConnectionPointWidget(
-        connectionPoint: this,
-        node: owner,
-      ),
-    );
-  }
-
-  @override
-  Offset computeOffset(NodeModel owner) {
-    return isLeft ? Offset(width / 2, owner.height / 4 - width / 2 + valueIndex * (owner.height / 2)) : Offset(owner.width / 2 - width / 2, owner.height / 4 - width / 2 + valueIndex * (owner.height / 2));
-    // Positions: first value at top (height/4), second at bottom (3*height/4)
-  }
-
-  @override
-  void handlePanEndBehaviour(BuildContext context, NodeModel fromNode) {
+  void handlePanEndBehaviour(BuildContext context) {
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
     final nodeComponent = activeEntity.getComponent<NodeComponent>();
@@ -427,19 +245,236 @@ class ValueConnectionPoint extends ConnectionPointModel {
     }
 
     for (var targetNode in nodes) {
-      if (targetNode.id == fromNode.id) continue;
+      if (targetNode.id == ownerNode.id) continue;
+
+      for (var point in targetNode.connectionPoints) {
+        if (point is! InputConnectionPoint) continue;
+
+        final pointPos = targetNode.position + point.computeOffset();
+        if ((endPos - pointPos).distance <= 20) {
+          if (ownerNode is HasOutput && targetNode is HasInput) {
+            (ownerNode as HasOutput).connectOutput(targetNode);
+            (targetNode as HasInput).connectInput(ownerNode);
+            isConnected = true;
+            point.isConnected = true;
+            log('output node $ownerNode is connected to input node $targetNode');
+            provider.clear();
+            return;
+          }
+        }
+      }
+    }
+
+    provider.clear();
+  }
+}
+
+class ConnectConnectionPoint extends ConnectionPointModel {
+  final bool isTop;
+
+  ConnectConnectionPoint({
+    required super.position,
+    required this.isTop,
+    required super.width,
+    required super.ownerNode,
+  }) : super(color: Colors.grey);
+
+  @override
+  ConnectionPointModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    bool? isConnected,
+    bool? isTop,
+    NodeModel? ownerNode,
+  }) {
+    return ConnectConnectionPoint(
+      position: position ?? this.position,
+      isTop: isTop ?? this.isTop,
+      width: width ?? this.width,
+      ownerNode: ownerNode ?? this.ownerNode,
+    )..isConnected = isConnected ?? this.isConnected;
+  }
+
+  @override
+  ConnectionPointModel copy() {
+    return copyWith(
+      position: position,
+      isTop: isTop,
+      width: width,
+      isConnected: isConnected,
+    );
+  }
+
+  @override
+  Offset computeOffset() {
+    return isTop
+        ? Offset(ownerNode.width / 2 - width / 2, -width / 2)
+        : Offset(ownerNode.width / 2 - width / 2, ownerNode.height - width / 2);
+  }
+
+  @override
+  void handlePanEndBehaviour(BuildContext context) {
+    log("handleConnectPanEnd called");
+
+    final entityManager = Provider.of<EntityManager>(context, listen: false);
+    final activeEntity = entityManager.activeEntity;
+    final nodeComponent = activeEntity.getComponent<NodeComponent>();
+
+    if (nodeComponent == null) {
+      log("No NodeComponent found");
+      return;
+    }
+
+    final provider = Provider.of<ConnectionProvider>(context, listen: false);
+    final endPos = provider.currentPosition;
+    final nodes = nodeComponent.workspaceNodes;
+
+    if (endPos == null) {
+      provider.clear();
+      return;
+    }
+
+    for (var targetNode in nodes) {
+      if (targetNode.id == ownerNode.id) continue;
+
+      for (var point in targetNode.connectionPoints) {
+        if (point is! ConnectConnectionPoint) continue;
+
+        final pointPos = targetNode.position + point.computeOffset();
+        if ((endPos - pointPos).distance <= 20) {
+          bool isTopTarget = point.isTop;
+
+          if (isTop == isTopTarget) continue;
+
+          NodeModel parent, child;
+
+          if (!isTop && isTopTarget) {
+            parent = ownerNode;
+            child = targetNode;
+          } else {
+            parent = targetNode;
+            child = ownerNode;
+          }
+
+          parent.connectNode(child);
+          isConnected = true;
+          point.isConnected = true;
+          provider.clear();
+          return;
+        }
+      }
+    }
+
+    provider.clear();
+  }
+
+  @override
+  void disconnect() {
+    if (isTop) {
+      ownerNode.disconnectIfTop();
+    } else {
+      ownerNode.disconnectIfBottom();
+    }
+    isConnected = false;
+  }
+}
+
+class ValueConnectionPoint extends ConnectionPointModel {
+  int valueIndex;
+  ValueConnectionPoint? sourcePoint;
+  ValueConnectionPoint? destinationPoint;
+  bool isLeft;
+  dynamic value;
+
+  ValueConnectionPoint({
+    required super.ownerNode,
+    required this.isLeft,
+    required super.position,
+    required this.valueIndex,
+    required super.width,
+    super.isConnected = false,
+  }) : super(color: Colors.purple);
+
+  @override
+  ConnectionPointModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    bool? isConnected,
+    NodeModel? ownerNode,
+  }) {
+    return ValueConnectionPoint(
+      isLeft: isLeft,
+      position: position ?? this.position,
+      valueIndex: valueIndex,
+      width: width ?? this.width,
+      isConnected: isConnected ?? this.isConnected,
+      ownerNode: ownerNode ?? this.ownerNode,
+    )
+      ..sourcePoint = null
+      ..destinationPoint = destinationPoint
+      ..value = value;
+  }
+
+  @override
+  ConnectionPointModel copy() {
+    return copyWith(
+      position: position,
+      width: width,
+      isConnected: isConnected,
+    );
+  }
+
+  @override
+  Offset computeOffset() {
+    return isLeft
+        ? Offset(
+            -width / 2,
+            ownerNode.height / 4 -
+                width / 2 +
+                valueIndex * (ownerNode.height / 2))
+        : Offset(
+            ownerNode.width - width / 2,
+            ownerNode.height / 4 -
+                width / 2 +
+                valueIndex * (ownerNode.height / 2));
+  }
+
+  @override
+  void handlePanEndBehaviour(BuildContext context) {
+    final entityManager = Provider.of<EntityManager>(context, listen: false);
+    final activeEntity = entityManager.activeEntity;
+    final nodeComponent = activeEntity.getComponent<NodeComponent>();
+
+    if (nodeComponent == null) {
+      log("No NodeComponent found");
+      return;
+    }
+
+    final provider = Provider.of<ConnectionProvider>(context, listen: false);
+    final endPos = provider.currentPosition;
+    final nodes = nodeComponent.workspaceNodes;
+
+    if (endPos == null) {
+      provider.clear();
+      return;
+    }
+
+    for (var targetNode in nodes) {
+      if (targetNode.id == ownerNode.id) continue;
 
       for (var targetPoint in targetNode.connectionPoints) {
-        if (targetPoint is! ValueConnectionPoint) continue; // Only connect to ValueConnectionPoint
+        if (targetPoint is! ValueConnectionPoint) continue;
 
-        final targetPointPos = targetNode.position + targetPoint.computeOffset(targetNode);
+        final targetPointPos =
+            targetNode.position + targetPoint.computeOffset();
         if ((endPos - targetPointPos).distance <= 20) {
-          if (targetNode is OutputNodeWithValue && targetPoint.sourceNode == null) {
-           
+          if (targetNode is OutputNodeWithValue && ownerNode is InputNodeWithValue) {
+            (ownerNode as InputNodeWithValue).connectValue(this, targetPoint);
+            isConnected = true;
             targetPoint.isConnected = true;
-            targetPoint.sourceIndex = valueIndex;
-            targetNode.connectValue(fromNode);
-            log('ValueConnectionPoint $valueIndex on $targetNode connected to $fromNode');
+            log('ValueConnectionPoint $valueIndex on $targetNode connected to $ownerNode');
             provider.clear();
             return;
           }
@@ -450,21 +485,24 @@ class ValueConnectionPoint extends ConnectionPointModel {
     provider.clear();
   }
 
-  dynamic processValue(dynamic result) {
-    if (sourceNode == null || !isConnected) return null;
-    if (result.errorMessage != null) return null;
-    final value = result.result;
-    if (value is List && sourceIndex != null && value.length > sourceIndex!) {
-      return value[sourceIndex!];
+  dynamic processValue([Entity? activeEntity]) {
+    if (!isConnected || sourcePoint == null) return value;
+
+    final result = sourcePoint!.ownerNode.execute(activeEntity);
+    if (result.errorMessage != null || result.result == null) return null;
+
+    final fullValue = result.result;
+    if (fullValue is Offset) {
+      return valueIndex == 0 ? fullValue.dx : fullValue.dy;
     }
 
-    return value;
-  }
-  
-  @override
-  void disconnect(NodeModel owner) {
-    if (owner is HasValue) {
-      owner.disconnect();
+    if (fullValue is List && valueIndex < fullValue.length) {
+      return fullValue[valueIndex];
     }
+
+    return fullValue;
   }
+
+  @override
+  void disconnect() {}
 }
