@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/ui_element/alignment_picker.dart';
 import 'package:scratch_clone/ui_element/joystick/data/joy_stick_element.dart';
-import 'package:scratch_clone/ui_element/ui_button/presentation/button_type_selector.dart';
+import 'package:scratch_clone/ui_element/ui_button/data/hold_button.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/four_button_config.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/three_button_config.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/two_button_config.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
 
@@ -103,9 +106,28 @@ class _AddUIElementDialogState extends State<_AddUIElementDialog> {
             UIElement element;
             switch (selectedType) {
               case 'Joystick':
+                element = JoyStickElement(alignment: selectedAlignment);
+                break;
+              case 'button':
+                element = HoldButton(
+                  alignment: selectedAlignment,
+                );
+              case 'twoButtons':
+                element = TwoButtonConfiguration(
+                  alignment: selectedAlignment,
+                );
+              case 'threeButtons':
+                element = ThreeButtonConfiguration(
+                  alignment: selectedAlignment,
+                );
+              case 'fourButtons':
+                element = FourButtonConfiguration(
+                  alignment: selectedAlignment,
+                );
               default:
                 element = JoyStickElement(alignment: selectedAlignment);
                 break;
+
             }
             Navigator.pop(context, element);
           },

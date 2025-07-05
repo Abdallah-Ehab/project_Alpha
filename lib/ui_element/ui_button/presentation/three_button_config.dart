@@ -4,9 +4,9 @@ import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_b
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class ThreeButtonConfiguration extends UIElement {
-  ThreeButtonConfiguration()
+  ThreeButtonConfiguration({super.alignment= Alignment.bottomRight})
       : super(
-          alignment: Alignment.bottomRight,
+          
           type: UIElementType.threeButtons,
         );
 

@@ -90,7 +90,7 @@ class AnimationTrackControlPanel extends StatelessWidget {
                  ChangeNotifierProvider.value(
                    value: currentTrack,
                    child: Consumer<AnimationTrack>(
-                     builder: (context, value, child) =>  CheckboxListTile(
+                     builder: (context, currentTrack, child) =>  CheckboxListTile(
                        title: const Text("Looping"),
                        value: currentTrack.isLooping,
                        onChanged: (value) {
@@ -105,7 +105,7 @@ class AnimationTrackControlPanel extends StatelessWidget {
                  
                    child: Consumer<AnimationTrack>(
                      
-                     builder: (context, value, child) =>  CheckboxListTile(
+                     builder: (context, currentTrack, child) =>  CheckboxListTile(
                        title: const Text("Must Finish Before Transition"),
                        value: currentTrack.mustFinish,
                        onChanged: (value) {

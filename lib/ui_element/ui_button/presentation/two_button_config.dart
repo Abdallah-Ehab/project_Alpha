@@ -15,9 +15,9 @@ class TwoButtonConfigWidget extends StatelessWidget {
 }
 
 class TwoButtonConfiguration extends UIElement {
-  TwoButtonConfiguration()
+  TwoButtonConfiguration({super.alignment = Alignment.centerRight})
       : super(
-          alignment: Alignment.centerRight,
+
           type: UIElementType.twoButtons,
         );
   @override

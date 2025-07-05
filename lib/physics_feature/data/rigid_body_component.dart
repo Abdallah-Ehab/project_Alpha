@@ -14,10 +14,11 @@ class RigidBodyComponent extends Component {
   double gravity;
   bool isStatic;
   bool isGrounded;
-  double fallProgress = 0.0;
-  final double gravityAccelerationRate = 0.5; // tunable
-  final double maxFallSpeed = 20.0;           // optional safety cap
-
+  double fallProgress;
+  final double gravityAccelerationRate; // tunable
+  final double maxFallSpeed;           // optional safety cap
+   double resistance; // Air resistance factor (0 to 1)
+    double friction;
   RigidBodyComponent({
     this.velocity = Offset.zero,
     this.mass = 1.0,
@@ -25,6 +26,11 @@ class RigidBodyComponent extends Component {
     this.gravity = 0.2, // Base gravity value
     this.isStatic = false,
     this.isGrounded = false,
+    this.fallProgress = 0.0,
+    this.gravityAccelerationRate = 0.1, // How quickly fallProgress increases
+    this.maxFallSpeed = 10.0, // Optional cap on fall speed
+    this.resistance = 0.98, // Air resistance factor (0 to 1
+    this.friction = 0.95,   // Ground friction factor (0 to 1)
     super.isActive,
   });
 
@@ -41,6 +47,11 @@ class RigidBodyComponent extends Component {
       'isStatic': isStatic,
       'isGrounded': isGrounded,
       'fallProgress': fallProgress,
+      'gravityAccelerationRate': gravityAccelerationRate,
+      'maxFallSpeed': maxFallSpeed,
+      'resistance': resistance,
+      'friction': friction,
+      
     };
   }
 
@@ -57,9 +68,29 @@ class RigidBodyComponent extends Component {
       gravity: (json['gravity'] as num).toDouble(),
       isStatic: json['isStatic'] as bool? ?? false,
       isGrounded: json['isGrounded'] as bool? ?? false,
+      gravityAccelerationRate: (json['gravityAccelerationRate'] as num?)?.toDouble() ?? 0.1,
+      maxFallSpeed: (json['maxFallSpeed'] as num?)?.toDouble() ?? 10.0,
+      resistance: (json['resistance'] as num?)?.toDouble() ?? 0.98,
+      friction: (json['friction'] as num?)?.toDouble() ?? 0
+  
     )..fallProgress = (json['fallProgress'] as num?)?.toDouble() ?? 0.0;
   }
 
+
+  void setMass(double mass){
+    this.mass = mass;
+    notifyListeners();
+  }
+
+  void setUseGravity(bool useGravity) {
+    this.useGravity = useGravity;
+    notifyListeners();
+  }
+
+  void setIsStatic(bool isStatic) {
+    this.isStatic = isStatic;
+    notifyListeners();
+  }
   @override
   RigidBodyComponent copy() {
     return RigidBodyComponent(
@@ -86,8 +117,6 @@ class RigidBodyComponent extends Component {
   void applyForce({
     double fx = 0.0,
     double fy = 0.0,
-    double resistance = 0.98, // Air resistance factor (0 to 1)
-    double friction = 0.95,   // Ground friction factor (0 to 1)
   }) {
     if (isStatic) return;
     
@@ -121,9 +150,9 @@ class RigidBodyComponent extends Component {
     notifyListeners();
   }
 
-  void applyForceX(double fx, {double friction = 0.95}) => applyForce(fx: fx, friction: friction);
+  void applyForceX(double fx) => applyForce(fx: fx);
 
-  void applyForceY(double fy, {double resistance = 0.98}) => applyForce(fy: fy, resistance: resistance);
+  void applyForceY(double fy,) => applyForce(fy: fy);
 
   void setVelocity(double vx, double vy) {
     if (isStatic) return;
@@ -133,6 +162,16 @@ class RigidBodyComponent extends Component {
       isGrounded = false;
       useGravity = true;
     }
+    notifyListeners();
+  }
+
+  void setResistance(double r) {
+    resistance = r;
+    notifyListeners();
+  }
+
+  void setFriction(double f) {
+    friction = f;
     notifyListeners();
   }
 
@@ -169,7 +208,7 @@ class RigidBodyComponent extends Component {
     // Optional cap on fallProgress to prevent black hole gravity
     fallProgress = fallProgress.clamp(0, maxFallSpeed);
 
-    velocity += Offset(0, gravity * fallProgress);
+    velocity += Offset(0, gravity * fallProgress * mass * resistance);
   }
 
   final dx = velocity.dx;

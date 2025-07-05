@@ -16,8 +16,6 @@ class ButtonConfigDialog extends StatefulWidget {
 class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
   late TextEditingController entityController;
   late TextEditingController variableController;
-  late TextEditingController valueController;
-
   String? error;
 
   @override
@@ -25,16 +23,13 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
     super.initState();
     entityController = TextEditingController(text: widget.buttonElement.entityName);
     variableController = TextEditingController(text: widget.buttonElement.variableName);
-    valueController = TextEditingController(
-      text: widget.buttonElement.valueToSet?.toString() ?? '',
-    );
   }
 
   @override
   void dispose() {
     entityController.dispose();
     variableController.dispose();
-    valueController.dispose();
+
     super.dispose();
   }
 
@@ -76,6 +71,7 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
+            keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (value) {
 
@@ -85,6 +81,7 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
           ),
           SizedBox(height: 16,),
           PixelatedTextField(
+            keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (value) {
 

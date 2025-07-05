@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -18,78 +19,168 @@ class UploadSpriteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entityManager = context.read<EntityManager>();
-    return ChangeNotifierProvider.value(
-      value: entityManager.activeEntity,
-      child: Consumer<Entity>(
-        builder: (BuildContext context, Entity entity, Widget? child) {
-          final animComponent =
-              entity.getComponent<AnimationControllerComponent>();
-          if (animComponent == null) {
-            return Center(
-              child: Text('No Animation Controller Component Added'),
-            );
-          } else {
-            return ChangeNotifierProvider.value(
+    return Consumer<EntityManager>(
+      builder: (context, entityManager, child) {
+        final entity = entityManager.activeEntity;
+        if (entity == null) {
+          return const Center(
+            child: Text(
+              'No active entity selected',
+              style: TextStyle(
+                fontFamily: 'PressStart2P',
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+
+        return ChangeNotifierProvider.value(
+          value: entity,
+          child: Consumer<Entity>(
+            builder: (context, entity, child) {
+              final animComponent =
+                  entity.getComponent<AnimationControllerComponent>();
+              if (animComponent == null) {
+                return const Center(
+                  child: Text(
+                    'No Animation Controller Component Added',
+                    style: TextStyle(
+                      fontFamily: 'PressStart2P',
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }
+
+              return ChangeNotifierProvider.value(
                 value: animComponent,
                 child: Consumer<AnimationControllerComponent>(
                   builder: (context, animationComponent, _) {
                     final currentTrack =
                         animationComponent.currentAnimationTrack;
-                    if (currentTrack == null) return const SizedBox.shrink();
+                    if (currentTrack == null) {
+                      return const Center(
+                        child: Text(
+                          'No animation track selected',
+                          style: TextStyle(
+                            fontFamily: 'PressStart2P',
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    }
 
                     return PixelArtButton(
-                        text: "Upload Frames",
-                        callback: () async {
+                      text: "Upload Sprite Sheet",
+                      fontsize: 16,
+                      callback: () async {
+                        final navigator =
+                            Navigator.of(context); // capture early
+                        final scaffoldContext =
+                            context; // keep a reference to show dialog if needed
+
+                        try {
+                          log('Button pressed - starting file picker');
+
                           final result = await FilePicker.platform.pickFiles(
                             allowMultiple: false,
                             type: FileType.image,
                           );
 
-                          if (result == null || result.files.isEmpty) return;
+                          if (result == null || result.files.isEmpty) {
+                            log('No file selected');
+                            return;
+                          }
 
-                          ui.Image image;
+                          final file = File(result.files.first.path!);
+                          if (!await file.exists()) {
+                            log('File does not exist');
+                            return;
+                          }
 
-                          final bytes =
-                              File(result.files.first.path!).readAsBytesSync();
+                          log('Reading file bytes...');
+                          final bytes = await file.readAsBytes();
+
+                          log('Decoding image...');
                           final decoded = img.decodeImage(bytes);
-                          if (decoded == null) return;
+                          if (decoded == null) {
+                            log('Failed to decode image');
+                            return;
+                          }
 
+                          log('Processing image...');
                           final resized =
-                              img.copyResize(decoded);
+                              img.copyResize(decoded, width: 2000, height: 2000);
                           final pngBytes = img.encodePng(resized);
+
                           final codec = await ui.instantiateImageCodec(
                               Uint8List.fromList(pngBytes));
                           final frameInfo = await codec.getNextFrame();
+                          final image = frameInfo.image;
 
-                          image = frameInfo.image;
+                          log('Navigating to SpriteSheetSlicer...');
 
-                          Navigator.of(context).push(
+                          // Use navigator captured earlier
+                          await navigator.push(
                             MaterialPageRoute(
-                              builder: (context) => SpriteSheetSlicer(
-                                spriteSheet: image, 
+                              builder: (_) => SpriteSheetSlicer(
+                                spriteSheet: image,
                                 onSpritesExtracted: (List<ui.Image> images) {
-                                  List<KeyFrame> frames = [];
-                                  for(final image in images){
-                                    frames.add(KeyFrame(
-                                      image: image,
-                                      sketches: [],
-                                      position: Offset.zero,
-                                      rotation: 0,
-                                      scale: 1.0,
-                                    ));
-                                  }
+                                  log('Sprites extracted: ${images.length}');
+
+                                  final frames = images
+                                      .map((img) => KeyFrame(
+                                            image: img,
+                                            sketches: [],
+                                            position: Offset.zero,
+                                            rotation: 0,
+                                            scale: 1.0,
+                                          ))
+                                      .toList();
+
                                   currentTrack.addMultipleFrames(frames);
-                                 },
+
+                                  if (scaffoldContext.mounted) {
+                                    Navigator.of(scaffoldContext).pop();
+                                  }
+                                },
                               ),
                             ),
                           );
-                        }, fontsize: 16,);
+                        } catch (e, stackTrace) {
+                          log('Error in upload sprite button: $e');
+                          log('Stack trace: $stackTrace');
+
+                          if (scaffoldContext.mounted) {
+                            showDialog(
+                              context: scaffoldContext,
+                              builder: (_) => AlertDialog(
+                                title: const Text('Error'),
+                                content:
+                                    Text('Failed to load sprite sheet: $e'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(scaffoldContext).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
                   },
-                ));
-          }
-        },
-      ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

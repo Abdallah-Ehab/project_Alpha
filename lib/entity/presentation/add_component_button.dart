@@ -5,6 +5,7 @@ import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
+import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 class AddComponentButton extends StatelessWidget {
@@ -40,6 +41,9 @@ class AddComponentButton extends StatelessWidget {
             break;
           case 'soundComponent':
             entity?.addComponent(SoundControllerComponent());
+          case 'rigidBodyComponent':
+            entity?.addComponent(RigidBodyComponent());
+            break;
           default:
             debugPrint('Unknown component type: $componentType');
         }
@@ -64,7 +68,8 @@ class _ComponentSelectionDialogState extends State<ComponentSelectionDialog> {
     'AnimationController',
     'Collider',
     'NodeComponent',
-    'soundComponent'
+    'soundComponent',
+    'rigidBodyComponent'
   ];
 
   @override

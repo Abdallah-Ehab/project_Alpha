@@ -201,6 +201,16 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
+  void setWidth(double width){
+    this.width = width;
+    notifyListeners();
+  }
+
+  void setHeight(double height){
+    this.height = height;
+    notifyListeners();
+  }
+
   void addVariable({required String name, required dynamic value}) {
     variables[name] = value;
     notifyListeners();

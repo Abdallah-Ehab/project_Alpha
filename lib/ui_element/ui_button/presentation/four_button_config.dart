@@ -4,9 +4,9 @@ import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_b
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class FourButtonConfiguration extends UIElement {
-  FourButtonConfiguration()
+  FourButtonConfiguration({super.alignment = Alignment.centerRight})
       : super(
-          alignment: Alignment.bottomRight,
+
           type: UIElementType.fourButtons,
         );
 
@@ -21,6 +21,7 @@ class FourButtonConfiguration extends UIElement {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
+
         mainAxisSize: MainAxisSize.min,
         children: [
           // Top
@@ -28,6 +29,7 @@ class FourButtonConfiguration extends UIElement {
           const SizedBox(height: 8),
           // Left, Center Spacer, Right
           Row(
+            
             mainAxisSize: MainAxisSize.min,
             children: [
               HoldButton().buildWidget(),

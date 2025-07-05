@@ -11,7 +11,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class AddNode extends MultipleInputNode {
   AddNode({super.position})
       : super(
-          image: 'assets/icons/add.png',
+          image: 'assets/icons/addNode.png',
           color: Colors.blue,
           width: 160,
           height: 120,

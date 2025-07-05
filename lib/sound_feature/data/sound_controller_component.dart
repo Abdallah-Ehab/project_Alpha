@@ -1,6 +1,7 @@
 
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -16,7 +17,20 @@ class SoundControllerComponent extends Component {
    
     this.currentlyPlaying = '',
     super.isActive,
-  }): tracks = {},transitions = [
+  }): tracks = {
+  'breath':SoundTrack(
+      name: 'breath',
+      filePath: 'sounds/breath.mp3',
+      releaseMode: ReleaseMode.loop,
+      loop: true,
+    ),
+    'boost': SoundTrack(
+      name: 'boost',
+      filePath: 'sounds/boost.mp3',
+      releaseMode: ReleaseMode.loop,
+      loop: true,
+    ),
+  },transitions = [
     Transition(startTrackName: 'breath', condition: Condition(entityVariable: 'breath', secondOperand: 'true', operator: '=='), targetTrackName: 'boost'),
     Transition(startTrackName: 'boost', condition: Condition(entityVariable: 'breath', secondOperand: 'true', operator: '=='), targetTrackName: 'breath')
   ];
@@ -27,6 +41,17 @@ class SoundControllerComponent extends Component {
       transition.execute(activeEntity,soundComponent: this);
     }
   }
+
+  void togglePlay(String trackName) async {
+  if (currentlyPlaying == trackName) {
+    await AudioManager.instance.stop();
+    currentlyPlaying = null;
+    notifyListeners();
+  } else {
+    play(trackName);
+  }
+}
+
 
   void removeTransitionAtIndex(int index){
     transitions.removeAt(index);
@@ -57,7 +82,7 @@ class SoundControllerComponent extends Component {
 
   try {
     await AudioManager.instance.stop();
-    await AudioManager.instance.playAsset(track.filePath, track.releaseMode, loop: track.loop);
+    AudioManager.instance.playFile(track.filePath, track.releaseMode, loop: track.loop);
     currentlyPlaying = trackName;
     notifyListeners();
     log("Successfully playing: $trackName");
