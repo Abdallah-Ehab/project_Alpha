@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_button.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 abstract class UIButtonElement extends UIElement with ChangeNotifier {
@@ -8,6 +9,7 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
   dynamic valueToSet;
 
   UIButtonElement({
+    super.type = UIElementType.button,
     this.entityName,
     this.variableName = '',
     this.valueToSet,

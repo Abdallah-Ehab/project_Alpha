@@ -131,6 +131,7 @@ class _CreateEntityDialogState extends State<_CreateEntityDialog> {
           SizedBox(height: 16,),
           PixelatedTextField(
             borderColor: Colors.white,
+            keyboardType: TextInputType.text,
             onChanged: (value) {},
             hintText: 'Entity Name',
             controller: _nameController,

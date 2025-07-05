@@ -28,7 +28,7 @@ class SketchModel {
                 'y': pt.dy,
               })
           .toList(),
-      'color': color,
+      'color': color.toARGB32(),
       'strokeWidth': strokeWidth,
     };
   }

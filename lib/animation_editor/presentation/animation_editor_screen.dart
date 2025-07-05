@@ -138,10 +138,8 @@ class AnimationPainter extends CustomPainter {
   }
 
   void _paintFrame(Canvas canvas, KeyFrame keyFrame, Color? overrideColor,Size size) {
-    canvas.save();
-    canvas.translate(keyFrame.position.dx, keyFrame.position.dy);
-    canvas.rotate(keyFrame.rotation);
-    canvas.scale(keyFrame.scale);
+    
+    
 
     for (var sketch in keyFrame.sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
@@ -164,7 +162,6 @@ class AnimationPainter extends CustomPainter {
       );
     }
 
-    canvas.restore();
   }
 
   @override

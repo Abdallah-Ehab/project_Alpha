@@ -17,16 +17,28 @@ class NodeIconWidget extends StatelessWidget {
       data: nodeModel,
       feedback: Material(
         child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withAlpha(200),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.black,
+              width: 2,
+            ),
+          ),
+          
           width: 50,
           height: 50,
-          color: nodeModel.color.withAlpha(200),
           child: Center(child: Image.asset(nodeModel.image)),
         ),
       ),
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black, width: 2),
+          color: Colors.white,
+        ),
         width: 50,
         height: 50,
-        color: nodeModel.color,
         child: Center(child: Image.asset(nodeModel.image)),
       ),
       onDragStarted: () {

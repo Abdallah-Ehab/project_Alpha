@@ -1,0 +1,785 @@
+{
+  "entities": {
+    "cameras": {
+      "mainCamera": {
+        "type": "camera",
+        "name": "mainCamera",
+        "position": {
+          "x": 297.89899553571433,
+          "y": -271.4006696428566
+        },
+        "rotation": 0.0,
+        "width": 500.0,
+        "height": 500.0,
+        "layerNumber": 0,
+        "zoom": 1.0,
+        "isEditorCamera": true
+      }
+    },
+    "actors": {
+      "fire": {
+        "type": "actor",
+        "name": "fire",
+        "position": {
+          "x": 561.0,
+          "y": 0.0
+        },
+        "rotation": 0.0,
+        "width": 100.0,
+        "height": 100.0,
+        "layerNumber": 0,
+        "children": [],
+        "components": {
+          "NodeComponent": [
+            {
+              "type": "NodeComponent",
+              "isActive": true,
+              "workspaceNodes": [
+                {
+                  "id": "4ce3cab5-e0bf-44f0-9876-0a2324f14761",
+                  "position": {
+                    "dx": 0.0,
+                    "dy": 0.0
+                  },
+                  "color": 4294940672,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "7685cdba-7b08-4368-b34a-938fd4cd82ee",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": true,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": "a19d04ca-f3c9-4129-89a8-65fad168f4ce",
+                  "parentId": null,
+                  "type": "StartNode"
+                },
+                {
+                  "id": "d5a9f1fd-5826-43f1-8487-0910d4ecb505",
+                  "position": {
+                    "dx": 214.0890066964281,
+                    "dy": 105.52455357142833
+                  },
+                  "color": 4294940672,
+                  "width": 180.0,
+                  "height": 160.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "ec4de9e6-1533-4e90-ae8d-06d66aa5dcf3",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ValueConnectionPoint",
+                      "id": "e650f5d9-bc44-4240-96be-39ae306eabfb",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "valueIndex": 0,
+                      "sourcePoint": null,
+                      "destinationPoint": null,
+                      "isLeft": true
+                    },
+                    {
+                      "type": "ValueConnectionPoint",
+                      "id": "4dc6ebe9-a733-44e8-a5e4-306152b1fe4c",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "valueIndex": 1,
+                      "sourcePoint": null,
+                      "destinationPoint": null,
+                      "isLeft": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "ff3a8e0b-5059-4548-83ed-7ca79b6a75b6",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "9fc88b2e-342e-4907-b59b-69748b0cce95",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "inputId": null,
+                  "type": "TeleportNode"
+                },
+                {
+                  "id": "0f7e24d9-e97d-4f11-94e5-5f69b5cd5b3b",
+                  "position": {
+                    "dx": -52.18191964285714,
+                    "dy": -183.98437499999994
+                  },
+                  "color": 4278228616,
+                  "width": 180.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ValueConnectionPoint",
+                      "id": "5f7f9bfd-f81d-423d-8dc8-36eee25050ba",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "valueIndex": 0,
+                      "sourcePoint": null,
+                      "destinationPoint": null,
+                      "isLeft": false
+                    },
+                    {
+                      "type": "ValueConnectionPoint",
+                      "id": "ecd4fe47-8c24-4bd0-9be1-df91eda2ecff",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "valueIndex": 1,
+                      "sourcePoint": null,
+                      "destinationPoint": null,
+                      "isLeft": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "GetPropertyFromEntityNode",
+                  "entityName": "assets/icons/GetPropertyFromEntityNode.png",
+                  "selectedProperty": "position",
+                  "hasTwoOutputs": true
+                },
+                {
+                  "id": "f6eec266-1873-4293-8c49-d44161d31de9",
+                  "position": {
+                    "dx": -210.47823660714295,
+                    "dy": -3.953125000000341
+                  },
+                  "color": 4283215696,
+                  "width": 200.0,
+                  "height": 200.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "d91f87c1-032c-4fe3-b5eb-21c36f98fb64",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "30ccc687-4c4b-4b87-922a-6a87eff391e9",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "246df926-20c1-40b5-918b-1ac31a21938c",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "a7e8ffb1-0d8b-4f46-9860-507dd55d8c06",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "inputId": null,
+                  "outputId": null,
+                  "type": "IfNode"
+                },
+                {
+                  "id": "603c755b-6a15-40fe-8f16-675d08cf8371",
+                  "position": {
+                    "dx": 52.47014508928572,
+                    "dy": 630.3381696428569
+                  },
+                  "color": 4280391411,
+                  "width": 200.0,
+                  "height": 200.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "1926fd13-2c74-435d-be59-4c92427b43ac",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 50.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "ba876e4e-3674-4b1f-b682-6f7e73487982",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 50.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "ea9bb053-f619-4020-a05a-6d367ca637fa",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 50.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "inputId": null,
+                  "outputId": null,
+                  "type": "ElseNode"
+                },
+                {
+                  "id": "500be3a1-d776-43ae-8565-4907db899654",
+                  "position": {
+                    "dx": -13.62667410714289,
+                    "dy": 425.3716517857144
+                  },
+                  "color": 4283215696,
+                  "width": 200.0,
+                  "height": 200.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "a882f810-a898-4b7e-b6c6-303b3efd6b62",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "inputId": null,
+                  "type": "StatementGroupNode",
+                  "isHighlighted": false,
+                  "statements": []
+                },
+                {
+                  "id": "7e062314-eea2-404f-a5b6-9c5889e22055",
+                  "position": {
+                    "dx": -248.46735491071428,
+                    "dy": 921.8482142857137
+                  },
+                  "color": 4294922834,
+                  "width": 300.0,
+                  "height": 300.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "c44d69b0-32a7-4e29-90bf-c208e414f263",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 50.0,
+                      "isConnected": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "ConditionGroupNode",
+                  "logicSequence": []
+                },
+                {
+                  "id": "6fdd86c4-2138-4e1f-be43-a257b4b347e0",
+                  "position": {
+                    "dx": -219.0443638392856,
+                    "dy": 720.3415178571425
+                  },
+                  "color": 4294961979,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "5807f023-ab76-48a1-b50c-51241eb90d93",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "SimpleConditionNode",
+                  "firstOperand": "",
+                  "secondOperand": "",
+                  "comparisonOperator": "=="
+                },
+                {
+                  "id": "4a0d901c-42f5-4325-85c7-f3842d6e6fe0",
+                  "position": {
+                    "dx": 217.51674107142853,
+                    "dy": -154.26897321428572
+                  },
+                  "color": 4294940672,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [],
+                  "childId": null,
+                  "parentId": null,
+                  "type": "DeclareVariableNode",
+                  "variableName": "x",
+                  "value": 0
+                },
+                {
+                  "id": "c3ee4829-384d-422c-8870-2900dbd2406e",
+                  "position": {
+                    "dx": -231.34123883928555,
+                    "dy": 590.1629464285714
+                  },
+                  "color": 4294940672,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "daa37f9c-161c-4dc1-9b46-b0004f004117",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "7283d158-11bf-42d1-8b50-98cc6561b4bf",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "type": "SetVariableNode",
+                  "variableName": "x",
+                  "value": 0
+                },
+                {
+                  "id": "d71c0ca6-a11e-4ca1-8f43-2e8600cf0c1e",
+                  "position": {
+                    "dx": -415.59291294642856,
+                    "dy": 318.98549107142844
+                  },
+                  "color": 4284955319,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [],
+                  "childId": null,
+                  "parentId": null,
+                  "type": "DeclareListNode",
+                  "listName": "myList"
+                },
+                {
+                  "id": "c126dedd-5c4f-4f50-aee5-868b5a19e123",
+                  "position": {
+                    "dx": -455.70089285714255,
+                    "dy": 482.6629464285715
+                  },
+                  "color": 4278190080,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "7871c1a5-2383-462e-9cd5-6f4aae9bad72",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "9320e964-ad34-4889-ac59-efa56b4ff164",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "type": "SpawnEntityNode",
+                  "prefabName": ""
+                },
+                {
+                  "id": "40613fbd-3ec8-4b09-9803-4635676ec94e",
+                  "position": {
+                    "dx": -477.15094866071405,
+                    "dy": 662.6908482142851
+                  },
+                  "color": 4280391411,
+                  "width": 160.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "934f7bfa-736e-416d-8f1b-2ab0475c6658",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "196b258b-4b14-4a88-8939-1cbe3b8a2864",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "374d5b59-b4a4-4b84-a9d2-eb0581b4ce00",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "28710fa0-3ebd-4ecb-8487-5322c28c3fcb",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "AddNode"
+                },
+                {
+                  "id": "2ed61d19-536a-4c8f-93a5-a7de035ad88b",
+                  "position": {
+                    "dx": -465.21819196428567,
+                    "dy": 809.3426339285709
+                  },
+                  "color": 4294198070,
+                  "width": 160.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "5b6f16d8-eff4-42fa-a9c5-3f74541903a6",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "0bbd8e1d-b975-4fb8-ae1d-bb2f80591b4c",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "1cd2d5bc-97b5-42a6-bb2b-f65a1b19a459",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "24ec71b1-ecdc-4251-9f85-53f78f59eb0b",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "SubtractNode"
+                },
+                {
+                  "id": "dc58384f-f2ed-4723-ae64-f3396f6c078c",
+                  "position": {
+                    "dx": -468.5532924107143,
+                    "dy": 996.396205357143
+                  },
+                  "color": 4283215696,
+                  "width": 160.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "551de318-c6a9-4a38-863b-507d494a66d6",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "4602bea2-dfd2-4f4a-af05-c3dbd2d449d3",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "64da4a12-c763-404b-9991-1657415dc2e8",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "bff45f1e-08de-4759-bd73-cc6629beb966",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "MultiplyNode"
+                },
+                {
+                  "id": "d61ac0f3-e677-4b1f-a5f9-922a0dabdf31",
+                  "position": {
+                    "dx": -449.41350446428567,
+                    "dy": 1180.3805803571431
+                  },
+                  "color": 4288423856,
+                  "width": 160.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "ce28b8b0-b784-4870-b298-aef1fd318b1d",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "f7fd2b67-e003-4fa9-96b9-81f4e94ca433",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "8ecda86f-ffe3-4ff8-b357-1ba0d0c34379",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "af7ad8a9-7d77-40b8-adc2-7fa20baa2958",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": null,
+                  "outputId": null,
+                  "type": "DivideNode"
+                },
+                {
+                  "id": "a19d04ca-f3c9-4129-89a8-65fad168f4ce",
+                  "position": {
+                    "dx": -20.303292410714477,
+                    "dy": 260.88839285714283
+                  },
+                  "color": 4280391411,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "87cc04e5-e879-49ac-9ad4-bc659361dbc0",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": true,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "17f12a84-c3a2-4f86-b9c2-65c109af6d2b",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": "4ce3cab5-e0bf-44f0-9876-0a2324f14761",
+                  "type": "MoveNode",
+                  "x": 3.0,
+                  "y": 0.0
+                }
+              ],
+              "startNodeId": "4ce3cab5-e0bf-44f0-9876-0a2324f14761"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "globalVariables": {},
+  "prefabs": {}
+}

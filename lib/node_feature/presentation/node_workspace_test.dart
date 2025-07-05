@@ -281,7 +281,7 @@ class _InfiniteNodeWrapperState extends State<InfiniteNodeWrapper> {
         final entityManager =
             Provider.of<EntityManager>(context, listen: false);
         final activeEntity = entityManager.activeEntity;
-        final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
         if (nodeComponent == null) return;
 
@@ -299,7 +299,7 @@ class _InfiniteNodeWrapperState extends State<InfiniteNodeWrapper> {
         final entityManager =
             Provider.of<EntityManager>(context, listen: false);
         final activeEntity = entityManager.activeEntity;
-        final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
         if (nodeComponent == null) return;
 

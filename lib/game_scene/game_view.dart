@@ -68,17 +68,12 @@ class GameView extends StatelessWidget {
             ),
             child: Stack(
               children: [
+
                 // Grid background moves with camera
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      scale:0.01,
-                      repeat: ImageRepeat.repeat,
-                      
-                      image: AssetImage("assets/grid_image.jpg"),
-                    ),
+                CustomPaint(
+                  size: Size(cam.width, cam.height),
+                  painter: GridPainter(
+                    gridSize: 100 / cam.zoom,
                   ),
                 ),
                 // Scene on top
@@ -108,4 +103,36 @@ class GameView extends StatelessWidget {
     );
     return cameraRect.overlaps(entityRect);
   }
+}
+
+
+
+class GridPainter extends CustomPainter {
+  final double gridSize;
+
+  GridPainter({this.gridSize = 10});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), Paint()..color = Colors.white);
+    final rows = (size.height / gridSize).ceil();
+    final columns = (size.width / gridSize).ceil();
+
+    final Paint gridPaint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1;
+
+    for (int row = 0; row <= rows; row++) {
+      double y = row * gridSize;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
+
+    for (int col = 0; col <= columns; col++) {
+      double x = col * gridSize;
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

@@ -40,6 +40,7 @@ class ActorEntity extends Entity{
       'height': height,
       'layerNumber': layerNumber,
       'children': children.map((c) => c.toJson()).toList(),
+      'components': components.map((key, value) => MapEntry(key.toString(), value.map((e) => e.toJson()).toList())),
     };
   }
 

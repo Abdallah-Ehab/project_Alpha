@@ -5,8 +5,7 @@ import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class UiElementManager extends ChangeNotifier {
   Map<String,UIElement> uiElements = {
-    "joyStick": JoyStickElement(),
-    'TwoButtonConfig' : TwoButtonConfiguration(),
+    
   };
   UIElement? _activeUIElement;
   static final UiElementManager _instance = UiElementManager._internal();

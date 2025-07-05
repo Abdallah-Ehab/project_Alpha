@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
 
 class UIElementsLayer extends StatelessWidget {
@@ -6,7 +7,7 @@ class UIElementsLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uiManager = UiElementManager();
+    final uiManager = context.watch<UiElementManager>();
     return Stack(
       children: uiManager.uiElements.entries.map((entry) {
         final uiElement = entry.value;

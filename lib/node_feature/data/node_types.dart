@@ -37,9 +37,9 @@ mixin HasValue on NodeModel{
   
 
   void connectValue(ValueConnectionPoint sourcePoint,ValueConnectionPoint destinationPoint) {
-   destinationPoint.sourcePoint = sourcePoint;
-   sourcePoint.destinationPoint = destinationPoint;
-   isConnected = true;
+    destinationPoint.sourcePoint = sourcePoint;
+    sourcePoint.destinationPoint = destinationPoint;
+    isConnected = true;
     notifyListeners();
   }
 

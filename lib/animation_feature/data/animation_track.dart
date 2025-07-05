@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 
 
@@ -28,7 +30,8 @@ class AnimationTrack with ChangeNotifier {
       'name': name,
       'fps': fps,
       'frames': frames.map((frame) => frame.toJson()).toList(),
-      'isLooping': isLooping
+      'isLooping': isLooping,
+      'mustFinish': mustFinish,
     };
   }
 
@@ -43,7 +46,8 @@ class AnimationTrack with ChangeNotifier {
       fps: json['fps'] as int? ?? 10,
     );
   }
-
+// we will call animation controller fromjson which will call the animation track from json which will call the keyframe from json
+//we can make a function that populates the keyframes with images from the image path and that is it
   void setIsLooping(bool isLooping){
   this.isLooping = isLooping;
   notifyListeners();
@@ -89,9 +93,7 @@ class KeyFrame with ChangeNotifier {
   Offset position;
   double rotation;
   double scale;
-
-  // temporarily holds the base64 string
-  String? _imageBase64;
+  String? imageBase64;
 
   KeyFrame copy() {
   return KeyFrame(
@@ -100,7 +102,8 @@ class KeyFrame with ChangeNotifier {
     position: Offset(position.dx,position.dy),
     rotation: rotation,
     scale: scale,
-  ).._imageBase64 = _imageBase64; // optional: preserve image data if needed
+    imageBase64: imageBase64,
+  );
 }
 
 
@@ -110,30 +113,14 @@ class KeyFrame with ChangeNotifier {
     this.position = const Offset(0, 0),
     this.rotation = 0.0,
     this.scale = 1.0,
+    this.imageBase64,
   });
 
-  /// Call this **after** fromJson if you need to load the image.
-  Future<void> loadImage() async {
-    if (_imageBase64 == null) return;
-    final bytes = base64Decode(_imageBase64!);
-    final completer = Completer<ui.Image>();
-    ui.decodeImageFromList(bytes, (ui.Image img) {
-      completer.complete(img);
-    });
-    image = await completer.future;
-    notifyListeners();
-  }
 
-  /// Since serializing `ui.Image` is async, this remains async.
-  Future<Map<String, dynamic>> toJson() async {
-    // if we have a live image, re-encode it
-    if (image != null) {
-      final byteData = await image!.toByteData(format: ui.ImageByteFormat.png);
-      _imageBase64 = base64Encode(byteData!.buffer.asUint8List());
-    }
-
+  
+  Map<String, dynamic> toJson(){
     return {
-      'image': _imageBase64,
+      'image': imageBase64,
       'sketches': sketches.map((s) => s.toJson()).toList(),
       'position': {'x': position.dx, 'y': position.dy},
       'rotation': rotation,
@@ -148,13 +135,10 @@ class KeyFrame with ChangeNotifier {
           .toList(),
       // leave image null for now
     )
-      ..position = Offset(
-        (json['position']['x'] as num).toDouble(),
-        (json['position']['y'] as num).toDouble(),
-      )
+      ..position = OffsetJson.fromJson(json['position'])
       ..rotation = (json['rotation'] as num).toDouble()
       ..scale = (json['scale'] as num).toDouble()
-      .._imageBase64 = json['image'] as String?;
+      ..imageBase64 = null;
   }
 
 
@@ -180,4 +164,20 @@ class KeyFrame with ChangeNotifier {
 }
 
 
+}
+
+
+
+Future<ui.Image> base64ToImage(String base64Str) async {
+  final Uint8List bytes = base64Decode(base64Str);
+  final Completer<ui.Image> completer = Completer();
+  ui.decodeImageFromList(bytes, (ui.Image img) => completer.complete(img));
+  return completer.future;
+}
+
+Future<String?> imageToBase64(ui.Image image) async {
+  final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  if (byteData == null) return null;
+  final bytes = byteData.buffer.asUint8List();
+  return base64Encode(bytes);
 }

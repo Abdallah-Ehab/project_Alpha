@@ -19,7 +19,7 @@ class NodeWrapper extends StatelessWidget {
       onPanUpdate: (details) {
         final entityManager = Provider.of<EntityManager>(context, listen: false);
         final activeEntity = entityManager.activeEntity;
-        final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
         if (nodeComponent == null) return;
 
@@ -64,7 +64,7 @@ class NodeWrapper extends StatelessWidget {
       onPanEnd: (details) {
         final entityManager = Provider.of<EntityManager>(context, listen: false);
         final activeEntity = entityManager.activeEntity;
-        final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
         if (nodeComponent == null) return;
 

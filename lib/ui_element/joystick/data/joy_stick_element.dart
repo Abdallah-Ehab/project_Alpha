@@ -5,6 +5,7 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/ui_element/joystick/presentation/joy_stick_control_panel.dart';
 import 'package:scratch_clone/ui_element/joystick/presentation/my_joy_stick_widget.dart';
+import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_button.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 // so I'm thinking about adding something new the ui elements the ui elements interact with the entity and its variables 
@@ -19,6 +20,8 @@ class JoyStickElement extends UIElement with ChangeNotifier {
   String xName;
   String yName; 
   JoyStickElement({
+    required super.alignment,
+    super.type = UIElementType.joystick,  
     this.entityName,
     this.xValue = 0,
     this.yValue = 0,

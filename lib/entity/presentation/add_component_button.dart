@@ -30,16 +30,16 @@ class AddComponentButton extends StatelessWidget {
         // Create and add the selected component
         switch (componentType) {
           case 'AnimationController':
-            entity.addComponent(AnimationControllerComponent());
+            entity?.addComponent(AnimationControllerComponent());
             break;
           case 'Collider':
-            entity.addComponent(ColliderComponent());
+            entity?.addComponent(ColliderComponent());
             break;
           case 'NodeComponent':
-            entity.addComponent(NodeComponent());
+            entity?.addComponent(NodeComponent());
             break;
           case 'soundComponent':
-            entity.addComponent(SoundControllerComponent());
+            entity?.addComponent(SoundControllerComponent());
           default:
             debugPrint('Unknown component type: $componentType');
         }

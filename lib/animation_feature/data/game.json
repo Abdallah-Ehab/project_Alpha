@@ -1,0 +1,268 @@
+{
+  "entities": {
+	"actors": {
+	  "goku": {
+		"type": "actor",
+		"name": "goku",
+		"position": { "x": 0.0, "y": 0.0 },
+		"rotation": 0.0,
+		"width": 100.0,
+		"height": 100.0,
+		"layerNumber": 0,
+		"children": [],
+		"components": {
+		  "AnimationControllerComponent": [
+			{
+			  "type": "animation_controller",
+			  "isActive": true,
+			  "currentFrame": 0,
+			  "animationPlaying": false,
+			  "lastUpdate": 0,
+			  "currentAnimationTrackName": "idle",
+			  "transitions": [
+				{
+				  "startTrackName": "idle",
+				  "condition": {
+					"entityVariable": "x",
+					"secondOperand": true,
+					"operator": "=="
+				  },
+				  "targetTrackName": "walk"
+				}
+			  ],
+			  "animationTracks": {
+				"idle": {
+				  "name": "idle",
+				  "fps": 10,
+				  "frames": [null, null, null, null],
+				  "isLooping": false,
+				  "mustFinish": true
+				},
+				"walk": {
+				  "name": "walk",
+				  "fps": 10,
+				  "frames": [null, null, null, null, null, null],
+				  "isLooping": false,
+				  "mustFinish": false
+				}
+			  }
+			}
+		  ],
+		  "NodeComponent": [
+			{
+			  "type": "NodeComponent",
+			  "isActive": true,
+			  "workspaceNodes": [
+				{
+				  "id": "708d9214-69ea-4531-9e2b-19c5c284a3cb",
+				  "position": { "dx": 0.0, "dy": 0.0 },
+				  "color": 4294940672,
+				  "width": 200.0,
+				  "height": 100.0,
+				  "isConnected": false,
+				  "connectionPoints": [
+					{
+					  "type": "ConnectConnectionPoint",
+					  "id": "fa3107b5-87c2-4b40-8c6d-7d7291c0e30b",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "isTop": false
+					}
+				  ],
+				  "childId": null,
+				  "parentId": null,
+				  "type": "StartNode"
+				},
+				{
+				  "id": "abcb885d-f5cc-47e7-bb22-bf8694d1c5da",
+				  "position": { "dx": 0.0, "dy": 0.0 },
+				  "color": 4294940672,
+				  "width": 180.0,
+				  "height": 160.0,
+				  "isConnected": false,
+				  "connectionPoints": [
+					{
+					  "type": "InputConnectionPoint",
+					  "id": "90391822-81be-47a0-9a15-60439c0b9177",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false
+					},
+					{
+					  "type": "ValueConnectionPoint",
+					  "id": "a4dc665c-4505-47bc-b2df-b1c8cb7da5b4",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "valueIndex": 0,
+					  "sourcePoint": null,
+					  "destinationPoint": null,
+					  "isLeft": true
+					},
+					{
+					  "type": "ValueConnectionPoint",
+					  "id": "853a053c-ccf5-4a20-95d4-0d0b53db0de5",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "valueIndex": 1,
+					  "sourcePoint": null,
+					  "destinationPoint": null,
+					  "isLeft": true
+					},
+					{
+					  "type": "ConnectConnectionPoint",
+					  "id": "3576fc06-6ffa-4ef1-8e82-530b3d5a5008",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "isTop": true
+					},
+					{
+					  "type": "ConnectConnectionPoint",
+					  "id": "d8300d1c-55f6-4295-bff3-5d14bbb0fcc2",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "isTop": false
+					}
+				  ],
+				  "childId": null,
+				  "parentId": null,
+				  "inputId": null,
+				  "type": "TeleportNode"
+				},
+				{
+				  "id": "2b4c290f-f3ca-4c7f-87e4-3f398e311148",
+				  "position": { "dx": 0.0, "dy": 0.0 },
+				  "color": 4278228616,
+				  "width": 180.0,
+				  "height": 120.0,
+				  "isConnected": false,
+				  "connectionPoints": [
+					{
+					  "type": "ValueConnectionPoint",
+					  "id": "c3316a57-505c-4ca3-9f71-dac869a1fca0",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "valueIndex": 0,
+					  "sourcePoint": null,
+					  "destinationPoint": null,
+					  "isLeft": false
+					},
+					{
+					  "type": "ValueConnectionPoint",
+					  "id": "26625acc-4575-4bc2-8e7c-8bb71cd2b312",
+					  "position": { "dx": 0.0, "dy": 0.0 },
+					  "width": 30.0,
+					  "isConnected": false,
+					  "valueIndex": 1,
+					  "sourcePoint": null,
+					  "destinationPoint": null,
+					  "isLeft": false
+					}
+				  ],
+				  "childId": null,
+				  "parentId": null,
+				  "outputId": null,
+				  "type": "GetPropertyFromEntityNode",
+				  "entityName": "assets/icons/GetPropertyFromEntityNode.png",
+				  "selectedProperty": "position",
+				  "hasTwoOutputs": true
+				}
+			  ],
+			  "startNodeId": "708d9214-69ea-4531-9e2b-19c5c284a3cb"
+			}
+		  ],
+		  "ColliderComponent": [
+			{
+			  "type": "collider",
+			  "isActive": true,
+			  "position": { "dx": 0.0, "dy": 0.0 },
+			  "width": 100.0,
+			  "height": 100.0
+			}
+		  ],
+		  "RigidBodyComponent": [
+			{
+			  "type": "rigidbody",
+			  "isActive": true,
+			  "velocity": { "dx": 0.0, "dy": 0.0 },
+			  "mass": 1.0,
+			  "useGravity": true,
+			  "gravity": 0.2,
+			  "isStatic": false,
+			  "isGrounded": false,
+			  "fallProgress": 0.0
+			}
+		  ],
+		  "SoundControllerComponent": [
+			{}
+		  ]
+		}
+	  },
+	  "vegeta": {
+		"type": "actor",
+		"name": "vegeta",
+		"position": { "x": 100.0, "y": 100.0 },
+		"rotation": 0.0,
+		"width": 100.0,
+		"height": 100.0,
+		"layerNumber": 0,
+		"children": [],
+		"components": {}
+	  },
+	  "ground": {
+		"type": "actor",
+		"name": "ground",
+		"position": { "x": 0.0, "y": 200.0 },
+		"rotation": 0.0,
+		"width": 1000.0,
+		"height": 50.0,
+		"layerNumber": 0,
+		"children": [],
+		"components": {
+		  "ColliderComponent": [
+			{
+			  "type": "collider",
+			  "isActive": true,
+			  "position": { "dx": 0.0, "dy": 200.0 },
+			  "width": 1000.0,
+			  "height": 50.0
+			}
+		  ],
+		  "RigidBodyComponent": [
+			{
+			  "type": "rigidbody",
+			  "isActive": true,
+			  "velocity": { "dx": 0.0, "dy": 0.0 },
+			  "mass": 1.0,
+			  "useGravity": true,
+			  "gravity": 0.2,
+			  "isStatic": true,
+			  "isGrounded": false,
+			  "fallProgress": 0.0
+			}
+		  ]
+		}
+	  }
+	},
+	"cameras": {
+	  "mainCamera": {
+		"type": "camera",
+		"name": "mainCamera",
+		"position": { "x": 0.0, "y": 100.0 },
+		"rotation": 0.0,
+		"width": 500.0,
+		"height": 500.0,
+		"layerNumber": 0,
+		"zoom": 1.0,
+		"isEditorCamera": true
+	  }
+	}
+  },
+  "globalVariables": {},
+  "prefabs": {}
+}

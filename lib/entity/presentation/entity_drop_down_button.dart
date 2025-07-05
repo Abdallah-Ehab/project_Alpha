@@ -12,7 +12,9 @@ class EntitySelectorArrows extends StatelessWidget {
         .expand((map) => map.values)
         .toList();
     final activeEntity = entityManager.activeEntity;
-
+    if (activeEntity == null) {
+      return const SizedBox.shrink();
+    }
     // find current index
     final currentIndex = allEntities.indexOf(activeEntity);
 
