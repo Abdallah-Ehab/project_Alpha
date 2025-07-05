@@ -10,7 +10,7 @@ class TracksDisplayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final entityManager = context.read<EntityManager>();
     final entity = entityManager.activeEntity;
-    final soundComp = entity.getComponent<SoundControllerComponent>();
+    final soundComp = entity?.getComponent<SoundControllerComponent>();
 
     if (soundComp == null) {
       return const Center(child: Text("No SoundControllerComponent found"));

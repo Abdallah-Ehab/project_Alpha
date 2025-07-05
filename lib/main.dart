@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/add_components.dart';
+import 'package:scratch_clone/game_scene/game_scene.dart';
+import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
@@ -28,7 +30,7 @@ class TestApp extends StatelessWidget {
         
       ],
       child: const MaterialApp(
-        home: AddComponents(),
+        home: TestGameLoop(),
       ),
     );
   }

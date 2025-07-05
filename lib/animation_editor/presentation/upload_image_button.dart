@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
@@ -8,6 +9,7 @@ import 'package:image/image.dart' as img;
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 
@@ -36,46 +38,50 @@ class UploadFramesButton extends StatelessWidget {
                         animationComponent.currentAnimationTrack;
                     if (currentTrack == null) return const SizedBox.shrink();
 
-                    return ElevatedButton.icon(
-                      icon: const Icon(Icons.upload_file),
-                      label: const Text("Upload Frames"),
-                      onPressed: () async {
-                        final result = await FilePicker.platform.pickFiles(
-                          allowMultiple: true,
-                          type: FileType.image,
-                        );
+                    return PixelArtButton(
+                        text: "Upload Frames",
+                        callback: () async {
+                          final result = await FilePicker.platform.pickFiles(
+                            allowMultiple: true,
+                            type: FileType.image,
+                          );
 
-                        if (result == null || result.files.isEmpty) return;
+                          if (result == null || result.files.isEmpty) return;
 
-                        List<ui.Image> images = [];
+                          List<KeyFrame> newFrames = [];
 
-                        for (final file in result.files) {
-                          final bytes = File(file.path!).readAsBytesSync();
-                          final decoded = img.decodeImage(bytes);
-                          if (decoded == null) continue;
+                          for (final file in result.files) {
+                            final bytes = await File(file.path!).readAsBytes();
+                            final decoded = img.decodeImage(bytes);
+                            if (decoded == null) continue;
 
-                          final resized =
-                              img.copyResize(decoded, width: 140, height: 140);
-                          final pngBytes = img.encodePng(resized);
-                          final codec = await ui.instantiateImageCodec(
-                              Uint8List.fromList(pngBytes));
-                          final frameInfo = await codec.getNextFrame();
-                          images.add(frameInfo.image);
-                        }
+                            final resized = img.copyResize(decoded,
+                                width: 140, height: 140);
+                            final pngBytes = img.encodePng(resized);
 
-                        final newFrames = images
-                            .map((ui.Image img) => KeyFrame(
-                                  image: img,
-                                  sketches: [],
-                                  position: Offset.zero,
-                                  rotation: 0,
-                                  scale: 1.0,
-                                ))
-                            .toList();
+                            // Convert to base64
+                            final base64Str = base64Encode(pngBytes);
 
-                        currentTrack.addMultipleFrames(newFrames);
-                      },
-                    );
+                            // Convert to ui.Image
+                            final codec = await ui.instantiateImageCodec(
+                                Uint8List.fromList(pngBytes));
+                            final frameInfo = await codec.getNextFrame();
+                            final image = frameInfo.image;
+
+                            final frame = KeyFrame(
+                              image: image,
+                              sketches: [],
+                              position: Offset.zero,
+                              rotation: 0,
+                              scale: 1.0,
+                            );
+                            frame.imageBase64 = base64Str;
+
+                            newFrames.add(frame);
+                          }
+
+                          currentTrack.addMultipleFrames(newFrames);
+                        }, fontsize: 16,);
                   },
                 ));
           }

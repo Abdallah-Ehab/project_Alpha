@@ -6,6 +6,7 @@ import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/actor_entity.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:uuid/uuid.dart';
 
 enum EntityType { actors, cameras, lights, sounds }
 
@@ -47,6 +48,7 @@ void spawnPrefab(String name, Offset position) {
   spawnEntityLater(clone);
 }
 
+
 void addGlobalVariable(String name,dynamic value){
   globalVariables[name] = value;
   notifyListeners();
@@ -54,20 +56,20 @@ void addGlobalVariable(String name,dynamic value){
 
   EntityManager._internal() {
     _entities = {
-      EntityType.actors: {
-        "goku": ActorEntity(
-            name: "goku", position: const Offset(0, 0), rotation: 0),
-        "vegeta": ActorEntity(
-            name: "vegeta", position: const Offset(100, 100), rotation: 0),
-        "ground": ActorEntity(
-          name: "ground",
-          position: const Offset(0, 200),
-          rotation: 0,
-          width: 1000,
-          height: 50,
-          layerNumber: 0,
-        ),
-      },
+      // EntityType.actors: {
+      //   "goku": ActorEntity(
+      //       name: "goku", position: const Offset(0, 0), rotation: 0),
+      //   "vegeta": ActorEntity(
+      //       name: "vegeta", position: const Offset(100, 100), rotation: 0),
+      //   "ground": ActorEntity(
+      //     name: "ground",
+      //     position: const Offset(0, 200),
+      //     rotation: 0,
+      //     width: 1000,
+      //     height: 50,
+      //     layerNumber: 0,
+      //   ),
+      // },
       EntityType.cameras: {
         "mainCamera": CameraEntity(
           name: "mainCamera",
@@ -78,7 +80,7 @@ void addGlobalVariable(String name,dynamic value){
         ),
       }
     };
-    _activeEntity = _entities[EntityType.actors]!["goku"];
+    _activeEntity = null;
     _activeCamera =
         _entities[EntityType.cameras]!["mainCamera"] as CameraEntity;
   }
@@ -120,7 +122,7 @@ void addGlobalVariable(String name,dynamic value){
   //while adding and removing from the list of prefabs
   
   for (var e in _entitiesToAdd) {
-    addEntity(EntityType.actors, e.name, e);
+    addEntity(EntityType.actors, e.name + Uuid().v4(), e);
   }
   _entitiesToAdd.clear();
 
@@ -130,20 +132,18 @@ void addGlobalVariable(String name,dynamic value){
   _entitiesToRemove.clear();
   }
 
-  Entity get activeEntity => _activeEntity!;
+  Entity? get activeEntity => _activeEntity;
   CameraEntity get activeCamera => _activeCamera!;
 
-  set activeEntity(Entity entity) {
-    for (var typeMap in _entities.values) {
-      if (typeMap.containsKey(entity.name)) {
-        _activeEntity = entity;
-        break;
-      }
-    }
+  set activeEntity(Entity? entity) {
+    _activeEntity = entity;
     notifyListeners();
   }
 
   List<Entity> getSortedEntityByLayerNumber(EntityType type) {
+    if(!_entities.containsKey(type)) {
+      return [];
+    }
     return _entities[type]!.values.toList()
       ..sort((a, b) => a.layerNumber.compareTo(b.layerNumber));
   }
@@ -171,7 +171,7 @@ void addGlobalVariable(String name,dynamic value){
 
 
   void addComponentToActiveEntity(Component component) {
-    activeEntity.addComponent(component);
+    activeEntity?.addComponent(component);
     notifyListeners();
   }
 
@@ -210,4 +210,51 @@ void addGlobalVariable(String name,dynamic value){
       notifyListeners();
     }
   }
+
+  Map<String, dynamic> toJson() {
+  return {
+    'entities': _entities.map((type, entitiesMap) {
+      return MapEntry(
+        type.name,
+        entitiesMap.map((id, entity) => MapEntry(id, entity.toJson())),
+      );
+    }),
+    'globalVariables': globalVariables,
+    'prefabs': prefabs.map((id, entity) => MapEntry(id, entity.toJson())),
+  };
+}
+
+void fromJson(Map<String, dynamic> json) {
+  _entities = {}; // Reset current entities
+
+  final entitiesJson = json['entities'] as Map<String, dynamic>;
+  for (final typeEntry in entitiesJson.entries) {
+    final type = EntityType.values.firstWhere((e) => e.name == typeEntry.key);
+    final entityMap = (typeEntry.value as Map<String, dynamic>).map(
+      (id, entityJson) =>
+          MapEntry(id, Entity.fromJson(entityJson as Map<String, dynamic>)),
+    );
+    _entities[type] = entityMap;
+  }
+
+  globalVariables.clear();
+  globalVariables.addAll(
+    (json['globalVariables'] as Map<String, dynamic>?) ?? {},
+  );
+
+  final prefabJson = json['prefabs'] as Map<String, dynamic>?;
+  if (prefabJson != null) {
+    prefabs.clear();
+    for (final entry in prefabJson.entries) {
+      prefabs[entry.key] = Entity.fromJson(entry.value);
+    }
+  }
+
+  _activeEntity = null;
+  _activeCamera = null;
+
+  notifyListeners();
+}
+
+
 }

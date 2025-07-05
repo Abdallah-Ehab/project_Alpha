@@ -8,6 +8,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class MultiplyNode extends MultipleInputNode {
   MultiplyNode({super.position})
@@ -21,10 +22,8 @@ class MultiplyNode extends MultipleInputNode {
     connectionPoints = [
       InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
       InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: true, width: 30, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
     ];
   }
 
@@ -56,37 +55,58 @@ class MultiplyNode extends MultipleInputNode {
         child: MathNodeWidget(node: this, label: '×'),
       );
 
- 
   @override
-MultiplyNode copyWith({
-  NodeModel? child,
-  Color? color,
-  List<ConnectionPointModel>? connectionPoints,
-  double? height,
-  bool? isConnected,
-  NodeModel? parent,
-  Offset? position,
-  double? width,
-}) {
-  final newNode = MultiplyNode(
-    position: position ?? this.position,
-  );
+  MultiplyNode copyWith({
+    NodeModel? child,
+    Color? color,
+    List<ConnectionPointModel>? connectionPoints,
+    double? height,
+    bool? isConnected,
+    NodeModel? parent,
+    Offset? position,
+    double? width,
+  }) {
+    final newNode = MultiplyNode(
+      position: position ?? this.position,
+    );
 
-  newNode.child = null;
-  newNode.parent = null;
-  newNode.isConnected = isConnected ?? this.isConnected;
-  newNode.color = color ?? this.color;
-  newNode.width = width ?? this.width;
-  newNode.height = height ?? this.height;
+    newNode.child = null;
+    newNode.parent = null;
+    newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.color = color ?? this.color;
+    newNode.width = width ?? this.width;
+    newNode.height = height ?? this.height;
 
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+        : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
 
-  return newNode;
-}
-
+    return newNode;
+  }
 
   @override
   MultiplyNode copy() => copyWith();
+
+  // ✅ Serialization
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'MultiplyNode';
+    return map;
+  }
+
+  // ✅ Deserialization
+  static MultiplyNode fromJson(Map<String, dynamic> json) {
+    final node = MultiplyNode(
+      position: OffsetJson.fromJson(json['position']),
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
+
+    return node;
+  }
 }

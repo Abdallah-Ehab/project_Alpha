@@ -20,7 +20,7 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
     super.initState();
 
     final entity = context.read<EntityManager>().activeEntity;
-    final animComp = entity.getComponent<AnimationControllerComponent>();
+    final animComp = entity?.getComponent<AnimationControllerComponent>();
     final track = animComp?.currentAnimationTrack;
 
     const fps = 12;
@@ -39,7 +39,7 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
 
     _controller.addListener(() {
       final entity = context.read<EntityManager>().activeEntity;
-      final animComp = entity.getComponent<AnimationControllerComponent>();
+      final animComp = entity?.getComponent<AnimationControllerComponent>();
       final track = animComp?.currentAnimationTrack;
 
       if (track != null && track.frames.isNotEmpty) {
@@ -62,7 +62,7 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
 
   void goToPreviousFrame() {
     final entity = context.read<EntityManager>().activeEntity;
-    final animComp = entity.getComponent<AnimationControllerComponent>();
+    final animComp = entity?.getComponent<AnimationControllerComponent>();
 
     if (animComp != null && animComp.currentAnimationTrack.frames.isNotEmpty) {
       final current = animComp.currentFrame;
@@ -73,7 +73,7 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
 
   void goToNextFrame() {
     final entity = context.read<EntityManager>().activeEntity;
-    final animComp = entity.getComponent<AnimationControllerComponent>();
+    final animComp = entity?.getComponent<AnimationControllerComponent>();
 
     if (animComp != null &&
         animComp

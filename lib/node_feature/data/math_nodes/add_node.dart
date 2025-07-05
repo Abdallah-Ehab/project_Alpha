@@ -6,6 +6,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class AddNode extends MultipleInputNode {
   AddNode({super.position})
@@ -74,6 +75,27 @@ AddNode copyWith({
       : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
   return newNode;
 }
+
+ @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'AddNode';
+    return map;
+  }
+
+  // ✅ JSON: Deserialization
+  static AddNode fromJson(Map<String, dynamic> json) {
+    final addNode = AddNode(position: OffsetJson.fromJson(json['position']))
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    addNode.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, addNode))
+        .toList();
+
+    return addNode;
+  }
+
 
 
   @override

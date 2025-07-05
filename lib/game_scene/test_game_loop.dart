@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:provider/provider.dart';
+import 'package:scratch_clone/animation_editor/presentation/upload_sprite_button.dart';
 
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/game_scene.dart';
@@ -37,21 +38,26 @@ class _TestGameLoopState extends State<TestGameLoop>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
-            color: Colors.white,
-            onPressed: () {
-              if (!_ticker.isActive) {
-                gameState.isPlaying = true;
-                _ticker.start();
-              } else {
-                _ticker.stop();
-                EntityManager().reset();
-                gameState.isPlaying = false;
-              }
-            },
-            icon: gameState.isPlaying
-                ? const Icon(Icons.pause)
-                : const Icon(Icons.play_arrow),
+          ChangeNotifierProvider.value(
+            value: gameState,
+            child: Consumer<GameState>(
+              builder: (context, gameState, child) =>  IconButton(
+                color: Colors.white,
+                onPressed: () {
+                  if (!_ticker.isActive) {
+                    gameState.isPlaying = true;
+                    _ticker.start();
+                  } else {
+                    _ticker.stop();
+                    EntityManager().reset();
+                    gameState.isPlaying = false;
+                  }
+                },
+                icon: gameState.isPlaying
+                    ? const Icon(Icons.pause)
+                    : const Icon(Icons.play_arrow),
+              ),
+            ),
           ),
         ],
       ),

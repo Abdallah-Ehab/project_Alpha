@@ -50,6 +50,14 @@ class _ControlPanelState extends State<ControlPanel> {
     return Consumer<EntityManager>(
       builder: (context, entityManager, child) {
         final entity = entityManager.activeEntity;
+        if(entity == null) {
+          return Center(
+            child: Text(
+              'No active entity selected',
+              style: TextStyle(fontFamily: 'PressStart2P', fontSize: 16),
+            ),
+          );
+        }
         _updateControllers(entity);
 
         return ChangeNotifierProvider.value(

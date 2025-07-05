@@ -6,6 +6,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class SubtractNode extends MultipleInputNode {
   SubtractNode({super.position})
@@ -53,28 +54,49 @@ class SubtractNode extends MultipleInputNode {
       );
 
   @override
-SubtractNode copyWith({
-  NodeModel? child,
-  Color? color,
-  List<ConnectionPointModel>? connectionPoints,
-  double? height,
-  bool? isConnected,
-  NodeModel? parent,
-  Offset? position,
-  double? width,
-}) {
-  final newNode = SubtractNode(
-    position: position ?? this.position,
-  );
-  newNode.child = null;
-  newNode.parent = null;
-  newNode.isConnected = isConnected ?? this.isConnected;
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
-  return newNode;
-}
+  SubtractNode copyWith({
+    NodeModel? child,
+    Color? color,
+    List<ConnectionPointModel>? connectionPoints,
+    double? height,
+    bool? isConnected,
+    NodeModel? parent,
+    Offset? position,
+    double? width,
+  }) {
+    final newNode = SubtractNode(
+      position: position ?? this.position,
+    );
+    newNode.child = null;
+    newNode.parent = null;
+    newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+        : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+    return newNode;
+  }
 
   @override
   SubtractNode copy() => copyWith();
+
+  // ✅ Serialization
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'SubtractNode';
+    return map;
+  }
+
+  // ✅ Deserialization
+  static SubtractNode fromJson(Map<String, dynamic> json) {
+    final subtractNode = SubtractNode(position: OffsetJson.fromJson(json['position']))
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    subtractNode.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, subtractNode))
+        .toList();
+
+    return subtractNode;
+  }
 }

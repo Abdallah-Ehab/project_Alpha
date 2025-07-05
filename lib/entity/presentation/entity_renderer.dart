@@ -96,27 +96,44 @@ class EntityPainter extends CustomPainter {
     }
     canvas.drawRect(Offset.zero & size, Paint()..color = Colors.grey);
     var sketches = keyFrame.sketches;
-    canvas.save();
-    canvas.translate(keyFrame.position.dx, keyFrame.position.dy);
-    canvas.rotate(keyFrame.rotation);
-    canvas.scale(keyFrame.scale);
+
+    // Calculate scaling factors from animation editor size (600x600) to entity size
+    const double editorWidth = 600.0;
+    const double editorHeight = 600.0;
+    double scaleX = size.width / editorWidth;
+    double scaleY = size.height / editorHeight;
 
     for (var sketch in sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
+        // Scale the points from editor coordinates to entity coordinates
+        Offset scaledPoint1 = Offset(
+          sketch.points[i].dx * scaleX,
+          sketch.points[i].dy * scaleY,
+        );
+        Offset scaledPoint2 = Offset(
+          sketch.points[i + 1].dx * scaleX,
+          sketch.points[i + 1].dy * scaleY,
+        );
+
         canvas.drawLine(
-            sketch.points[i],
-            sketch.points[i + 1],
-            Paint()
-              ..color = sketch.color
-              ..strokeWidth = sketch.strokeWidth
-              ..style = PaintingStyle.stroke);
+          scaledPoint1,
+          scaledPoint2,
+          Paint()
+            ..color = sketch.color
+            ..strokeWidth = sketch.strokeWidth * scaleX // Scale stroke width too
+            ..style = PaintingStyle.stroke
+        );
       }
     }
+    
     if (keyFrame.image != null) {
-      canvas.drawImage(keyFrame.image!, Offset(-size.width / 8, 0), Paint());
+      
+      canvas.drawImage(
+        keyFrame.image!, 
+        Offset((-size.width / 8), 0), 
+        Paint()
+      );
     }
-
-    canvas.restore();
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
 import 'package:scratch_clone/node_feature/presentation/connection_point_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 import 'package:uuid/uuid.dart';
 
 // each connection point type will have its own onPanEnd, color and position
@@ -52,6 +53,8 @@ abstract class ConnectionPointModel {
     } else if (this is ValueConnectionPoint) {
       return {
         'valueIndex': (this as ValueConnectionPoint).valueIndex,
+        'sourcePoint': (this as ValueConnectionPoint).sourcePoint?.id,
+        'destinationPoint': (this as ValueConnectionPoint).destinationPoint?.id,
         'isLeft': (this as ValueConnectionPoint).isLeft,
       };
     }
@@ -60,10 +63,7 @@ abstract class ConnectionPointModel {
 
   static ConnectionPointModel fromJson(
       Map<String, dynamic> json, NodeModel ownerNode) {
-    final position = Offset(
-      (json['position']['dx'] as num).toDouble(),
-      (json['position']['dy'] as num).toDouble(),
-    );
+    final position = OffsetJson.fromJson(json['position']);
     final width = (json['width'] as num).toDouble();
     final isConnected = json['isConnected'] as bool;
 
@@ -88,7 +88,7 @@ abstract class ConnectionPointModel {
           ownerNode: ownerNode,
         )..isConnected = isConnected;
       case 'ValueConnectionPoint':
-        return ValueConnectionPoint(
+        final vcp = ValueConnectionPoint(
           isLeft: json['isLeft'] as bool,
           position: position,
           width: width,
@@ -96,6 +96,9 @@ abstract class ConnectionPointModel {
           ownerNode: ownerNode,
           isConnected: isConnected,
         );
+        vcp.destinationPoint = vcp;
+        vcp.sourcePoint = null;
+        return vcp;
       default:
         throw UnimplementedError(
           'Unknown ConnectionPointModel type: ${json['type']}',
@@ -228,7 +231,7 @@ class OutputConnectionPoint extends ConnectionPointModel {
   void handlePanEndBehaviour(BuildContext context) {
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity.getComponent<NodeComponent>();
+    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
@@ -319,7 +322,7 @@ class ConnectConnectionPoint extends ConnectionPointModel {
 
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity.getComponent<NodeComponent>();
+    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
@@ -445,7 +448,7 @@ class ValueConnectionPoint extends ConnectionPointModel {
   void handlePanEndBehaviour(BuildContext context) {
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity.getComponent<NodeComponent>();
+    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
 
     if (nodeComponent == null) {
       log("No NodeComponent found");

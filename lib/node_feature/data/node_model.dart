@@ -1,8 +1,15 @@
+import 'package:collection/equality.dart';
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
+import 'package:scratch_clone/node_feature/data/flow_control_nodes/condition_group_node.dart';
+import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
+import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
+import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
 import 'package:uuid/uuid.dart';
 
@@ -70,52 +77,24 @@ abstract class NodeModel with ChangeNotifier {
     switch (type) {
       case 'StartNode':
         return StartNode.fromJson(json);
+      case 'MoveNode':
+        return MoveNode.fromJson(json);
+      case 'IfNode':
+        return IfNode.fromJson(json);
+      case 'ElseNode':
+        return ElseNode.fromJson(json);
+      case 'DeclareVariableNode':
+        return DeclareVariableNode.fromJson(json);
+      case 'ConditionGroupNode':
+        return ConditionGroupNode.fromJson(json);
+      case 'StatementGroupNode':
+        return StatementGroupNode.fromJson(json);
 
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
     }
   }
 
-  // /// Restores references after deserializing
-  // void restoreConnections(Map<String, NodeModel> nodeMap, Map<String, dynamic> json) {
-  //   if (json['childId'] != null) child = nodeMap[json['childId']];
-  //   if (json['parentId'] != null) parent = nodeMap[json['parentId']];
-
-  //   if (this is HasInput && json['inputId'] != null) {
-  //     (this as HasInput).input = nodeMap[json['inputId']];
-  //   }
-  //   if (this is HasOutput && json['outputId'] != null) {
-  //     (this as HasOutput).output = nodeMap[json['outputId']];
-  //   }
-  //   if (this is HasValue && json['sourceNodeId'] != null) {
-  //     (this as HasValue).sourceNode = nodeMap[json['sourceNodeId']];
-  //   }
-  // }
-
-  // /// Factory to deserialize the correct subclass
-  // static NodeModel fromJson(Map<String, dynamic> json) {
-  //   final type = json['type'] as String;
-
-  //   switch (type) {
-  //     case 'StartNode':
-  //       return StartNode.fromJson(json);
-  //     case 'MoveNode':
-  //       return MoveNode.fromJson(json);
-  //     case 'IfNode':
-  //       return IfNode.fromJson(json);
-  //     case 'ElseNode':
-  //       return ElseNode.fromJson(json);
-  //     case 'DeclareVariableNode':
-  //       return DeclareVariableNode.fromJson(json);
-  //     case 'AddToListNode':
-  //       return AddToListNode.fromJson(json);
-  //     // Add other node types here...
-  //     default:
-  //       throw UnimplementedError('Unknown NodeModel type: $type');
-  //   }
-  // }
-
-  /// Implemented in subclasses
   NodeModel copy();
 
   NodeModel copyWith({

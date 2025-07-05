@@ -1,83 +1,14 @@
-// void handleConnectPanEnd(BuildContext context, NodeModel fromNode) {
-//   log("handleConnectPanEnd called");
-
-//   final entityManager = Provider.of<EntityManager>(context, listen: false);
-//   final activeEntity = entityManager.activeEntity;
-//   final nodeComponent = activeEntity.getComponent<NodeComponent>();
-
-//   if (nodeComponent == null) {
-//     log("No NodeComponent found");
-//     return;
-//   }
-
-//   final provider = Provider.of<ConnectionProvider>(context, listen: false);
-//   final endPos = provider.currentPosition;
-//   final nodes = nodeComponent.workspaceNodes;
-
-//   for (var targetNode in nodes) {
-//     if (targetNode.id == fromNode.id) continue;
-
-//     for (var point in targetNode.connectionPoints) {
-//       if (point is! ConnectConnectionPoint) continue;
-
-//       final pointPos = targetNode.position + point.computeOffset(targetNode);
-//       if ((endPos! - pointPos).distance <= 20) {
-//         bool isTopTarget = point.isTop;
-
-//         if (isTopFrom == isTopTarget) continue;
-
-//         NodeModel parent, child;
-
-//         if (!isTopFrom && isTopTarget) {
-//           parent = fromNode;
-//           child = targetNode;
-//         } else {
-//           parent = targetNode;
-//           child = fromNode;
-//         }
-
-//         parent.connectNode(child);
-//         provider.clear();
-//         return;
-//       }
-//     }
-//   }
-
-//   provider.clear();
-// }
-
-
-
-// void handleOutputPanEnd(BuildContext context, NodeModel owner) {
-//   final entityManager = Provider.of<EntityManager>(context, listen: false);
-//   final activeEntity = entityManager.activeEntity;
-//   final nodeComponent = activeEntity.getComponent<NodeComponent>();
-
-//   if (nodeComponent == null) {
-//     log("No NodeComponent found");
-//     return;
-//   }
-
-//   final provider = Provider.of<ConnectionProvider>(context, listen: false);
-//   final endPos = provider.currentPosition;
-//   final nodes = nodeComponent.workspaceNodes;
-
-//   for (var targetNode in nodes) {
-//     if (targetNode.id == owner.id) continue;
-
-//     for (var point in targetNode.connectionPoints) {
-//       if (point is! InputConnectionPoint) continue;
-
-//       final pointPos = targetNode.position + point.computeOffset(targetNode);
-//       if ((endPos! - pointPos).distance <= 20) {
-//         if (owner is HasOutput && targetNode is HasInput) {
-//           owner.connectOutput(targetNode);
-//           provider.clear();
-//           return;
-//         }
-//       }
-//     }
-//   }
-
-//   provider.clear();
-// }
+dynamic parseStringValue(String rawValue) {
+  dynamic value;
+  if (int.tryParse(rawValue) != null) {
+    value = int.parse(rawValue);
+  } else if (double.tryParse(rawValue) != null) {
+    value = double.parse(rawValue);
+  } else if (rawValue.toLowerCase() == 'true' ||
+      rawValue.toLowerCase() == 'false') {
+    value = rawValue.toLowerCase() == 'true';
+  } else {
+    value = rawValue;
+  }
+  return value;
+}

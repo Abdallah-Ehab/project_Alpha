@@ -6,6 +6,7 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
+import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class DivideNode extends MultipleInputNode {
   DivideNode({super.position})
@@ -19,10 +20,8 @@ class DivideNode extends MultipleInputNode {
     connectionPoints = [
       InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
       InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: true, width: 30, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
     ];
   }
 
@@ -54,32 +53,54 @@ class DivideNode extends MultipleInputNode {
         child: MathNodeWidget(node: this, label: '÷'),
       );
 
-@override
-DivideNode copyWith({
-  NodeModel? child,
-  Color? color,
-  List<ConnectionPointModel>? connectionPoints,
-  double? height,
-  bool? isConnected,
-  NodeModel? parent,
-  Offset? position,
-  double? width,
-}) {
-  final newNode = DivideNode(
-    position: position ?? this.position,
-  );
+  @override
+  DivideNode copyWith({
+    NodeModel? child,
+    Color? color,
+    List<ConnectionPointModel>? connectionPoints,
+    double? height,
+    bool? isConnected,
+    NodeModel? parent,
+    Offset? position,
+    double? width,
+  }) {
+    final newNode = DivideNode(
+      position: position ?? this.position,
+    );
 
-  newNode.parent = null;
-  newNode.child = null;
-  newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.parent = null;
+    newNode.child = null;
+    newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+        : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
 
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
-
-  return newNode;
-}
+    return newNode;
+  }
 
   @override
   DivideNode copy() => copyWith();
+
+  // ✅ JSON Serialization
+  @override
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'DivideNode';
+    return map;
+  }
+
+  // ✅ JSON Deserialization
+  static DivideNode fromJson(Map<String, dynamic> json) {
+    final node = DivideNode(
+      position: OffsetJson.fromJson(json['position']),
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
+
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
+
+    return node;
+  }
 }

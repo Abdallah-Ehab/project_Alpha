@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -44,15 +47,24 @@ class SoundControllerComponent extends Component {
   }
   
 
-  void play(String trackName) async{
-    if (trackName == currentlyPlaying) return;
-    final track = tracks[trackName];
-    if (track == null) return;
+  void play(String trackName) async {
+  if (trackName == currentlyPlaying) return;
+  final track = tracks[trackName];
+  if (track == null) {
+    log("Track not found: $trackName");
+    return;
+  }
 
+  try {
+    await AudioManager.instance.stop();
     await AudioManager.instance.playAsset(track.filePath, track.releaseMode, loop: track.loop);
     currentlyPlaying = trackName;
     notifyListeners();
+    log("Successfully playing: $trackName");
+  } catch (e) {
+    log("Error playing track $trackName: $e");
   }
+}
 
   @override
   void reset() {
@@ -75,7 +87,6 @@ class SoundControllerComponent extends Component {
   
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return {};
   }
 }

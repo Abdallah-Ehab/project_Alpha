@@ -146,10 +146,31 @@ class ColliderComponent extends Component {
     return;
   }
 
+  
+ 
+
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return {
+      'type': 'collider',
+      'isActive': isActive,
+      'position': {'dx': position.dx, 'dy': position.dy},
+      'width': width,
+      'height': height,
+    };
+  }
+
+  static ColliderComponent fromJson(Map<String, dynamic> json) {
+    final pos = json['position'] as Map<String, dynamic>;
+    return ColliderComponent(
+      isActive: json['isActive'] as bool? ?? true,
+      position: Offset(
+        (pos['dx'] as num).toDouble(),
+        (pos['dy'] as num).toDouble(),
+      ),
+      width: (json['width'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+    );
   }
 
   @override
@@ -161,4 +182,5 @@ class ColliderComponent extends Component {
       isActive: isActive,
     );
   }
+
 }

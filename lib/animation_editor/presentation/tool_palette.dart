@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_editor/data/onin_skin_settings.dart';
 import 'package:scratch_clone/animation_editor/data/tool_settings.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:scratch_clone/animation_editor/presentation/animation_track_control_panel.dart';
+import 'package:scratch_clone/animation_editor/presentation/upload_image_button.dart';
+import 'package:scratch_clone/animation_editor/presentation/upload_sprite_button.dart';
 
 class ToolPaletteDrawer extends StatelessWidget {
   const ToolPaletteDrawer({super.key});
@@ -72,8 +75,11 @@ class ToolPaletteDrawer extends StatelessWidget {
               ),
             ],
           ),
-
-          
+          AnimationTrackControlPanel(),
+          const SizedBox(height: 20),
+          UploadFramesButton(),
+          const SizedBox(height: 10),
+          UploadSpriteButton()
         ],
       ),
     );

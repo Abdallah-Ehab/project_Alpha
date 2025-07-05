@@ -28,6 +28,61 @@ class RigidBodyComponent extends Component {
     super.isActive,
   });
 
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'rigidbody',
+      'isActive': isActive,
+      'velocity': {'dx': velocity.dx, 'dy': velocity.dy},
+      'mass': mass,
+      'useGravity': useGravity,
+      'gravity': gravity,
+      'isStatic': isStatic,
+      'isGrounded': isGrounded,
+      'fallProgress': fallProgress,
+    };
+  }
+
+  static RigidBodyComponent fromJson(Map<String, dynamic> json) {
+    final vel = json['velocity'] as Map<String, dynamic>;
+    return RigidBodyComponent(
+      isActive: json['isActive'] as bool? ?? true,
+      velocity: Offset(
+        (vel['dx'] as num).toDouble(),
+        (vel['dy'] as num).toDouble(),
+      ),
+      mass: (json['mass'] as num).toDouble(),
+      useGravity: json['useGravity'] as bool? ?? true,
+      gravity: (json['gravity'] as num).toDouble(),
+      isStatic: json['isStatic'] as bool? ?? false,
+      isGrounded: json['isGrounded'] as bool? ?? false,
+    )..fallProgress = (json['fallProgress'] as num?)?.toDouble() ?? 0.0;
+  }
+
+  @override
+  RigidBodyComponent copy() {
+    return RigidBodyComponent(
+      velocity: velocity,
+      mass: mass,
+      useGravity: useGravity,
+      gravity: gravity,
+      isStatic: isStatic,
+      isGrounded: isGrounded,
+      isActive: isActive,
+    )..fallProgress = fallProgress;
+  }
+
+  @override
+  void reset() {
+    velocity = Offset.zero;
+    gravity = 0.2;
+    isGrounded = false;
+    useGravity = true;
+    notifyListeners();
+  }
+
+
   void applyForce({
     double fx = 0.0,
     double fy = 0.0,
@@ -41,7 +96,7 @@ class RigidBodyComponent extends Component {
 
     // Apply resistance (air drag) if not grounded
     final entity = EntityManager().activeEntity;
-    
+    if(entity == null) return;
     checkIfGrounded(entity);
 
     if (!isGrounded) {
@@ -123,14 +178,7 @@ class RigidBodyComponent extends Component {
   activeEntity.move(x: dx, y: dy);
 }
 
-  @override
-  void reset() {
-    velocity = Offset.zero;
-    gravity = 0.2; // Reset gravity
-    isGrounded = false;
-    useGravity = true;
-    notifyListeners();
-  }
+
 
 
   void checkIfGrounded(Entity entity) {
@@ -160,22 +208,6 @@ class RigidBodyComponent extends Component {
   }
 }
 
-  @override
-  Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
-  }
-
-  @override
-  RigidBodyComponent copy() {
-    return RigidBodyComponent(
-      velocity: velocity,
-      mass: mass,
-      useGravity: useGravity,
-      gravity: gravity,
-      isStatic: isStatic,
-      isGrounded: isGrounded,
-      isActive: isActive,
-    );
-  }
+  
+  
 }
