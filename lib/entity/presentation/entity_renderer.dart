@@ -59,7 +59,7 @@ class EntityRenderer extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Visualize entity canvas
+        // // Visualize entity canvas
         Positioned(
           top: 0,
           left: 0,
@@ -128,10 +128,11 @@ class EntityPainter extends CustomPainter {
     
     if (keyFrame.image != null) {
       
-      canvas.drawImage(
+      canvas.drawImageRect(
         keyFrame.image!, 
-        Offset((-size.width / 8), 0), 
-        Paint()
+        Rect.fromLTWH(0, 0, keyFrame.image!.width.toDouble(), keyFrame.image!.height.toDouble()),
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Paint()..filterQuality = FilterQuality.high
       );
     }
   }

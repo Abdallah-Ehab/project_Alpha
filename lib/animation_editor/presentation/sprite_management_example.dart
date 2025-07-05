@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
@@ -180,147 +181,201 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
   double offsetX = 0;
   double offsetY = 0;
   double spacing = 0;
+  int spriteCount = 1;
+  
+  final TextEditingController _spriteCountController = TextEditingController();
+
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    _spriteCountController.text = spriteCount.toString();
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    _spriteCountController.dispose();
+    super.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Controls
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Columns: $columns'),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: columns.toDouble(),
-                      min: 1,
-                      max: 20,
-                      divisions: 19,
-                      onChanged: (value) {
-                        setState(() {
-                          columns = value.round();
-                        });
-                      },
+    return Scaffold(
+      body: Column(
+        children: [
+          // Controls
+          Expanded(
+            flex: 6,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Columns: $columns'),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: columns.toDouble(),
+                            min: 1,
+                            max: 20,
+                            divisions: 19,
+                            onChanged: (value) {
+                              setState(() {
+                                columns = value.round();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Rows: $rows'),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: rows.toDouble(),
-                      min: 1,
-                      max: 20,
-                      divisions: 19,
-                      onChanged: (value) {
-                        setState(() {
-                          rows = value.round();
-                        });
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Rows: $rows'),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: rows.toDouble(),
+                            min: 1,
+                            max: 20,
+                            divisions: 19,
+                            onChanged: (value) {
+                              setState(() {
+                                rows = value.round();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Offset X: ${offsetX.round()}'),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: offsetX,
-                      min: 0,
-                      max: 100,
-                      onChanged: (value) {
-                        setState(() {
-                          offsetX = value;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Sprites to Extract:'),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _spriteCountController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Enter number',
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            ),
+                            onChanged: (value) {
+                              int? newCount = int.tryParse(value);
+                              if (newCount != null && newCount > 0) {
+                                setState(() {
+                                  spriteCount = newCount;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Offset Y: ${offsetY.round()}'),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: offsetY,
-                      min: 0,
-                      max: 100,
-                      onChanged: (value) {
-                        setState(() {
-                          offsetY = value;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Offset X: ${offsetX.round()}'),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: offsetX,
+                            min: 0,
+                            max: 100,
+                            onChanged: (value) {
+                              setState(() {
+                                offsetX = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Spacing: ${spacing.round()}'),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: spacing,
-                      min: 0,
-                      max: 20,
-                      onChanged: (value) {
-                        setState(() {
-                          spacing = value;
-                        });
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Offset Y: ${offsetY.round()}'),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: offsetY,
+                            min: 0,
+                            max: 100,
+                            onChanged: (value) {
+                              setState(() {
+                                offsetY = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('Spacing: ${spacing.round()}'),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: spacing,
+                            min: 0,
+                            max: 20,
+                            onChanged: (value) {
+                              setState(() {
+                                spacing = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-        
-        // Preview
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
             ),
-            child: CustomPaint(
-              painter: SpriteSheetPreviewPainter(
-                image: widget.spriteSheet,
-                rows: rows,
-                columns: columns,
-                offsetX: offsetX,
-                offsetY: offsetY,
-                spacing: spacing,
+          ),
+          
+          // Preview
+          Expanded(
+            flex: 8,
+            child: Container(
+              margin: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
               ),
-              size: Size.infinite,
+              child: CustomPaint(
+                painter: SpriteSheetPreviewPainter(
+                  image: widget.spriteSheet,
+                  rows: rows,
+                  columns: columns,
+                  offsetX: offsetX,
+                  offsetY: offsetY,
+                  spacing: spacing,
+                  spriteCount: spriteCount,
+                ),
+                size: Size.infinite,
+              ),
             ),
           ),
-        ),
-        
-        // Extract button
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: () => _extractSprites(),
-            child: Text('Extract Sprites'),
+          
+          // Extract button
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () => _extractSprites(),
+              child: Text('Extract $spriteCount Sprites'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
   
@@ -330,8 +385,10 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
     double spriteWidth = (widget.spriteSheet.width - offsetX * 2 - spacing * (columns - 1)) / columns;
     double spriteHeight = (widget.spriteSheet.height - offsetY * 2 - spacing * (rows - 1)) / rows;
     
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < columns; col++) {
+    int extractedCount = 0;
+    
+    for (int row = 0; row < rows && extractedCount < spriteCount; row++) {
+      for (int col = 0; col < columns && extractedCount < spriteCount; col++) {
         double x = offsetX + col * (spriteWidth + spacing);
         double y = offsetY + row * (spriteHeight + spacing);
         
@@ -344,6 +401,7 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
         );
         
         sprites.add(sprite);
+        extractedCount++;
       }
     }
     
@@ -371,6 +429,7 @@ class SpriteSheetPreviewPainter extends CustomPainter {
   final double offsetX;
   final double offsetY;
   final double spacing;
+  final int spriteCount;
   
   SpriteSheetPreviewPainter({
     required this.image,
@@ -379,6 +438,7 @@ class SpriteSheetPreviewPainter extends CustomPainter {
     required this.offsetX,
     required this.offsetY,
     required this.spacing,
+    required this.spriteCount,
   });
   
   @override
@@ -399,9 +459,30 @@ class SpriteSheetPreviewPainter extends CustomPainter {
       ..strokeWidth = 2.0 / scale
       ..style = PaintingStyle.stroke;
     
+    // Draw highlighted sprites that will be extracted
+    Paint highlightPaint = Paint()
+      ..color = Colors.green.withOpacity(0.3)
+      ..style = PaintingStyle.fill;
+    
     double spriteWidth = (image.width - offsetX * 2 - spacing * (columns - 1)) / columns;
     double spriteHeight = (image.height - offsetY * 2 - spacing * (rows - 1)) / rows;
     
+    // Highlight sprites that will be extracted
+    int highlightedCount = 0;
+    for (int row = 0; row < rows && highlightedCount < spriteCount; row++) {
+      for (int col = 0; col < columns && highlightedCount < spriteCount; col++) {
+        double x = offsetX + col * (spriteWidth + spacing);
+        double y = offsetY + row * (spriteHeight + spacing);
+        
+        canvas.drawRect(
+          Rect.fromLTWH(x, y, spriteWidth, spriteHeight),
+          highlightPaint,
+        );
+        highlightedCount++;
+      }
+    }
+    
+    // Draw grid lines for rows
     for (int row = 0; row <= rows; row++) {
       double y = offsetY + row * (spriteHeight + spacing) - (row > 0 ? spacing : 0);
       canvas.drawLine(
@@ -411,6 +492,7 @@ class SpriteSheetPreviewPainter extends CustomPainter {
       );
     }
     
+    // Draw grid lines for columns
     for (int col = 0; col <= columns; col++) {
       double x = offsetX + col * (spriteWidth + spacing) - (col > 0 ? spacing : 0);
       canvas.drawLine(
@@ -426,4 +508,3 @@ class SpriteSheetPreviewPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
-

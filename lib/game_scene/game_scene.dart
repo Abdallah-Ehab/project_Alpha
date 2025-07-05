@@ -65,7 +65,7 @@ class GameScene extends StatelessWidget {
           ),
           Expanded(
             flex:2,
-            child: ControlPanel(), // Control panel at the bottom
+            child: ComponentPanels(), // Control panel at the bottom
           ),]
       ),
     );

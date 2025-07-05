@@ -56,20 +56,8 @@ void addGlobalVariable(String name,dynamic value){
 
   EntityManager._internal() {
     _entities = {
-      // EntityType.actors: {
-      //   "goku": ActorEntity(
-      //       name: "goku", position: const Offset(0, 0), rotation: 0),
-      //   "vegeta": ActorEntity(
-      //       name: "vegeta", position: const Offset(100, 100), rotation: 0),
-      //   "ground": ActorEntity(
-      //     name: "ground",
-      //     position: const Offset(0, 200),
-      //     rotation: 0,
-      //     width: 1000,
-      //     height: 50,
-      //     layerNumber: 0,
-      //   ),
-      // },
+      
+       
       EntityType.cameras: {
         "mainCamera": CameraEntity(
           name: "mainCamera",
@@ -198,6 +186,16 @@ void addGlobalVariable(String name,dynamic value){
         entity.reset();
       }
     }
+  }
+
+  bool hasEntity(String name) {
+    for (var type in _entities.keys) {
+      final entityThatStartWithname = _entities[type]?.values.firstWhereOrNull((entity) => entity.name.startsWith(name));
+      if(entityThatStartWithname != null) {
+      return true;
+    }
+    }
+   return false;
   }
 
   void switchCameraFromEditorToGame() {

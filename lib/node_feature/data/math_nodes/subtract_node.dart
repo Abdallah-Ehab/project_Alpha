@@ -11,7 +11,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class DivideNode extends MultipleInputNode {
   DivideNode({super.position})
       : super(
-          image: 'assets/icons/divide.png',
+          image: 'assets/icons/divideNode.png',
           color: Colors.purple,
           width: 160,
           height: 120,

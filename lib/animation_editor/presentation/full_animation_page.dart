@@ -128,6 +128,7 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Expanded(flex: 20, child: AnimationEditorScreen()),
                 Expanded(

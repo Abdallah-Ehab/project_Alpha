@@ -24,7 +24,7 @@ class NodeComponent extends Component {
       List<NodeModel>? workspaceNodes}) {
     this.startNode = startNode ?? StartNode();
     this.workspaceNodes = workspaceNodes ??
-        [this.startNode!, TeleportNode(), GetPropertyFromEntityNode()];
+        [this.startNode!];
   }
 
   @override

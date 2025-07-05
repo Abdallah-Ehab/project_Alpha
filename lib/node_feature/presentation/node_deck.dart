@@ -14,6 +14,8 @@ import 'package:scratch_clone/node_feature/data/math_nodes/subtract_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
+import 'package:scratch_clone/node_feature/data/physics_related_nodes/collision_detection_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
@@ -32,11 +34,13 @@ class NodeDeck extends StatelessWidget {
     StatementGroupNode(statements: []),
     ConditionGroupNode(logicSequence: []),
     SimpleConditionNode(),
+    DetectCollisionNode()
   ];
 
   final List<NodeModel> playerTransformNodes = [
     TeleportNode(),
     MoveNode(),
+    ApplyForceNode()
   ];
 
   final List<NodeModel> variableNodes = [

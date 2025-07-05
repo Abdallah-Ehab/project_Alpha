@@ -11,7 +11,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class SubtractNode extends MultipleInputNode {
   SubtractNode({super.position})
       : super(
-          image: 'assets/icons/subtract.png',
+          image: 'assets/icons/subtractNode.png',
           color: Colors.red,
           width: 160,
           height: 120,

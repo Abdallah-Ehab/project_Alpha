@@ -13,7 +13,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class MultiplyNode extends MultipleInputNode {
   MultiplyNode({super.position})
       : super(
-          image: 'assets/icons/multiply.png',
+          image: 'assets/icons/multiplyNode.png',
           color: Colors.green,
           width: 160,
           height: 120,

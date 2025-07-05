@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/camera_feature/presentation/camera_widget.dart';
@@ -8,8 +9,23 @@ import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/entity/presentation/entity_renderer.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 
-class GameView extends StatelessWidget {
+class GameView extends StatefulWidget with WidgetsBindingObserver {
   const GameView({super.key});
+
+  @override
+  State<GameView> createState() => _GameViewState();
+}
+
+class _GameViewState extends State<GameView> {
+
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations( [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +62,6 @@ class GameView extends StatelessWidget {
                               transform: Matrix4.identity()
                                 ..translate(
                                     entity.position.dx, entity.position.dy)
-                                ..scale(entity.widthScale, entity.heigthScale)
                                 ..rotateY(entity.rotation),
                               child: EntityRenderer(entity: entity),
                             ),
