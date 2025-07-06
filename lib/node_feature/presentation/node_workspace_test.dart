@@ -62,7 +62,9 @@ class NodeWorkspaceCamera extends ChangeNotifier {
 
 // Enhanced Node Workspace
 class NodeWorkspaceTest extends StatefulWidget {
-  const NodeWorkspaceTest({super.key});
+  final NodeComponent nodeComponent; // Pass the NodeComponent directly
+
+  NodeWorkspaceTest({super.key, required this.nodeComponent});
 
   @override
   State<NodeWorkspaceTest> createState() => _NodeWorkspaceTestState();
@@ -87,108 +89,100 @@ class _NodeWorkspaceTestState extends State<NodeWorkspaceTest> {
   @override
   Widget build(BuildContext context) {
     final connectionProvider = Provider.of<ConnectionProvider>(context);
-    final entityManager = context.read<EntityManager>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
       drawer: NodeDeck(),
       body: ChangeNotifierProvider.value(
-        value: entityManager.activeEntity,
-        child: Consumer<Entity>(
-          builder: (context, activeEntity, child) {
-            final nodeComponent = activeEntity.getComponent<NodeComponent>();
+        value: widget.nodeComponent, // Use the passed nodeComponent
+        child: ChangeNotifierProvider.value(
+          value: _camera,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final viewportSize =
+                  Size(constraints.maxWidth, constraints.maxHeight);
 
-            if (nodeComponent == null) {
-              return const Center(
-                  child: Text("No NodeComponent on active entity."));
-            }
-
-            return ChangeNotifierProvider.value(
-              value: nodeComponent,
-              child: ChangeNotifierProvider.value(
-                value: _camera,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final viewportSize =
-                        Size(constraints.maxWidth, constraints.maxHeight);
-
-                    return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onScaleStart: (details) {
-                        _isPanning = false;
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onScaleStart: (details) {
+                  _isPanning = false;
+                },
+                onScaleUpdate: (details) {
+                  if (details.pointerCount == 1) {
+                    // Single finger - pan
+                    if (!_isPanning) {
+                      _isPanning = true;
+                    }
+                    _camera.pan(-details.focalPointDelta / _camera.zoom);
+                  } else if (details.pointerCount == 2) {
+                    // Two fingers - zoom
+                    _camera.zoomAt(details.localFocalPoint, details.scale);
+                  }
+                },
+                child: Consumer2<NodeComponent, NodeWorkspaceCamera>(
+                  builder: (context, nodeComponent, camera, child) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Provider.of<ConnectionProvider>(context, listen: false)
+                          .setCamera(camera, viewportSize);
+                    });
+                    return DragTarget<NodeModel>(
+                      onAcceptWithDetails: (details) {
+                        nodeComponent.addNodeToWorkspace(details.data.copyWith(
+                            position: camera.screenToWorld(
+                                details.offset, viewportSize)));
                       },
-                      onScaleUpdate: (details) {
-                        if (details.pointerCount == 1) {
-                          // Single finger - pan
-                          if (!_isPanning) {
-                            _isPanning = true;
-                          }
-                          _camera.pan(-details.focalPointDelta / _camera.zoom);
-                        } else if (details.pointerCount == 2) {
-                          // Two fingers - zoom
-                          _camera.zoomAt(
-                              details.localFocalPoint, details.scale);
-                        }
-                      },
-                      child: Consumer2<NodeComponent, NodeWorkspaceCamera>(
-                        builder: (context, nodeComponent, camera, child) {
-                          return DragTarget<NodeModel>(
-                            onAcceptWithDetails: (details){
-                              nodeComponent.addNodeToWorkspace(details.data.copyWith(position: camera.screenToWorld(details.offset, viewportSize)));
-                            },
-                            builder: (context, candidateData, rejectedData) =>  ClipRect(
-                              child: CustomPaint(
+                      builder: (context, candidateData, rejectedData) =>
+                          ClipRect(
+                        child: CustomPaint(
+                          size: viewportSize,
+                          painter: InfiniteGridPainter(
+                            camera: camera,
+                            viewportSize: viewportSize,
+                          ),
+                          child: Stack(
+                            children: [
+                              // Connection lines
+                              CustomPaint(
                                 size: viewportSize,
-                                painter: InfiniteGridPainter(
+                                painter: InfiniteArrowPainter(
+                                  nodes: nodeComponent.workspaceNodes,
+                                  connectionProvider: connectionProvider,
                                   camera: camera,
                                   viewportSize: viewportSize,
                                 ),
-                                child: Stack(
-                                  children: [
-                                    // Connection lines
-                                    CustomPaint(
-                                      size: viewportSize,
-                                      painter: InfiniteArrowPainter(
-                                        nodes: nodeComponent.workspaceNodes,
-                                        connectionProvider: connectionProvider,
-                                        camera: camera,
-                                        viewportSize: viewportSize,
-                                      ),
-                                    ),
-                                    // Nodes
-                                    ...nodeComponent.workspaceNodes
-                                        .where((node) => _camera.isRectVisible(
-                                              Rect.fromLTWH(
-                                                node.position.dx,
-                                                node.position.dy,
-                                                node.width,
-                                                node.height,
-                                              ),
-                                              viewportSize,
-                                            ))
-                                        .map((node) {
-                                      return InfiniteNodeRenderer(
-                                        key: ValueKey(node.id),
-                                        nodeModel: node,
-                                        camera: _camera,
-                                        viewportSize: viewportSize,
-                                        onDragStart: () => _isPanning = false,
-                                      );
-                                    }),
-                                  ],
-                                ),
                               ),
-                            ),
-                          );
-                        },
+                              // Nodes
+                              ...nodeComponent.workspaceNodes
+                                  .where((node) => _camera.isRectVisible(
+                                        Rect.fromLTWH(
+                                          node.position.dx,
+                                          node.position.dy,
+                                          node.width,
+                                          node.height,
+                                        ),
+                                        viewportSize,
+                                      ))
+                                  .map((node) {
+                                return InfiniteNodeRenderer(
+                                  key: ValueKey(node.id),
+                                  nodeModel: node,
+                                  camera: _camera,
+                                  viewportSize: viewportSize,
+                                  onDragStart: () => _isPanning = false,
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -457,11 +451,13 @@ class InfiniteArrowPainter extends CustomPainter {
     if (connectionProvider.fromPoint != null &&
         connectionProvider.currentPosition != null) {
       final ownernode = _findOwnerOfPoint(connectionProvider.fromPoint!, nodes);
-      final startPosition = ownernode!.position +
-          connectionProvider.fromPoint!.computeOffset();
+      final startPosition =
+          ownernode!.position + connectionProvider.fromPoint!.computeOffset();
       final startPoint = camera.worldToScreen(startPosition, viewportSize);
-      final endPoint = camera.worldToScreen(
-          connectionProvider.currentPosition!, viewportSize);
+      
+      // currentPosition is now in world coordinates, so convert to screen
+      final endPoint = camera.worldToScreen(connectionProvider.currentPosition!, viewportSize);
+      
       paint.color = Colors.grey;
       _drawArrow(canvas, paint, startPoint, endPoint, dashed: true);
     }
@@ -492,37 +488,34 @@ class InfiniteArrowPainter extends CustomPainter {
             .firstWhereOrNull((p) => p is InputConnectionPoint);
 
         if (outputPoint != null && inputPoint != null) {
-          final start = camera.worldToScreen(node.position, viewportSize) +
-              outputPoint.computeOffset();
-          final end =
-              camera.worldToScreen(node.output!.position, viewportSize) +
-                  inputPoint.computeOffset();
+          final start = node.position + outputPoint.computeOffset();
+          final end = node.output!.position + inputPoint.computeOffset();
+          final startPoint = camera.worldToScreen(start, viewportSize);
+          final endPoint = camera.worldToScreen(end, viewportSize);
+          
           paint.color = Colors.red;
-          _drawArrow(canvas, paint, start, end, dashed: false);
+          _drawArrow(canvas, paint, startPoint, endPoint, dashed: false);
         }
       }
 
       if (node is OutputNodeWithValue) {
-       
         final targetPoints =
             node.connectionPoints.whereType<ValueConnectionPoint>();
-        
+
         for (final targetCp in targetPoints) {
           if (!targetCp.isConnected) continue;
 
           final sourcePoint = targetCp.sourcePoint;
 
-          if(sourcePoint == null) continue;
-          
+          if (sourcePoint == null) continue;
 
-          
-            final start =
-                camera.worldToScreen(sourcePoint.ownerNode.position + sourcePoint.computeOffset(),viewportSize);
-            final end = camera.worldToScreen(node.position + targetCp.computeOffset(),viewportSize);
-            paint.color = Colors.orange;
-            _drawArrow(canvas, paint, start, end,
-                dashed: false); // Your custom arrow-drawing logic
-          
+          final start = camera.worldToScreen(
+              sourcePoint.ownerNode.position + sourcePoint.computeOffset(),
+              viewportSize);
+          final end = camera.worldToScreen(
+              node.position + targetCp.computeOffset(), viewportSize);
+          paint.color = Colors.orange;
+          _drawArrow(canvas, paint, start, end, dashed: false);
         }
       }
     }

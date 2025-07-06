@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ui';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -13,11 +14,14 @@ import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/m
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 
 class NodeComponent extends Component {
   NodeModel? startNode;
   late List<NodeModel> workspaceNodes;
-
+  NodeWorkspaceCamera? _camera;
+  Size? _viewportSize;
+  
   NodeComponent(
       {super.isActive = true,
       NodeModel? startNode,
@@ -25,6 +29,28 @@ class NodeComponent extends Component {
     this.startNode = startNode ?? StartNode();
     this.workspaceNodes = workspaceNodes ??
         [this.startNode!];
+  }
+
+  
+  
+  
+  // Set camera for this specific node component
+  void setCamera(NodeWorkspaceCamera camera, Size viewportSize) {
+    _camera = camera;
+    _viewportSize = viewportSize;
+    notifyListeners();
+  }
+  
+  // Getters for camera and viewport
+  NodeWorkspaceCamera? get camera => _camera;
+  Size? get viewportSize => _viewportSize;
+  
+  // Convert screen to world coordinates using component's camera
+  Offset? screenToWorld(Offset screenPosition) {
+    if (_camera != null && _viewportSize != null) {
+      return _camera!.screenToWorld(screenPosition, _viewportSize!);
+    }
+    return null;
   }
 
   @override

@@ -16,6 +16,7 @@ class ConnectionPointWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final connectionProvider =
         Provider.of<ConnectionProvider>(context, listen: false);
+    
     return GestureDetector(
       onPanStart: (details) {
         if(connectionPoint is InputConnectionPoint || connectionPoint.isConnected) return;

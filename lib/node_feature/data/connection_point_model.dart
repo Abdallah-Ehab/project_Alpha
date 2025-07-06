@@ -5,10 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
+import 'package:scratch_clone/node_feature/data/node_component_index_provider.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
 import 'package:scratch_clone/node_feature/presentation/connection_point_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 import 'package:uuid/uuid.dart';
 
@@ -228,48 +230,51 @@ class OutputConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  void handlePanEndBehaviour(BuildContext context) {
-    final entityManager = Provider.of<EntityManager>(context, listen: false);
-    final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
+void handlePanEndBehaviour(BuildContext context) {
+  final entityManager = Provider.of<EntityManager>(context, listen: false);
+  final provider = Provider.of<ConnectionProvider>(context, listen: false);
+  final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
+  final activeEntity = entityManager.activeEntity;
+  final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
 
-    if (nodeComponent == null) {
-      log("No NodeComponent found");
-      return;
-    }
+  if (nodeComponent == null) {
+    log("No NodeComponent found");
+    return;
+  }
 
-    final provider = Provider.of<ConnectionProvider>(context, listen: false);
-    final endPos = provider.currentPosition;
-    final nodes = nodeComponent.workspaceNodes;
+  final endPos = provider.currentPosition; // Already in world coordinates
+  final nodes = nodeComponent.workspaceNodes;
 
-    if (endPos == null) {
-      provider.clear();
-      return;
-    }
+  if (endPos == null) {
+    provider.clear();
+    return;
+  }
 
-    for (var targetNode in nodes) {
-      if (targetNode.id == ownerNode.id) continue;
+  for (var targetNode in nodes) {
+    if (targetNode.id == ownerNode.id) continue;
 
-      for (var point in targetNode.connectionPoints) {
-        if (point is! InputConnectionPoint) continue;
+    for (var point in targetNode.connectionPoints) {
+      if (point is! InputConnectionPoint) continue;
 
-        final pointPos = targetNode.position + point.computeOffset();
-        if ((endPos - pointPos).distance <= 20) {
-          if (ownerNode is HasOutput && targetNode is HasInput) {
-            (ownerNode as HasOutput).connectOutput(targetNode);
-            (targetNode as HasInput).connectInput(ownerNode);
-            isConnected = true;
-            point.isConnected = true;
-            log('output node $ownerNode is connected to input node $targetNode');
-            provider.clear();
-            return;
-          }
+      // Both positions are now in world coordinates
+      final pointPos = targetNode.position + point.computeOffset();
+      
+      if ((endPos - pointPos).distance <= 20) {
+        if (ownerNode is HasOutput && targetNode is HasInput) {
+          (ownerNode as HasOutput).connectOutput(targetNode);
+          (targetNode as HasInput).connectInput(ownerNode);
+          isConnected = true;
+          point.isConnected = true;
+          log('output node $ownerNode is connected to input node $targetNode');
+          provider.clear();
+          return;
         }
       }
     }
-
-    provider.clear();
   }
+
+  provider.clear();
+}
 }
 
 class ConnectConnectionPoint extends ConnectionPointModel {
@@ -322,7 +327,8 @@ class ConnectConnectionPoint extends ConnectionPointModel {
 
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
+    final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
+    final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
@@ -448,7 +454,8 @@ class ValueConnectionPoint extends ConnectionPointModel {
   void handlePanEndBehaviour(BuildContext context) {
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final nodeComponent = activeEntity?.getComponent<NodeComponent>();
+    final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
+    final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
