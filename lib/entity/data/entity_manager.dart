@@ -34,7 +34,7 @@ class EntityManager extends ChangeNotifier {
 
 void addPrefab(String name, Entity entity) {
   entities[EntityType.actors]?.removeWhere((key, value) => value.name == entity.name);
-  activeEntity = entities[EntityType.actors]!['goku']!;
+  activeEntity = null;
   prefabs[name] = entity;
   notifyListeners();
 }
