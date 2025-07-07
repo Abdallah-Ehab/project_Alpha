@@ -44,7 +44,7 @@ class _GameViewState extends State<GameView> {
               children: [
                 // Render non-camera entities
                 ...entityManager
-                    .getSortedEntityByLayerNumber(EntityType.actors)
+                    .getAllEntitiesSortedByLayerNumber()
                     .where((e) => isInCameraView(cam, e))
                     .map(
                       (e) => ChangeNotifierProvider.value(
@@ -63,7 +63,7 @@ class _GameViewState extends State<GameView> {
                                 ..translate(
                                     entity.position.dx, entity.position.dy)
                                 ..rotateY(entity.rotation),
-                              child: EntityRenderer(entity: entity),
+                              child: EntityRenderer(entity: entity,lights: entityManager.getLights() ?? []),
                             ),
                           ),
                         ),

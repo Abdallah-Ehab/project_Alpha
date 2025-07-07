@@ -38,7 +38,7 @@ class RigidBodyComponent extends Component {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'type': 'rigidbody',
+      'type': 'rigidbody_component',
       'isActive': isActive,
       'velocity': {'dx': velocity.dx, 'dy': velocity.dy},
       'mass': mass,

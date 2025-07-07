@@ -10,7 +10,7 @@ import 'package:scratch_clone/entity/data/entity_manager.dart';
 Future<void> saveGame() async {
   final dir = await getApplicationDocumentsDirectory();
   final path = '${dir.path}/save.json';
-
+  log('Saving game to $path');
   final jsonData = EntityManager().toJson();
   log(jsonData.toString());
   final file = File(path);

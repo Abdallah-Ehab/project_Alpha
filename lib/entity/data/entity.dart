@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:scratch_clone/camera_feature/data/camera_entity.dart';
 import 'package:scratch_clone/component/component.dart';
+import 'package:scratch_clone/entity/data/light_entity.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
@@ -96,6 +97,8 @@ abstract class Entity with ChangeNotifier {
       case 'camera':
         return CameraEntity.fromJson(
             json); // Replace with your specific Entity subclasses
+      case 'light':
+      return LightEntity.fromJson(json);
       default:
         throw Exception('Unknown entity type');
     }

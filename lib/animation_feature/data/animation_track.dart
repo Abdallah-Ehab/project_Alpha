@@ -122,7 +122,7 @@ class KeyFrame with ChangeNotifier {
     return {
       'image': imageBase64,
       'sketches': sketches.map((s) => s.toJson()).toList(),
-      'position': {'x': position.dx, 'y': position.dy},
+      'position': {'dx': position.dx, 'dy': position.dy},
       'rotation': rotation,
       'scale': scale,
     };
@@ -138,7 +138,8 @@ class KeyFrame with ChangeNotifier {
       ..position = OffsetJson.fromJson(json['position'])
       ..rotation = (json['rotation'] as num).toDouble()
       ..scale = (json['scale'] as num).toDouble()
-      ..imageBase64 = null;
+      ..imageBase64 = json['image'] as String?
+      ..image = null;
   }
 
 

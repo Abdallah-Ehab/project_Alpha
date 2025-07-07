@@ -55,7 +55,7 @@ class NodeComponent extends Component {
 
   @override
   Map<String, dynamic> toJson() => {
-        'type': 'NodeComponent',
+        'type': 'node_component',
         'isActive': isActive,
         'workspaceNodes':
             workspaceNodes.map((node) => node.baseToJson()).toList(),

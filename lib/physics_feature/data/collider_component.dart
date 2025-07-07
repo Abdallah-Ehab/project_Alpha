@@ -152,7 +152,7 @@ class ColliderComponent extends Component {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'type': 'collider',
+      'type': 'collider_component',
       'isActive': isActive,
       'position': {'dx': position.dx, 'dy': position.dy},
       'width': width,

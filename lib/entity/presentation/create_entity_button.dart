@@ -5,6 +5,7 @@ import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
 import 'package:scratch_clone/entity/data/actor_entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/entity/data/light_entity.dart';
 
 class CreateEntityButton extends StatelessWidget {
   const CreateEntityButton({super.key});
@@ -64,8 +65,13 @@ class _CreateEntityDialogState extends State<_CreateEntityDialog> {
           rotation: 0), // Customize if needed
       EntityType.cameras =>
         CameraEntity(name: name, position: Offset.zero, rotation: 0), // Example
-      // TODO: Handle this case.
-      EntityType.lights => throw UnimplementedError(),
+      
+      EntityType.lights => LightEntity(
+          name: name,
+          position: Offset.zero,
+          rotation: 0,
+          color: Colors.red, // Default color, customize if needed
+        ),
       // TODO: Handle this case.
       EntityType.sounds => throw UnimplementedError(),
     };
