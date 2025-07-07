@@ -114,4 +114,17 @@ class SoundControllerComponent extends Component {
   Map<String, dynamic> toJson() {
     return {};
   }
+
+  static SoundControllerComponent fromJson(Map<String, dynamic> json) {
+    return SoundControllerComponent(
+      isActive: json['isActive'] as bool? ?? true,
+      currentlyPlaying: json['currentlyPlaying'] as String?,
+    )..transitions = (json['transitions'] as List<dynamic>?)
+            ?.map((e) => Transition.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        []
+    ..tracks = (json['tracks'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, SoundTrack(filePath: '',loop: true, name: '', releaseMode: ReleaseMode.loop,))) ??
+        {};
+  }
 }

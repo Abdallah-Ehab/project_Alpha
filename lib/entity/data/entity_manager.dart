@@ -74,7 +74,12 @@ void addGlobalVariable(String name,dynamic value){
   }
 
   Map<EntityType, Map<String, Entity>> get entities => _entities;
-
+  Map<String, Entity> getEntitiesByType(EntityType type) {
+    return _entities[type] ?? {};
+  }
+  List<Entity>? getLights() {
+    return _entities[EntityType.lights]?.values.where((e) => e.name == 'light').toList();
+  }
   Iterable<Entity> get allEntities sync* {
     for (var typeMap in _entities.values) {
       yield* typeMap.values;
@@ -128,14 +133,12 @@ void addGlobalVariable(String name,dynamic value){
     notifyListeners();
   }
 
-  List<Entity> getSortedEntityByLayerNumber(EntityType type) {
-    if(!_entities.containsKey(type)) {
-      return [];
-    }
-    return _entities[type]!.values.toList()
+ List<Entity> getAllEntitiesSortedByLayerNumber() {
+  return _entities.values
+      .expand((map) => map.values.whereNot((value)=>value is CameraEntity)) // Flatten all entity maps
+      .toList()
       ..sort((a, b) => a.layerNumber.compareTo(b.layerNumber));
-  }
-
+}
   void setActiveEntityByTypeAndName(EntityType type, String name) {
     if (_entities[type]?.containsKey(name) == true) {
       _activeEntity = _entities[type]![name];
@@ -249,7 +252,26 @@ void fromJson(Map<String, dynamic> json) {
   }
 
   _activeEntity = null;
-  _activeCamera = null;
+
+  // 🔧 Restore the camera
+  final cameraMap = _entities[EntityType.cameras];
+  if (cameraMap != null && cameraMap.isNotEmpty) {
+    final editorCamera = cameraMap.values
+        .whereType<CameraEntity>()
+        .firstWhere((cam) => cam.isEditorCamera, orElse: () => cameraMap.values.first as CameraEntity);
+    _activeCamera = editorCamera;
+  } else {
+    // If no cameras exist at all, create one to avoid crash
+    final fallbackCamera = CameraEntity(
+      name: "mainCamera",
+      position: const Offset(0, 100),
+      rotation: 0,
+      zoom: 1.0,
+      isEditorCamera: true,
+    );
+    _entities[EntityType.cameras] = {"mainCamera": fallbackCamera};
+    _activeCamera = fallbackCamera;
+  }
 
   notifyListeners();
 }
