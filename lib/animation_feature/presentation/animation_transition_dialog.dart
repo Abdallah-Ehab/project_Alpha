@@ -123,7 +123,7 @@ class _AddAnimationTransitionDialogState
                       TextField(
                         decoration: const InputDecoration(
                             labelText: 'Second Operand (number)'),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.text,
                         onChanged: (value) => secondOperand = value,
                       ),
                     ],

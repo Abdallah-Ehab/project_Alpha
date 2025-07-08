@@ -16,7 +16,7 @@ class RigidBodyComponent extends Component {
   bool isGrounded;
   double fallProgress;
   final double gravityAccelerationRate; // tunable
-  final double maxFallSpeed;           // optional safety cap
+  double maxFallSpeed;           // optional safety cap
    double resistance; // Air resistance factor (0 to 1)
     double friction;
   RigidBodyComponent({
@@ -113,6 +113,10 @@ class RigidBodyComponent extends Component {
     notifyListeners();
   }
 
+  void setMaxFall(double maxfall){
+    maxFallSpeed = maxfall;
+    notifyListeners();
+  }
 
   void applyForce({
     double fx = 0.0,
@@ -202,20 +206,27 @@ class RigidBodyComponent extends Component {
   if (isStatic) return;
 
   checkIfGrounded(activeEntity);
+
   if (!isGrounded && useGravity) {
     fallProgress += gravityAccelerationRate;
 
-    // Optional cap on fallProgress to prevent black hole gravity
+    // Clamp fallProgress to prevent excessive speeds
     fallProgress = fallProgress.clamp(0, maxFallSpeed);
 
     velocity += Offset(0, gravity * fallProgress * mass * resistance);
   }
 
-  final dx = velocity.dx;
-  final dy = velocity.dy;
+  // Clamp velocity components
+  final double maxSpeed = maxFallSpeed;
+  double clampedDx = velocity.dx.clamp(-maxSpeed, maxSpeed);
+  double clampedDy = velocity.dy.clamp(-maxSpeed, maxSpeed);
 
-  activeEntity.move(x: dx, y: dy);
+  velocity = Offset(clampedDx, clampedDy);
+
+  // Apply movement based on clamped velocity
+  activeEntity.move(x: clampedDx, y: clampedDy);
 }
+
 
 
 

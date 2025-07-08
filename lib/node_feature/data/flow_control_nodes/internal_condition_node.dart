@@ -74,11 +74,11 @@ Result<bool> execute([Entity? entity]) {
     if (entity != null) {
       switch (lower) {
         case 'ontap':
-          return entity.onTapVariable;
+          return entity.variables['ontap'];
         case 'onlongpress':
-          return entity.onLongPressVariable;
+          return entity.variables['onlongpress'];
         case 'ondoubletap':
-          return entity.onDoubleTapVariable;
+          return entity.variables['ondoubletap'];
       }
 
       // Normal variable lookup

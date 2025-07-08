@@ -1,4 +1,3 @@
-import 'package:collection/equality.dart';
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
@@ -10,6 +9,7 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
 import 'package:uuid/uuid.dart';
 
@@ -89,6 +89,8 @@ abstract class NodeModel with ChangeNotifier {
         return ConditionGroupNode.fromJson(json);
       case 'StatementGroupNode':
         return StatementGroupNode.fromJson(json);
+      case 'SetVariableNode':
+      return SetVariableNode.fromJson(json);
 
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
@@ -138,16 +140,18 @@ abstract class NodeModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void disconnectIfTop() {
+  void disconnectIfBottom({required ConnectionPointModel cp}) {
     if (child != null) {
+      cp.isConnected = false;
       child!.parent = null;
       child = null;
       notifyListeners();
     }
   }
 
-  void disconnectIfBottom() {
+  void disconnectIfTop({required ConnectionPointModel cp}) {
     if (parent != null) {
+      cp.isConnected = false;
       parent!.child = null;
       parent = null;
       notifyListeners();
@@ -214,7 +218,9 @@ class StartNode extends NodeModel {
       ..id = json['id']
       ..width = (json['width'] as num).toDouble()
       ..height = (json['height'] as num).toDouble()
-      ..isConnected = json['isConnected'] as bool;
+      ..isConnected = json['isConnected'] as bool
+      ..child = null
+      ..parent = null;
 
     final connectionPoints = connectionPointsJson
         .map((e) => ConnectionPointModel.fromJson(e, startNode))

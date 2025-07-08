@@ -119,7 +119,9 @@ static StatementGroupNode fromJson(Map<String, dynamic> json) {
     position: OffsetJson.fromJson(json['position']),
   )
     ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false;
+    ..isConnected = json['isConnected'] ?? false
+    ..child = null
+    ..parent = null;
 
   node.connectionPoints = (json['connectionPoints'] as List)
       .map((e) => ConnectionPointModel.fromJson(e, node))

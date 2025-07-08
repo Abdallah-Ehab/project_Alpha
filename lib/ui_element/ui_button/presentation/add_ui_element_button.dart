@@ -55,7 +55,7 @@ class _AddUIElementDialog extends StatefulWidget {
 }
 
 class _AddUIElementDialogState extends State<_AddUIElementDialog> {
-  String selectedType = 'Joystick';
+  String selectedType = 'joystick';
   Alignment selectedAlignment = Alignment.center;
 
   @override
@@ -67,7 +67,7 @@ class _AddUIElementDialogState extends State<_AddUIElementDialog> {
         children: [
           // Type Selector
           DropdownButton<String>(
-            value: UIElementType.joystick.name,
+            value: selectedType,
             onChanged: (value) {
               setState(() {
                 selectedType = value!;
@@ -105,7 +105,7 @@ class _AddUIElementDialogState extends State<_AddUIElementDialog> {
           onPressed: () {
             UIElement element;
             switch (selectedType) {
-              case 'Joystick':
+              case 'joystick':
                 element = JoyStickElement(alignment: selectedAlignment);
                 break;
               case 'button':

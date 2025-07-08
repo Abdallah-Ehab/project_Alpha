@@ -15,7 +15,7 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
   bool hasTwoOutputs;
 
   GetPropertyFromEntityNode({
-    this.entityName = 'assets/icons/GetPropertyFromEntityNode.png',
+    this.entityName = '',
     this.selectedProperty = Property.position,
     this.hasTwoOutputs = true,
     super.position,
@@ -27,8 +27,20 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
           connectionPoints: [],
         ) {
     connectionPoints = [
-      ValueConnectionPoint(position: Offset.zero, valueIndex: 0, width: 30, isLeft: false, ownerNode: this),
-      ValueConnectionPoint(position: Offset.zero, valueIndex: 1, width: 30, isLeft: false, ownerNode: this),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        valueIndex: 0,
+        width: 30,
+        isLeft: false,
+        ownerNode: this,
+      ),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        valueIndex: 1,
+        width: 30,
+        isLeft: false,
+        ownerNode: this,
+      ),
     ];
   }
 
@@ -52,7 +64,16 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
   @override
   Result execute([Entity? activeEntity]) {
     final value = _getPropertyValue();
-    return Result.success(result: value);
+
+    if (selectedProperty == Property.position && value is Offset) {
+      (connectionPoints[0] as ValueConnectionPoint).value = value.dx;
+      (connectionPoints[1] as ValueConnectionPoint).value = value.dy;
+      return Result.success(result: [value.dx, value.dy]);
+    } else {
+      (connectionPoints[0] as ValueConnectionPoint).value = value;
+      (connectionPoints[1] as ValueConnectionPoint).value = null;
+      return Result.success(result: [value]);
+    }
   }
 
   @override
@@ -63,39 +84,44 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
     );
   }
 
-@override
-NodeModel copyWith({
-  Offset? position,
-  Color? color,
-  double? width,
-  double? height,
-  bool? isConnected,
-  NodeModel? child,
-  NodeModel? parent,
-  String? entityName,
-  Property? selectedProperty,
-  bool? hasTwoOutputs,
-  NodeModel? sourceNode,
-  List<ConnectionPointModel>? connectionPoints,
-}) {
-  final newNode = GetPropertyFromEntityNode(
-    entityName: entityName ?? this.entityName,
-    selectedProperty: selectedProperty ?? this.selectedProperty,
-    hasTwoOutputs: hasTwoOutputs ?? this.hasTwoOutputs,
-    position: position ?? this.position,
-  );
+  @override
+  NodeModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    String? entityName,
+    Property? selectedProperty,
+    bool? hasTwoOutputs,
+    NodeModel? sourceNode,
+    List<ConnectionPointModel>? connectionPoints,
+  }) {
+    final newNode = GetPropertyFromEntityNode(
+      entityName: entityName ?? this.entityName,
+      selectedProperty: selectedProperty ?? this.selectedProperty,
+      hasTwoOutputs: hasTwoOutputs ?? this.hasTwoOutputs,
+      position: position ?? this.position,
+    );
 
-  newNode.isConnected = isConnected ?? this.isConnected;
-  newNode.child = null;
-  newNode.parent = null;
-  newNode.output = null;
+    newNode.isConnected = isConnected ?? this.isConnected;
+    newNode.child = null;
+    newNode.parent = null;
+    newNode.output = null;
 
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints
+            .map((cp) => cp.copyWith(ownerNode: newNode))
+            .toList()
+        : this
+            .connectionPoints
+            .map((cp) => cp.copyWith(ownerNode: newNode))
+            .toList();
 
-  return newNode;
-}
+    return newNode;
+  }
 
   @override
   NodeModel copy() {
@@ -107,7 +133,7 @@ NodeModel copyWith({
     final map = super.baseToJson();
     map['type'] = 'GetPropertyFromEntityNode';
     map['entityName'] = entityName;
-    map['selectedProperty'] = selectedProperty.name; // Save as string
+    map['selectedProperty'] = selectedProperty.name;
     map['hasTwoOutputs'] = hasTwoOutputs;
     return map;
   }
@@ -120,7 +146,7 @@ NodeModel copyWith({
         orElse: () => Property.position,
       ),
       hasTwoOutputs: json['hasTwoOutputs'] ?? false,
-      position: OffsetJson.fromJson(json['position'])
+      position: OffsetJson.fromJson(json['position']),
     )
       ..id = json['id']
       ..isConnected = json['isConnected'] ?? false;

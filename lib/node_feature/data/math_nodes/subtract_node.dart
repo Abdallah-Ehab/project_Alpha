@@ -8,69 +8,94 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class DivideNode extends MultipleInputNode {
-  DivideNode({super.position})
+class SubtractNode extends NodeModel {
+  SubtractNode({super.position})
       : super(
-          image: 'assets/icons/divideNode.png',
-          color: Colors.purple,
+          image: 'assets/icons/subtractNode.png',
+          color: Colors.red,
           width: 160,
-          height: 120,
+          height: 100,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
-      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 0,
+        isLeft: true,
+        ownerNode: this,
+      ),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 1,
+        isLeft: true,
+        ownerNode: this,
+      ),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 0,
+        isLeft: false,
+        ownerNode: this,
+      ),
     ];
   }
 
   @override
   Result execute([Entity? activeEntity]) {
-    final a = _getInputValue(0, activeEntity);
-    final b = _getInputValue(1, activeEntity);
+    final a = _getValueFromInput(0, activeEntity);
+    final b = _getValueFromInput(1, activeEntity);
 
-    if (a == null || b == null || b == 0) {
-      return Result.failure(errorMessage: 'Invalid inputs for division.');
+    if (a == null || b == null) {
+      return Result.failure(errorMessage: "Missing inputs for subtraction.");
     }
 
-    return Result.success(result: a / b);
+    final result = a - b;
+
+    final output = connectionPoints[2] as ValueConnectionPoint;
+    output.value = result;
+
+    return Result.success(result: result);
   }
 
-  double? _getInputValue(int index, Entity? activeEntity) {
-    final inputNode = getInput(index);
-    if (inputNode == null) return null;
+  double? _getValueFromInput(int index, Entity? entity) {
+    final cp = connectionPoints[index] as ValueConnectionPoint;
+    final sourceNode = cp.sourcePoint?.ownerNode;
+    if (sourceNode == null) return null;
 
-    final result = inputNode.execute(activeEntity);
-    if (result.errorMessage != null) return null;
+    final result = sourceNode.execute(entity);
+    if (result.errorMessage != null || result.result == null) return null;
 
-    return result.result is num ? result.result.toDouble() : null;
+    final value = result.result;
+    if (value is num) return value.toDouble();
+    return null;
   }
 
   @override
-  Widget buildNode() => ChangeNotifierProvider.value(
-        value: this,
-        child: MathNodeWidget(node: this, label: '÷'),
-      );
+  Widget buildNode() {
+    return ChangeNotifierProvider.value(
+      value: this,
+      child: MathNodeWidget(label: '-',node: this,),
+    );
+  }
 
   @override
-  DivideNode copyWith({
-    NodeModel? child,
+  SubtractNode copyWith({
+    Offset? position,
     Color? color,
-    List<ConnectionPointModel>? connectionPoints,
+    double? width,
     double? height,
     bool? isConnected,
+    NodeModel? child,
     NodeModel? parent,
-    Offset? position,
-    double? width,
+    List<ConnectionPointModel>? connectionPoints,
   }) {
-    final newNode = DivideNode(
-      position: position ?? this.position,
-    );
+    final newNode = SubtractNode(position: position ?? this.position)
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = null
+      ..parent = null;
 
-    newNode.parent = null;
-    newNode.child = null;
-    newNode.isConnected = isConnected ?? this.isConnected;
     newNode.connectionPoints = connectionPoints != null
         ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
         : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
@@ -79,21 +104,17 @@ class DivideNode extends MultipleInputNode {
   }
 
   @override
-  DivideNode copy() => copyWith();
+  SubtractNode copy() => copyWith();
 
-  // ✅ JSON Serialization
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
-    map['type'] = 'DivideNode';
+    map['type'] = 'SubtractNode';
     return map;
   }
 
-  // ✅ JSON Deserialization
-  static DivideNode fromJson(Map<String, dynamic> json) {
-    final node = DivideNode(
-      position: OffsetJson.fromJson(json['position']),
-    )
+  static SubtractNode fromJson(Map<String, dynamic> json) {
+    final node = SubtractNode(position: OffsetJson.fromJson(json['position']))
       ..id = json['id']
       ..isConnected = json['isConnected'] ?? false;
 

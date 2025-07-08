@@ -3,17 +3,10 @@ import 'dart:ui';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/node_feature/data/flow_control_nodes/condition_group_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
-import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
-import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
-import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
-import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
-import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 
 class NodeComponent extends Component {
