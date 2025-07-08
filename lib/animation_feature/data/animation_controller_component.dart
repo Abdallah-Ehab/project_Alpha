@@ -167,6 +167,84 @@ class AnimationControllerComponent extends Component {
       animationTracks: animationTracks.map((k, v) => MapEntry(k, v.copy())),
     );
   }
+
+
+  void markAsDestroyAnimation(String trackName) {
+    if (!animationTracks.containsKey(trackName)) return;
+    
+    // First, remove any existing destroy animation
+    _removeExistingDestroyAnimationTransitions();
+    
+    // Mark the track as destroy animation
+    animationTracks[trackName]!.setIsDestroyAnimationTrack(true);
+    
+    // Generate transitions from all other tracks to this destroy animation
+    _generateDestroyAnimationTransitions(trackName);
+    
+    notifyListeners();
+  }
+
+  // NEW: Method to unmark an animation track as destroy animation
+  void unmarkAsDestroyAnimation(String trackName) {
+    if (!animationTracks.containsKey(trackName)) return;
+    
+    // Unmark the track
+    animationTracks[trackName]!.setIsDestroyAnimationTrack(false);
+    
+    // Remove all destroy animation transitions
+    _removeExistingDestroyAnimationTransitions();
+    
+    notifyListeners();
+  }
+
+  // NEW: Generate transitions from all other tracks to destroy animation
+  void _generateDestroyAnimationTransitions(String destroyTrackName) {
+    for (String trackName in animationTracks.keys) {
+      if (trackName != destroyTrackName) {
+        // Create transition from this track to destroy animation
+        final destroyTransition = Transition(
+          startTrackName: trackName,
+          condition: Condition(
+            entityVariable: "destroy",
+            secondOperand: "true",
+            operator: "=="
+          ),
+          targetTrackName: destroyTrackName,
+        );
+        
+        transitions.add(destroyTransition);
+      }
+    }
+  }
+
+  // NEW: Remove existing destroy animation transitions
+  void _removeExistingDestroyAnimationTransitions() {
+    transitions.removeWhere((transition) {
+      return transition.condition.entityVariable == "destroy" &&
+             transition.condition.operator == "==" &&
+             transition.condition.secondOperand == "true";
+    });
+  }
+
+  // NEW: Get the current destroy animation track (if any)
+  AnimationTrack? getDestroyAnimationTrack() {
+    for (AnimationTrack track in animationTracks.values) {
+      if (track.isDestroyAnimationTrack) {
+        return track;
+      }
+    }
+    return null;
+  }
+
+  // NEW: Check if there's a destroy animation track
+  bool hasDestroyAnimation() {
+    return getDestroyAnimationTrack() != null;
+  }
+
+  // NEW: Trigger destroy animation by setting entity variable
+  void triggerDestroy(Entity entity) {
+    entity.variables["destroy"] = true;
+  }
 }
 
 class Transition {

@@ -8,6 +8,7 @@ class LightEntity extends Entity {
 
   LightEntity({
     required super.name,
+    super.tag = 'light',
     required super.position,
     super.rotation = 0,
     super.width,
@@ -22,6 +23,7 @@ class LightEntity extends Entity {
   LightEntity copy() {
     return LightEntity(
       name: name,
+      tag : tag,
       position: position,
       rotation: rotation,
       width: width,
@@ -38,6 +40,7 @@ class LightEntity extends Entity {
     return {
       'type': 'light',
       'name': name,
+      'tag' : tag,
       'position': Entity.offsetToJson(position),
       'rotation': rotation,
       'width': width,
@@ -54,6 +57,7 @@ class LightEntity extends Entity {
   static LightEntity fromJson(Map<String, dynamic> json) {
     return LightEntity(
       name: json['name'],
+      tag : json['tag'],
       position: Entity.offsetFromJson(json['position']),
       rotation: json['rotation'],
       width: json['width'],

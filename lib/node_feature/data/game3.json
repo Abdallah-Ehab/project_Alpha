@@ -1,0 +1,306 @@
+{
+  "entities": {
+    "cameras": {
+      "mainCamera": {
+        "type": "camera",
+        "tag": "camera",
+        "name": "mainCamera",
+        "position": {
+          "x": 0.0,
+          "y": 100.0
+        },
+        "rotation": 0.0,
+        "width": 500.0,
+        "height": 500.0,
+        "layerNumber": 0,
+        "zoom": 1.0,
+        "isEditorCamera": true
+      }
+    },
+    "actors": {
+      "flapp": {
+        "type": "actor",
+        "name": "flapp",
+        "position": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rotation": 0.0,
+        "width": 100.0,
+        "height": 100.0,
+        "layerNumber": 1,
+        "children": [],
+        "components": {
+          "ColliderComponent": [
+            {
+              "type": "collider_component",
+              "isActive": true,
+              "position": {
+                "dx": 0.0,
+                "dy": 0.0
+              },
+              "width": 100.0,
+              "height": 100.0
+            }
+          ],
+          "RigidBodyComponent": [
+            {
+              "type": "rigidbody_component",
+              "isActive": true,
+              "velocity": {
+                "dx": 0.0,
+                "dy": 0.0
+              },
+              "mass": 1.0,
+              "useGravity": true,
+              "gravity": 0.2,
+              "isStatic": false,
+              "isGrounded": false,
+              "fallProgress": 0.0,
+              "gravityAccelerationRate": 0.1,
+              "maxFallSpeed": 1.0,
+              "resistance": 0.98,
+              "friction": 0.95
+            }
+          ],
+          "NodeComponent": [
+            {
+              "type": "node_component",
+              "isActive": true,
+              "workspaceNodes": [
+                {
+                  "id": "a1261cfc-0b5f-4068-b7b8-57f254e69ccc",
+                  "position": {
+                    "dx": 0.0,
+                    "dy": 0.0
+                  },
+                  "color": 4294940672,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "75055a45-ef82-4cdc-a71e-92cea7a0e472",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": true,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": "c0b7c402-11c2-4a7d-85da-55e13c000ef7",
+                  "type": "StartNode"
+                },
+                {
+                  "id": "c0b7c402-11c2-4a7d-85da-55e13c000ef7",
+                  "position": {
+                    "dx": 6.666666666666686,
+                    "dy": 263.16666666666663
+                  },
+                  "color": 4283215696,
+                  "width": 200.0,
+                  "height": 100.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "0f8307cd-af14-4c90-b093-c368d58b3bf9",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": true
+                    },
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "f049e3a5-7590-45b2-919b-20bbea726b6b",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "fcb0b199-7a1d-4618-bfae-f7db84a05d98",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": true,
+                      "isTop": true
+                    },
+                    {
+                      "type": "ConnectConnectionPoint",
+                      "id": "8f04abfd-bb9e-4c2f-83d9-c4b5d5a3a102",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 30.0,
+                      "isConnected": false,
+                      "isTop": false
+                    }
+                  ],
+                  "childId": null,
+                  "parentId": "a1261cfc-0b5f-4068-b7b8-57f254e69ccc",
+                  "inputId": "d3ab25d8-6ece-45f7-a29f-5b5ac91d7a9a",
+                  "outputId": "e98498db-079d-417a-b944-79a311092751",
+                  "type": "IfNode"
+                },
+                {
+                  "id": "d3ab25d8-6ece-45f7-a29f-5b5ac91d7a9a",
+                  "position": {
+                    "dx": -393.08333333333326,
+                    "dy": 197.58333333333331
+                  },
+                  "color": 4294922834,
+                  "width": 300.0,
+                  "height": 120.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "OutputConnectionPoint",
+                      "id": "64952f47-1ec3-4137-8132-635176053d25",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 50.0,
+                      "isConnected": true
+                    }
+                  ],
+                  "childId": null,
+                  "outputId": "c0b7c402-11c2-4a7d-85da-55e13c000ef7",
+                  "type": "ConditionGroupNode",
+                  "logicSequence": [
+                    {
+                      "id": "1e8ad5a9-8828-468d-80b0-85593ad0ea18",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "color": 4283215696,
+                      "width": 100.0,
+                      "height": 100.0,
+                      "isConnected": false,
+                      "connectionPoints": [],
+                      "type": "InternalConditionNode",
+                      "firstOperand": "ontap",
+                      "secondOperand": "true",
+                      "comparisonOperator": "=="
+                    }
+                  ]
+                },
+                {
+                  "id": "e98498db-079d-417a-b944-79a311092751",
+                  "position": {
+                    "dx": 299.83333333333337,
+                    "dy": 309.66666666666663
+                  },
+                  "color": 4283215696,
+                  "width": 200.0,
+                  "height": 180.0,
+                  "isConnected": false,
+                  "connectionPoints": [
+                    {
+                      "type": "InputConnectionPoint",
+                      "id": "0a723e04-ccbb-43e7-8017-246b7eb575e8",
+                      "position": {
+                        "dx": 0.0,
+                        "dy": 0.0
+                      },
+                      "width": 20.0,
+                      "isConnected": true
+                    }
+                  ],
+                  "parentId": null,
+                  "inputId": "c0b7c402-11c2-4a7d-85da-55e13c000ef7",
+                  "type": "StatementGroupNode",
+                  "isHighlighted": false,
+                  "statements": [
+                    {
+                      "id": "f1fdc5fd-5e6e-499f-a88e-2bc898b617d9",
+                      "position": {
+                        "dx": 336.5000000000003,
+                        "dy": 315.4166666666665
+                      },
+                      "color": 4280391411,
+                      "width": 200.0,
+                      "height": 100.0,
+                      "isConnected": false,
+                      "connectionPoints": [
+                        {
+                          "type": "ConnectConnectionPoint",
+                          "id": "a1825d79-eac1-4c3f-ab2a-4b8cd6237f9f",
+                          "position": {
+                            "dx": 0.0,
+                            "dy": 0.0
+                          },
+                          "width": 20.0,
+                          "isConnected": false,
+                          "isTop": true
+                        },
+                        {
+                          "type": "ConnectConnectionPoint",
+                          "id": "5f4a6601-97bb-407f-9238-32eabbb49038",
+                          "position": {
+                            "dx": 0.0,
+                            "dy": 0.0
+                          },
+                          "width": 20.0,
+                          "isConnected": false,
+                          "isTop": false
+                        }
+                      ],
+                      "type": "MoveNode",
+                      "x": 0.0,
+                      "y": -10.0
+                    }
+                  ]
+                }
+              ],
+              "startNodeId": "a1261cfc-0b5f-4068-b7b8-57f254e69ccc"
+            }
+          ]
+        }
+      },
+      "floor": {
+        "type": "actor",
+        "name": "floor",
+        "position": {
+          "x": 0.0,
+          "y": 200.0
+        },
+        "rotation": 0.0,
+        "width": 1000.0,
+        "height": 100.0,
+        "layerNumber": 1,
+        "children": [],
+        "components": {
+          "ColliderComponent": [
+            {
+              "type": "collider_component",
+              "isActive": true,
+              "position": {
+                "dx": 0.0,
+                "dy": 0.0
+              },
+              "width": 1000.0,
+              "height": 100.0
+            }
+          ]
+        }
+      }
+    },
+    "globalVariables": {},
+    "prefabs": {},
+    "removedEntities": []
+  }
+}

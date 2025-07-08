@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -32,6 +34,7 @@ class ElseNode extends InputOutputNode {
     if (output != null) {
       final statementResult = output!.execute(activeEntity);
       if (statementResult.errorMessage != null) {
+        log('else is executed');
         return Result.failure(errorMessage: statementResult.errorMessage);
       }
     }

@@ -15,6 +15,7 @@ enum Property { name, position, rotation, width, height, layerNumber }
 
 abstract class Entity with ChangeNotifier {
   String name;
+  String tag;
   ui.Offset position;
   double rotation;
   double width;
@@ -31,6 +32,7 @@ abstract class Entity with ChangeNotifier {
 
   Entity({
     required this.name,
+    required this.tag,
     required this.position,
     required this.rotation,
     this.widthScale = 1.0,
@@ -41,7 +43,9 @@ abstract class Entity with ChangeNotifier {
     this.onDoubleTapVariable = false,
     this.onTapVariable = false,
     this.onLongPressVariable = false
-  }):components = {},variables = {},lists = {};
+  }):components = {},variables = {
+    'ontap' : false,
+  },lists = {};
 
   dynamic getProperty(Property property) {
     switch (property) {
@@ -108,7 +112,7 @@ abstract class Entity with ChangeNotifier {
 
   void addComponent(Component component) {
     if (component is ColliderComponent) {
-      component.position = position;
+      component.position = Offset.zero;
       component.width = width;
       component.height = height;
     }

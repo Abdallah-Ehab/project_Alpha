@@ -113,7 +113,7 @@ class UploadSpriteButton extends StatelessWidget {
 
                           log('Processing image...');
                           final resized =
-                              img.copyResize(decoded, width: 2000, height: 2000);
+                              img.copyResize(decoded, width: 3000, height: 3000);
                           final pngBytes = img.encodePng(resized);
 
                           final codec = await ui.instantiateImageCodec(

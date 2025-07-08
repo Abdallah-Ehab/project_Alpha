@@ -10,20 +10,37 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class MultiplyNode extends MultipleInputNode {
+class MultiplyNode extends NodeModel {
   MultiplyNode({super.position})
       : super(
           image: 'assets/icons/multiplyNode.png',
           color: Colors.green,
           width: 160,
-          height: 120,
+          height: 100,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      InputConnectionPoint(position: Offset.zero, width: 30, ownerNode: this),
-      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
-      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 0,
+        isLeft: true,
+        ownerNode: this,
+      ),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 1,
+        isLeft: true,
+        ownerNode: this,
+      ),
+      ValueConnectionPoint(
+        position: Offset.zero,
+        width: 30,
+        valueIndex: 0,
+        isLeft: false,
+        ownerNode: this,
+      ),
     ];
   }
 
@@ -36,46 +53,46 @@ class MultiplyNode extends MultipleInputNode {
       return Result.failure(errorMessage: 'Missing inputs for multiplication.');
     }
 
-    return Result.success(result: a * b);
+    final result = a * b;
+    (connectionPoints[2] as ValueConnectionPoint).value = result;
+
+    return Result.success(result: result);
   }
 
-  double? _getInputValue(int index, Entity? activeEntity) {
-    final inputNode = getInput(index);
-    if (inputNode == null) return null;
+  double? _getInputValue(int index, Entity? entity) {
+    final cp = connectionPoints[index] as ValueConnectionPoint;
+    final sourceNode = cp.sourcePoint?.ownerNode;
+    if (sourceNode == null) return null;
 
-    final result = inputNode.execute(activeEntity);
-    if (result.errorMessage != null) return null;
+    final result = sourceNode.execute(entity);
+    if (result.errorMessage != null || result.result == null) return null;
 
     return result.result is num ? result.result.toDouble() : null;
   }
 
   @override
-  Widget buildNode() => ChangeNotifierProvider.value(
-        value: this,
-        child: MathNodeWidget(node: this, label: '×'),
-      );
+  Widget buildNode() {
+    return ChangeNotifierProvider.value(
+      value: this,
+      child: MathNodeWidget(label: '×',node: this,),
+    );
+  }
 
   @override
   MultiplyNode copyWith({
-    NodeModel? child,
+    Offset? position,
     Color? color,
-    List<ConnectionPointModel>? connectionPoints,
+    double? width,
     double? height,
     bool? isConnected,
+    NodeModel? child,
     NodeModel? parent,
-    Offset? position,
-    double? width,
+    List<ConnectionPointModel>? connectionPoints,
   }) {
-    final newNode = MultiplyNode(
-      position: position ?? this.position,
-    );
-
-    newNode.child = null;
-    newNode.parent = null;
-    newNode.isConnected = isConnected ?? this.isConnected;
-    newNode.color = color ?? this.color;
-    newNode.width = width ?? this.width;
-    newNode.height = height ?? this.height;
+    final newNode = MultiplyNode(position: position ?? this.position)
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = null
+      ..parent = null;
 
     newNode.connectionPoints = connectionPoints != null
         ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
@@ -87,7 +104,6 @@ class MultiplyNode extends MultipleInputNode {
   @override
   MultiplyNode copy() => copyWith();
 
-  // ✅ Serialization
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
@@ -95,11 +111,8 @@ class MultiplyNode extends MultipleInputNode {
     return map;
   }
 
-  // ✅ Deserialization
   static MultiplyNode fromJson(Map<String, dynamic> json) {
-    final node = MultiplyNode(
-      position: OffsetJson.fromJson(json['position']),
-    )
+    final node = MultiplyNode(position: OffsetJson.fromJson(json['position']))
       ..id = json['id']
       ..isConnected = json['isConnected'] ?? false;
 

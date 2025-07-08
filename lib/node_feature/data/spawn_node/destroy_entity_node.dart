@@ -12,20 +12,17 @@ import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class DestroyEntityNode extends NodeModel {
-  DestroyEntityNode({
-    super.position = Offset.zero,
-  }) : super(
-          image: 'assets/icons/DestroyEntityNode.png',
-          width: 180,
-          height: 80,
-          color: Colors.red[900]!,
+  DestroyEntityNode({super.position = Offset.zero})
+      : super(
+          image: 'assets/icons/destroyNode.png',
+          color: Colors.redAccent,
+          width: 160,
+          height: 100,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: true, width: 20, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: false, width: 20, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
     ];
   }
 
@@ -35,21 +32,15 @@ class DestroyEntityNode extends NodeModel {
       return Result.failure(errorMessage: "No active entity to destroy.");
     }
 
-    final entityManager = EntityManager();
-    final name = activeEntity.name;
-    entityManager.removeEntityLater(activeEntity);
-
-    log("Destroyed entity '$name'.");
-
-    return Result.success(result: "Destroyed entity '$name'.");
+    EntityManager().removeEntityLater(activeEntity);
+    return Result.success(result: "${activeEntity.name} will be destroyed");
   }
 
   @override
   Widget buildNode() {
-    return ChangeNotifierProvider.value(value: this,
-      child: DestroyEntityNodeWidget(
-        node: this,
-      ),
+    return ChangeNotifierProvider.value(
+      value: this,
+      child: DestroyEntityNodeWidget(node: this),
     );
   }
 
@@ -64,9 +55,7 @@ class DestroyEntityNode extends NodeModel {
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
   }) {
-    final newNode = DestroyEntityNode(
-      position: position ?? this.position,
-    )
+    final newNode = DestroyEntityNode(position: position ?? this.position)
       ..isConnected = isConnected ?? this.isConnected
       ..child = null
       ..parent = null;
@@ -89,9 +78,7 @@ class DestroyEntityNode extends NodeModel {
   }
 
   static DestroyEntityNode fromJson(Map<String, dynamic> json) {
-    final node = DestroyEntityNode(
-      position: OffsetJson.fromJson(json['position']),
-    )
+    final node = DestroyEntityNode(position: OffsetJson.fromJson(json['position']))
       ..id = json['id']
       ..isConnected = json['isConnected'] ?? false;
 

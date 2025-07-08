@@ -1,82 +1,80 @@
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
-import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget/destroy_entity_node_with_name_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/simple_teleport_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class DestroyEntityNodeWithName extends NodeModel {
-  String entityName;
+class SimpleTeleportNode extends NodeModel {
+  double dx;
+  double dy;
 
-  DestroyEntityNodeWithName({
-    this.entityName = '',
+  SimpleTeleportNode({
+    this.dx = 0.0,
+    this.dy = 0.0,
     super.position = Offset.zero,
   }) : super(
-          image: 'assets/icons/DestroyEntityNode.png',
-          width: 200,
-          height: 100,
-          color: Colors.red[900]!,
+          image: 'assets/icons/TeleportNode.png',
+          color: Colors.blue,
+          width: 180,
+          height: 140,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: true, width: 20, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: false, width: 20, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
+      ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
     ];
   }
 
-  void setEntityName(String name) {
-    entityName = name;
+  void setX(double x){
+    dx = x ;
+    notifyListeners();
+  }
+
+  void setY(double y){
+    dy = y;
     notifyListeners();
   }
 
   @override
   Result execute([Entity? activeEntity]) {
-    final entityManager = EntityManager();
-
-    if (entityName.isEmpty) {
-      return Result.failure(errorMessage: "No entity name specified to destroy.");
+    if (activeEntity == null) {
+      return Result.failure(errorMessage: "No active entity");
     }
 
-    if (!entityManager.hasEntity(entityName)) {
-      return Result.failure(errorMessage: "Entity '$entityName' not found.");
-    }
-
-    entityManager.removeEntity(EntityType.actors,entityName);
-    log("Destroyed entity '$entityName'.");
-
-    return Result.success(result: "Destroyed entity '$entityName'.");
+    activeEntity.teleport(dx: dx, dy: dy);
+    return Result.success();
   }
 
   @override
   Widget buildNode() {
     return ChangeNotifierProvider.value(
       value: this,
-      child: DestroyEntityNodeWithNameWidget(node: this),
+      child: SimpleTeleportNodeWidget(nodeModel: this),
     );
   }
 
   @override
-  DestroyEntityNodeWithName copyWith({
+  @override
+  SimpleTeleportNode copyWith({
     Offset? position,
+    double? dx,
+    double? dy,
     Color? color,
-    double? width,
-    double? height,
     bool? isConnected,
     NodeModel? child,
     NodeModel? parent,
     List<ConnectionPointModel>? connectionPoints,
-    String? entityName,
+    double? width,
+    double? height,
   }) {
-    final newNode = DestroyEntityNodeWithName(
-      entityName: entityName ?? this.entityName,
+    final newNode = SimpleTeleportNode(
+      dx: dx ?? this.dx,
+      dy: dy ?? this.dy,
       position: position ?? this.position,
     )
       ..isConnected = isConnected ?? this.isConnected
@@ -87,23 +85,27 @@ class DestroyEntityNodeWithName extends NodeModel {
         ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
         : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
 
+    // Optionally set width and height if needed, or ignore if not used in this subclass
+
     return newNode;
   }
 
   @override
-  DestroyEntityNodeWithName copy() => copyWith();
+  SimpleTeleportNode copy() => copyWith();
 
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
-    map['type'] = 'DestroyEntityNode';
-    map['entityName'] = entityName;
+    map['type'] = 'TeleportNodeManual';
+    map['dx'] = dx;
+    map['dy'] = dy;
     return map;
   }
 
-  static DestroyEntityNodeWithName fromJson(Map<String, dynamic> json) {
-    final node = DestroyEntityNodeWithName(
-      entityName: json['entityName'] ?? '',
+  static SimpleTeleportNode fromJson(Map<String, dynamic> json) {
+    final node = SimpleTeleportNode(
+      dx: (json['dx'] as num?)?.toDouble() ?? 0,
+      dy: (json['dy'] as num?)?.toDouble() ?? 0,
       position: OffsetJson.fromJson(json['position']),
     )
       ..id = json['id']

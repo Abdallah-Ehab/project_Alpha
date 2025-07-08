@@ -7,6 +7,7 @@ class ActorEntity extends Entity{
   List<Entity> children;
   ActorEntity({
     required super.name,
+    required super.tag,
     required super.position,
     required super.rotation,
     super.width,
@@ -18,6 +19,7 @@ class ActorEntity extends Entity{
   factory ActorEntity.fromJson(Map<String, dynamic> json) {
   final actor = ActorEntity(
     name: json['name'] as String,
+    tag: json['tag'] as String,
     position: Entity.offsetFromJson(json['position'] as Map<String, dynamic>),
     rotation: (json['rotation'] as num).toDouble(),
     width: (json['width'] as num?)?.toDouble() ?? 100,
@@ -82,6 +84,7 @@ class ActorEntity extends Entity{
 ActorEntity copy() {
   final copied = ActorEntity(
     name: name,
+    tag: tag,
     position: position,
     rotation: rotation,
     width: width,

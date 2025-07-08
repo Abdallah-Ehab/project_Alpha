@@ -8,7 +8,9 @@ class PixelatedTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
   final Color borderColor;
   final Key? fieldKey;
-  final String label ;
+  final String label;
+  final TextEditingController? controller; // Add controller support
+
   const PixelatedTextFormField({
     super.key,
     this.initialValue,
@@ -18,6 +20,7 @@ class PixelatedTextFormField extends StatelessWidget {
     this.keyboardType = const TextInputType.numberWithOptions(),
     Color? borderColor,
     this.fieldKey,
+    this.controller, // Add controller parameter
   }) : borderColor = borderColor ?? Colors.black;
 
   @override
@@ -33,11 +36,10 @@ class PixelatedTextFormField extends StatelessWidget {
         ),
         SizedBox(width: 10),
         Expanded(
-          
           child: TextFormField(
-            
             key: fieldKey,
-            initialValue: initialValue,
+            controller: controller, // Use controller if provided
+            initialValue: controller == null ? initialValue : null, // Only use initialValue if no controller
             onChanged: onChanged,
             style: const TextStyle(
               color: Colors.white,

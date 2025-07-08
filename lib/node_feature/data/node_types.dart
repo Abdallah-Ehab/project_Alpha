@@ -12,7 +12,9 @@ mixin HasInput on NodeModel {
     notifyListeners();
   }
 
-  void disconnectInput() {
+  void disconnectInput({required ConnectionPointModel cp}) {
+    cp.isConnected = false;
+    (input as HasOutput).output = null;
     input = null;
     notifyListeners();
   }
@@ -27,7 +29,9 @@ mixin HasOutput on NodeModel {
     notifyListeners();
   }
 
-  void disconnectOutput() {
+  void disconnectOutput({required ConnectionPointModel cp}) {
+    cp.isConnected = false;
+    (output as HasInput).input = null;
     output = null;
     notifyListeners();
   }
