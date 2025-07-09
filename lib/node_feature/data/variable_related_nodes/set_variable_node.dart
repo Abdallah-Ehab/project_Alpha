@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -49,6 +51,7 @@ class SetVariableNode extends NodeModel {
     }
 
     activeEntity.setVariableXToValueY(variableName, value);
+    log('variable $variableName is set to $value');
     return Result.success(
         result: "Variable '$variableName' updated to $value.");
   }

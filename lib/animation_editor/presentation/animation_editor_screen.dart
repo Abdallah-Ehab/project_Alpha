@@ -157,7 +157,7 @@ class AnimationPainter extends CustomPainter {
     if (keyFrame.image != null) {
       canvas.drawImage(
         keyFrame.image!,
-        Offset(size.width/2,size.height/2),
+        Offset.zero,
         Paint()..color = overrideColor ?? Colors.white,
       );
     }

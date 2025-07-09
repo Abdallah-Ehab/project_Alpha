@@ -9,7 +9,7 @@ class DetectCollisionNodeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showEntityDialog(context),
+      onTap: () => _showTagDialog(context),
       child: Stack(
         children: [
           Container(
@@ -22,7 +22,7 @@ class DetectCollisionNodeWidget extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                "Collision\n${nodeModel.entity1Name} ↔ ${nodeModel.entity2Name}",
+                "Collision with Tag\n'${nodeModel.tag}'",
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
@@ -34,26 +34,16 @@ class DetectCollisionNodeWidget extends StatelessWidget {
     );
   }
 
-  void _showEntityDialog(BuildContext context) {
-    final entity1Controller = TextEditingController(text: nodeModel.entity1Name);
-    final entity2Controller = TextEditingController(text: nodeModel.entity2Name);
+  void _showTagDialog(BuildContext context) {
+    final tagController = TextEditingController(text: nodeModel.tag);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Set Entities to Check Collision"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: entity1Controller,
-              decoration: const InputDecoration(labelText: "Entity 1 Name"),
-            ),
-            TextField(
-              controller: entity2Controller,
-              decoration: const InputDecoration(labelText: "Entity 2 Name"),
-            ),
-          ],
+        title: const Text("Set Tag to Detect Collision"),
+        content: TextField(
+          controller: tagController,
+          decoration: const InputDecoration(labelText: "Tag (e.g. 'enemy')"),
         ),
         actions: [
           TextButton(
@@ -62,10 +52,7 @@ class DetectCollisionNodeWidget extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              nodeModel.setEntities(
-                entity1Controller.text.trim(),
-                entity2Controller.text.trim(),
-              );
+              nodeModel.setTag(tagController.text.trim());
               Navigator.pop(context);
             },
             child: const Text("Save"),

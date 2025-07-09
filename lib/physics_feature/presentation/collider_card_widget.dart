@@ -44,8 +44,40 @@ class ColliderCardWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
 
-                              
                               PixelatedTextFormField(
+                         
+                                label: 'X',
+                                fieldKey: ValueKey('collider_x_${colliderComponent.hashCode}'),
+                                initialValue: colliderComponent.position.dx.toStringAsFixed(2),
+                                hintText: 'X position',
+                                onChanged: (value) {
+                                  final parsed = double.tryParse(value);
+                                  if (parsed != null) {
+                                    colliderComponent.setX(parsed);
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              PixelatedTextFormField(
+                         
+                                label: 'Y',
+                                fieldKey: ValueKey('collider_y_${colliderComponent.hashCode}'),
+                                initialValue: colliderComponent.position.dy.toStringAsFixed(2),
+                                hintText: 'Y position',
+                                onChanged: (value) {
+                                  final parsed = double.tryParse(value);
+                                  if (parsed != null) {
+                                    colliderComponent.setY(parsed);
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              PixelatedTextFormField(
+                             
                                 label: 'Width',
                                 fieldKey: ValueKey('collider_width_${colliderComponent.hashCode}'),
                                 initialValue: colliderComponent.width.toStringAsFixed(2),
@@ -59,9 +91,9 @@ class ColliderCardWidget extends StatelessWidget {
                               ),
 
                               const SizedBox(height: 10),
-                              
-                            
+
                               PixelatedTextFormField(
+                          
                                 label: 'Height',
                                 fieldKey: ValueKey('collider_height_${colliderComponent.hashCode}'),
                                 initialValue: colliderComponent.height.toStringAsFixed(2),

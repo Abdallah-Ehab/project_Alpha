@@ -25,7 +25,7 @@ class FourButtonConfiguration extends UIElement {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Top
-          Center(child: HoldButton().buildWidget()),
+          HoldButton().buildWidget(),
           const SizedBox(height: 8),
           // Left, Center Spacer, Right
           Row(
@@ -39,7 +39,7 @@ class FourButtonConfiguration extends UIElement {
           ),
           const SizedBox(height: 8),
           // Bottom
-          Center(child: HoldButton().buildWidget()),
+          HoldButton().buildWidget(),
         ],
       ),
     );

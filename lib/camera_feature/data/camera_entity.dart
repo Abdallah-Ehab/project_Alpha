@@ -7,6 +7,7 @@ class CameraEntity extends Entity {
   bool isEditorCamera;
 
   CameraEntity({
+    super.tag = 'camera',
     required super.name,
     required super.position,
     required super.rotation,
@@ -19,6 +20,7 @@ class CameraEntity extends Entity {
 
   factory CameraEntity.fromJson(Map<String, dynamic> json) {
     return CameraEntity(
+      tag: json['tag'] as String,
       name: json['name'] as String,
       position: Entity.offsetFromJson(json['position'] as Map<String, dynamic>),
       rotation: (json['rotation'] as num).toDouble(),
@@ -34,6 +36,7 @@ class CameraEntity extends Entity {
   Map<String, dynamic> toJson() {
     return {
       'type': 'camera',
+      'tag' : 'camera',
       'name': name,
       'position': Entity.offsetToJson(position),
       'rotation': rotation,

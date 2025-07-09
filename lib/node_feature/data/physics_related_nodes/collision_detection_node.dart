@@ -11,13 +11,11 @@ import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class DetectCollisionNode extends InputNode {
-  String entity1Name;
-  String entity2Name;
+  String tag;
   bool hasError;
 
   DetectCollisionNode({
-    this.entity1Name = "",
-    this.entity2Name = "",
+    this.tag = "",
     super.position = Offset.zero,
     this.hasError = false,
   }) : super(
@@ -25,46 +23,57 @@ class DetectCollisionNode extends InputNode {
           color: Colors.deepOrange,
           width: 160,
           height: 60,
-          connectionPoints:[]
-        ){
-          connectionPoints =  [
-            OutputConnectionPoint(position: Offset.zero, width: 50,ownerNode:this ),
-          ];
-        }
+          connectionPoints: [],
+        ) {
+    connectionPoints = [
+      OutputConnectionPoint(position: Offset.zero, width: 50, ownerNode: this),
+    ];
+  }
 
-  void setEntities(String name1, String name2) {
-    entity1Name = name1;
-    entity2Name = name2;
+  void setTag(String newTag) {
+    tag = newTag;
     notifyListeners();
   }
 
   @override
   Result<bool> execute([Entity? activeEntity]) {
-    final entity1 = EntityManager().getActorByName(entity1Name);
-    final entity2 = EntityManager().getActorByName(entity2Name);
-
-    if (entity1 == null || entity2 == null) {
+    if (activeEntity == null) {
       hasError = true;
-      return Result.failure(errorMessage: "One or both entities not found.");
+      return Result.failure(errorMessage: "No active entity.");
     }
 
-    final collider1 = entity1.getComponent<ColliderComponent>();
-    final collider2 = entity2.getComponent<ColliderComponent>();
-
-    if (collider1 == null || collider2 == null) {
+    final targets = EntityManager().getActorByTag(tag);
+    if (targets == null || targets.isEmpty) {
       hasError = true;
-      return Result.failure(errorMessage: "Missing ColliderComponent.");
+      return Result.success(result: false); // No targets = no collision
     }
 
-    final rect1 = collider1.getRect(entity1);
-    final rect2 = collider2.getRect(entity2);
+    final collider1 = activeEntity.getComponent<ColliderComponent>();
+    if (collider1 == null) {
+      hasError = true;
+      return Result.failure(errorMessage: "Active entity missing ColliderComponent.");
+    }
 
-    final bool isColliding = rect1.left < rect2.right &&
-        rect1.right > rect2.left &&
-        rect1.top < rect2.bottom &&
-        rect1.bottom > rect2.top;
+    final rect1 = collider1.getRect(activeEntity);
 
-    return Result.success(result: isColliding);
+    for (final target in targets) {
+      if (target == activeEntity) continue; // skip self
+
+      final collider2 = target.getComponent<ColliderComponent>();
+      if (collider2 == null) continue;
+
+      final rect2 = collider2.getRect(target);
+      final isColliding = rect1.left < rect2.right &&
+          rect1.right > rect2.left &&
+          rect1.top < rect2.bottom &&
+          rect1.bottom > rect2.top;
+
+      if (isColliding) {
+        return Result.success(result: true);
+      }
+    }
+
+    return Result.success(result: false); // No collisions
   }
 
   @override
@@ -76,64 +85,57 @@ class DetectCollisionNode extends InputNode {
   }
 
   @override
-NodeModel copyWith({
-  Offset? position,
-  Color? color,
-  double? width,
-  double? height,
-  bool? isConnected,
-  NodeModel? child,
-  NodeModel? parent,
-  List<ConnectionPointModel>? connectionPoints,
-}) {
-  final newNode = DetectCollisionNode(
-    entity1Name: entity1Name,
-    entity2Name: entity2Name,
-    position: position ?? this.position,
-    hasError: hasError,
-  )
-    ..isConnected = isConnected ?? this.isConnected
-    ..child = null
-    ..parent = null;
+  NodeModel copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    List<ConnectionPointModel>? connectionPoints,
+  }) {
+    final newNode = DetectCollisionNode(
+      tag: tag,
+      position: position ?? this.position,
+      hasError: hasError,
+    )
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = null
+      ..parent = null;
 
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+        : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
 
-  return newNode;
-}
-
+    return newNode;
+  }
 
   @override
-  DetectCollisionNode copy() {
-    return copyWith() as DetectCollisionNode;
-  }
+  DetectCollisionNode copy() => copyWith() as DetectCollisionNode;
 
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
     map['type'] = 'DetectCollisionNode';
-    map['entity1Name'] = entity1Name;
-    map['entity2Name'] = entity2Name;
+    map['tag'] = tag;
     map['hasError'] = hasError;
     return map;
   }
 
-static DetectCollisionNode fromJson(Map<String, dynamic> json) {
-  final node = DetectCollisionNode(
-    entity1Name: json['entity1Name'] ?? '',
-    entity2Name: json['entity2Name'] ?? '',
-    hasError: json['hasError'] ?? false,
-    position: OffsetJson.fromJson(json['position'])
-  )
-    ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false;
+  static DetectCollisionNode fromJson(Map<String, dynamic> json) {
+    final node = DetectCollisionNode(
+      tag: json['tag'] ?? '',
+      hasError: json['hasError'] ?? false,
+      position: OffsetJson.fromJson(json['position']),
+    )
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
 
-  node.connectionPoints = (json['connectionPoints'] as List)
-      .map((e) => ConnectionPointModel.fromJson(e, node))
-      .toList();
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
 
-  return node;
-}
-
+    return node;
+  }
 }

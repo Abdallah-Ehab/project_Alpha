@@ -18,11 +18,15 @@ class AnimationTrack with ChangeNotifier {
   int fps;
   bool isLooping;
   bool mustFinish;
+  bool isDestroyAnimationTrack; // New attribute for destroy animation
 
-  AnimationTrack(this.name, this.frames,this.isLooping,this.mustFinish, {this.fps = 10});
+  AnimationTrack(this.name, this.frames, this.isLooping, this.mustFinish, 
+      {this.fps = 10, this.isDestroyAnimationTrack = false});
 
-  AnimationTrack copy(){
-    return AnimationTrack(name, frames.map((e)=>e.copy()).toList(), isLooping,mustFinish, fps: fps);
+  AnimationTrack copy() {
+    return AnimationTrack(name, frames.map((e) => e.copy()).toList(), 
+        isLooping, mustFinish, 
+        fps: fps, isDestroyAnimationTrack: isDestroyAnimationTrack);
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +36,7 @@ class AnimationTrack with ChangeNotifier {
       'frames': frames.map((frame) => frame.toJson()).toList(),
       'isLooping': isLooping,
       'mustFinish': mustFinish,
+      'isDestroyAnimationTrack': isDestroyAnimationTrack,
     };
   }
 
@@ -44,49 +49,53 @@ class AnimationTrack with ChangeNotifier {
       json['isLooping'],
       json['mustFinish'], 
       fps: json['fps'] as int? ?? 10,
+      isDestroyAnimationTrack: json['isDestroyAnimationTrack'] as bool? ?? false,
     );
   }
-// we will call animation controller fromjson which will call the animation track from json which will call the keyframe from json
-//we can make a function that populates the keyframes with images from the image path and that is it
-  void setIsLooping(bool isLooping){
-  this.isLooping = isLooping;
-  notifyListeners();
-}
 
-void setMustFinish(bool  mustFinish){
+  void setIsLooping(bool isLooping) {
+    this.isLooping = isLooping;
+    notifyListeners();
+  }
+
+  void setMustFinish(bool mustFinish) {
     this.mustFinish = mustFinish;
     notifyListeners();
-}
+  }
 
-  void addFrame(KeyFrame frame){
+  void setIsDestroyAnimationTrack(bool isDestroyAnimationTrack) {
+    this.isDestroyAnimationTrack = isDestroyAnimationTrack;
+    notifyListeners();
+  }
+
+  void addFrame(KeyFrame frame) {
     frames.add(frame);
     notifyListeners();
   }
 
   void removeFrame(int index) {
-  if (index >= 0 && index < frames.length) {
-    frames.removeAt(index);
-    notifyListeners();
+    if (index >= 0 && index < frames.length) {
+      frames.removeAt(index);
+      notifyListeners();
+    }
   }
-}
-  KeyFrame removeFrameAt(int index){
+
+  KeyFrame removeFrameAt(int index) {
     final frame = frames.removeAt(index);
     notifyListeners();
     return frame;
   }
 
-  void insertFrameAt(int index,KeyFrame frame){
+  void insertFrameAt(int index, KeyFrame frame) {
     frames.insert(index, frame);
     notifyListeners();
   }
 
-  void addMultipleFrames(List<KeyFrame> frames){
+  void addMultipleFrames(List<KeyFrame> frames) {
     this.frames.addAll(frames);
     notifyListeners();
   }
-  
 }
-
 class KeyFrame with ChangeNotifier {
   ui.Image? image;
   List<SketchModel> sketches;

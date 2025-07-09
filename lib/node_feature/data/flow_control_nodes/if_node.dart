@@ -19,15 +19,15 @@ class IfNode extends InputOutputNode {
           image: 'assets/icons/ifNode.png',
           color: Colors.green,
           width: 200,
-          height: 200,
+          height: 100,
           connectionPoints: []){
           connectionPoints= [
-            InputConnectionPoint(position: Offset.zero, width: 20,ownerNode: this),
-            OutputConnectionPoint(position: Offset.zero, width: 20,ownerNode: this),
+            InputConnectionPoint(position: Offset.zero, width: 30,ownerNode: this),
+            OutputConnectionPoint(position: Offset.zero, width: 30,ownerNode: this),
             ConnectConnectionPoint(
-                position: Offset.zero, isTop: true, width: 20,ownerNode: this),
+                position: Offset.zero, isTop: true, width: 30,ownerNode: this),
             ConnectConnectionPoint(
-                position: Offset.zero, isTop: false, width: 20,ownerNode: this),
+                position: Offset.zero, isTop: false, width: 30,ownerNode: this),
           ];
           }
           
@@ -100,7 +100,9 @@ NodeModel copyWith({
       ..id = json['id']
       ..width = (json['width'] as num).toDouble()
       ..height = (json['height'] as num).toDouble()
-      ..isConnected = json['isConnected'] as bool;
+      ..isConnected = json['isConnected'] as bool
+      ..child = null
+      ..parent = null;
 
     ifNode.connectionPoints = (json['connectionPoints'] as List)
         .map((e) {

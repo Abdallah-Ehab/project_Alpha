@@ -121,7 +121,11 @@ abstract class ConnectionPointModel {
 
   Offset computeOffset();
   void handlePanEndBehaviour(BuildContext context);
+  void handleDoubleTapBehaviour(BuildContext context);
+  
   void disconnect();
+
+
   ConnectionPointModel copyWith({
     Offset? position,
     Color? color,
@@ -170,17 +174,24 @@ class InputConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  void handlePanEndBehaviour(BuildContext context) {
+  void handlePanEndBehaviour(BuildContext context){
     // Input points don't initiate connections
     return;
   }
 
   @override
   void disconnect() {
-    if (ownerNode is HasOutput) {
-      (ownerNode as HasOutput).disconnectOutput();
+    if (ownerNode is HasInput) {
+      
+      (ownerNode as HasInput).disconnectInput(cp: this);
     }
-    isConnected = false;
+    
+  }
+  
+  @override
+  void handleDoubleTapBehaviour(BuildContext context) {
+    disconnect();
+    
   }
 }
 
@@ -224,9 +235,9 @@ class OutputConnectionPoint extends ConnectionPointModel {
   @override
   void disconnect() {
     if (ownerNode is HasInput) {
-      (ownerNode as HasInput).disconnectInput();
+      (ownerNode as HasInput).disconnectInput(cp: this);
     }
-    isConnected = false;
+    
   }
 
   @override
@@ -275,6 +286,11 @@ void handlePanEndBehaviour(BuildContext context) {
 
   provider.clear();
 }
+
+  @override
+  void handleDoubleTapBehaviour(BuildContext context) {
+    disconnect();
+  }
 }
 
 class ConnectConnectionPoint extends ConnectionPointModel {
@@ -381,11 +397,18 @@ class ConnectConnectionPoint extends ConnectionPointModel {
   @override
   void disconnect() {
     if (isTop) {
-      ownerNode.disconnectIfTop();
+      
+      ownerNode.disconnectIfTop(cp : this);
     } else {
-      ownerNode.disconnectIfBottom();
+      isConnected = false;
+      ownerNode.disconnectIfBottom(cp : this);
     }
-    isConnected = false;
+    
+  }
+  
+  @override
+  void handleDoubleTapBehaviour(BuildContext context) {
+   disconnect();
   }
 }
 
@@ -403,7 +426,7 @@ class ValueConnectionPoint extends ConnectionPointModel {
     required this.valueIndex,
     required super.width,
     super.isConnected = false,
-  }) : super(color: Colors.purple);
+  }) : super(color: Colors.orange);
 
   @override
   ConnectionPointModel copyWith({
@@ -514,5 +537,20 @@ class ValueConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  void disconnect() {}
+  void disconnect() {
+    if (sourcePoint != null) {
+      sourcePoint!.destinationPoint = null;
+      sourcePoint = null;
+    }
+    if (destinationPoint != null) {
+      destinationPoint!.sourcePoint = null;
+      destinationPoint = null;
+    }
+    isConnected = false;
+  }
+  
+  @override
+  void handleDoubleTapBehaviour(BuildContext context) {
+   disconnect();
+  }
 }

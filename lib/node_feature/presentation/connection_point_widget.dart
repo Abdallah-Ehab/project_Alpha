@@ -18,8 +18,9 @@ class ConnectionPointWidget extends StatelessWidget {
         Provider.of<ConnectionProvider>(context, listen: false);
     
     return GestureDetector(
+      onDoubleTap: () => connectionPoint.disconnect(),
       onPanStart: (details) {
-        if(connectionPoint is InputConnectionPoint || connectionPoint.isConnected) return;
+        if(connectionPoint is InputConnectionPoint) return;
         log('point pan start');
         connectionProvider.startConnection(connectionPoint);
       },
@@ -28,10 +29,6 @@ class ConnectionPointWidget extends StatelessWidget {
       },
       onPanEnd: (details) {
         connectionPoint.handlePanEndBehaviour(context);
-      },
-      onLongPress: () {
-        connectionPoint.disconnect();
-        log('Disconnected connections for node ${node.id}');
       },
       child: Container(
         width: connectionPoint.width,

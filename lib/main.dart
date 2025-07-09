@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/api_keys.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/game_scene/add_components.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/game_state/load_game_page.dart';
@@ -10,7 +11,6 @@ import 'package:scratch_clone/login_and_signup/presentation/cubit/authentacation
 import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
 import 'package:scratch_clone/node_feature/data/node_component_index_provider.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
-import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -42,6 +42,7 @@ class TestApp extends StatelessWidget {
           return entityManager.activeEntity;
         }),
       ],
+
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -55,6 +56,7 @@ class TestApp extends StatelessWidget {
         child: const MaterialApp(
           home: LoginScreen(),
         ),
+
       ),
     );
   }
