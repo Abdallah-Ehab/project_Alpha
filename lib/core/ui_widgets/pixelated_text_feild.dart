@@ -6,17 +6,20 @@ class PixelatedTextField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final TextInputType keyboardType;
   final Color borderColor;
- 
+  final int maxLength;
 
-   PixelatedTextField({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    required this.onChanged,
-    this.keyboardType = const TextInputType.numberWithOptions(),Color? borderColor  // default to numbers
-  }) :borderColor=borderColor ?? Colors.black, super(key: key);
-
- 
+  PixelatedTextField(
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      required this.onChanged,
+      this.keyboardType = const TextInputType.numberWithOptions(),
+      Color? borderColor,
+      int? maxLength // default to numbers
+      })
+      : borderColor = borderColor ?? Colors.black,
+        maxLength = maxLength ?? 20,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +30,10 @@ class PixelatedTextField extends StatelessWidget {
         fontSize: 12,
         fontFamily: 'PressStart2P',
       ),
-      maxLength: 5,
+      maxLength: maxLength,
       controller: controller,
-      keyboardType: keyboardType,  // uses passed in type or falls back to numeric
+      keyboardType: keyboardType,
+      // uses passed in type or falls back to numeric
       cursorColor: Colors.white,
       cursorWidth: 4,
       decoration: InputDecoration(
@@ -44,14 +48,14 @@ class PixelatedTextField extends StatelessWidget {
         ),
         counterText: '',
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide:  BorderSide(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
             color: borderColor,
             width: 2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(
             color: Colors.white,
             width: 2,

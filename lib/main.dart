@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:scratch_clone/core/api_keys.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/game_state/load_game_page.dart';
+import 'package:scratch_clone/login_and_signup/presentation/cubit/authentacation_cubit.dart';
+import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
 import 'package:scratch_clone/node_feature/data/node_component_index_provider.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
 import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+import 'login_and_signup/presentation/cubit/storage_cubit.dart';
+import 'main_screen_and_loading_projects/presentation/project_loading_Screens.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+      url: ApiKeys.url, anonKey: ApiKeys.anon_key, debug: true);
   runApp(const TestApp());
 }
 
@@ -20,19 +31,30 @@ class TestApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=> GameState()),
+        ChangeNotifierProvider(create: (_) => GameState()),
         ChangeNotifierProvider(create: (_) => UiElementManager()),
         ChangeNotifierProvider(create: (_) => EntityManager()),
-        ChangeNotifierProvider(create: (_)=>ConnectionProvider()),
-        ChangeNotifierProvider(create: (_)=> NodeComponentIndexProvider(0)),
-        ChangeNotifierProvider(create: (context){
-          final entityManager = Provider.of<EntityManager>(context, listen: false);
+        ChangeNotifierProvider(create: (_) => ConnectionProvider()),
+        ChangeNotifierProvider(create: (_) => NodeComponentIndexProvider(0)),
+        ChangeNotifierProvider(create: (context) {
+          final entityManager =
+              Provider.of<EntityManager>(context, listen: false);
           return entityManager.activeEntity;
         }),
-        
       ],
-      child: const MaterialApp(
-        home: TestGameLoop(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthCubit(Supabase.instance.client),
+          ),
+          BlocProvider(
+            create: (context) =>StorageCubit(),
+          ),
+
+        ],
+        child: const MaterialApp(
+          home: LoginScreen(),
+        ),
       ),
     );
   }

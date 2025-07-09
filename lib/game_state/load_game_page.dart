@@ -11,10 +11,12 @@ import 'package:scratch_clone/animation_feature/data/animation_controller_compon
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 class GameLoaderPage extends StatefulWidget {
-  const GameLoaderPage({super.key});
+  final String filename;
+  const GameLoaderPage({super.key, required this.filename});
 
   @override
   State<GameLoaderPage> createState() => _GameLoaderPageState();
@@ -27,6 +29,7 @@ class _GameLoaderPageState extends State<GameLoaderPage> {
   @override
   void initState() {
     super.initState();
+
     _loadGame();
   }
 
@@ -34,7 +37,7 @@ class _GameLoaderPageState extends State<GameLoaderPage> {
     try {
       final entityManager = context.read<EntityManager>();
 
-      final String gameJsonString = await _loadGameJsonFromFile(); 
+      final String gameJsonString = await _loadGameJsonFromFile(widget.filename);
       final Map<String, dynamic> gameJson = jsonDecode(gameJsonString);
 
       entityManager.fromJson(gameJson);
@@ -89,15 +92,20 @@ class _GameLoaderPageState extends State<GameLoaderPage> {
     return completer.future;
   }
 
- 
 
-Future<String> _loadGameJsonFromFile() async {
+
+Future<String> _loadGameJsonFromFile(String filename) async {
+  final uid = Supabase.instance.client.auth.currentUser?.id;
   final dir = await getApplicationDocumentsDirectory();
-  final path = '${dir.path}/save.json';
+  final path = '${dir.path}/$uid/$filename.json';
   final file = File(path);
 
   if (!await file.exists()) {
-    throw Exception('Save file not found at $path');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const TestGameLoop()),
+    );
+    return Future.error('Game JSON not found');
   }
   String fileContent = await file.readAsString();
   log('file content: $fileContent');

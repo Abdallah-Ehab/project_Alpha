@@ -3,19 +3,27 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 
+import '../login_and_signup/presentation/cubit/storage_cubit.dart';
+
 Future<void> saveGame() async {
-  final dir = await getApplicationDocumentsDirectory();
-  final path = '${dir.path}/save.json';
-  log('Saving game to $path');
-  final jsonData = EntityManager().toJson();
-  log(jsonData.toString());
-  final file = File(path);
-  await file.writeAsString(jsonEncode(jsonData));
+  // ->> has no meaning because the project name gets stored in creation
+  // final dir = await getApplicationDocumentsDirectory();
+  // final path = '${dir.path}/save.json';
+  // log('Saving game to $path');
+  // final jsonData = EntityManager().toJson();
+  // log(jsonData.toString());
+  // final file = File(path);
+  // await file.writeAsString(jsonEncode(jsonData));
+
+
 }
+
+
 
 class SaveGameButton extends StatelessWidget {
   const SaveGameButton({
@@ -24,11 +32,17 @@ class SaveGameButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PixelArtButton(
-      text: 'Save Game',
-      fontsize: 12,
-      callback: () {
-        _showSavingDialog(context);
+    return BlocBuilder<StorageCubit, StorageState>(
+      builder: (context, state) {
+        return PixelArtButton(
+          text: 'Save Game',
+          fontsize: 12,
+          callback: () async{
+
+            // _showSavingDialog(context);
+            context.read<StorageCubit>().uploadCurrentJson();
+          },
+        );
       },
     );
   }
