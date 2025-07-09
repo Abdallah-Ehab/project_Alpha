@@ -9,18 +9,22 @@ import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/flip_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class FlipNode extends NodeModel {
-  FlipNode({super.position = Offset.zero})
-      : super(
+class SimpleFlipNode extends NodeModel {
+  bool flipX;
+  bool flipY;
+
+  SimpleFlipNode({
+    this.flipX = false,
+    this.flipY = false,
+    super.position = Offset.zero,
+  }) : super(
           image: 'assets/icons/flip.png',
-          color: Colors.indigo,
+          color: Colors.deepPurple,
           width: 180,
           height: 140,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      
-      
       ConnectConnectionPoint(position: Offset.zero, isTop: true, width: 30, ownerNode: this),
       ConnectConnectionPoint(position: Offset.zero, isTop: false, width: 30, ownerNode: this),
     ];
@@ -29,9 +33,6 @@ class FlipNode extends NodeModel {
   @override
   Result execute([Entity? activeEntity]) {
     if (activeEntity == null) return Result.failure(errorMessage: "No active entity");
-
-    final flipX = _extractBool(connectionPoints[1] as ValueConnectionPoint, activeEntity);
-    final flipY = _extractBool(connectionPoints[2] as ValueConnectionPoint, activeEntity);
 
     if (flipX) {
       activeEntity.setWidth(activeEntity.widthScale * -1);
@@ -43,27 +44,24 @@ class FlipNode extends NodeModel {
     return Result.success();
   }
 
-  bool _extractBool(ValueConnectionPoint point, Entity activeEntity) {
-    final connectedNode = point.sourcePoint?.ownerNode;
-    if (connectedNode == null) return false;
-
-    final result = connectedNode.execute(activeEntity);
-    if (result.errorMessage != null || result.result == null) return false;
-
-    final val = result.result;
-    if (val is bool) return val;
-    if (val is num) return val != 0;
-    return false;
-  }
-
   @override
   Widget buildNode() => ChangeNotifierProvider.value(
         value: this,
-        child: FlipNodeWidget(nodeModel: this),
+        child: SimpleFlipNodeWidget(node: this),
       );
+  
+  void setFlipX(bool value){
+    flipX = value;
+    notifyListeners();
+  }
+
+   void setFlipY(bool value){
+    flipY = value;
+    notifyListeners();
+  }
 
   @override
-  FlipNode copyWith({
+SimpleFlipNode copyWith({
   Offset? position,
   Color? color,
   double? width,
@@ -74,9 +72,14 @@ class FlipNode extends NodeModel {
   List<ConnectionPointModel>? connectionPoints,
   double? x,
   double? y,
+  bool? flipX,
+  bool? flipY,
 }) {
-  final newNode = FlipNode()
-    ..position = position ?? this.position
+  final newNode = SimpleFlipNode(
+    flipX: flipX ?? this.flipX,
+    flipY: flipY ?? this.flipY,
+    position: position ?? this.position,
+  )
     ..isConnected = isConnected ?? this.isConnected
     ..child = null
     ..parent = null;
@@ -88,20 +91,27 @@ class FlipNode extends NodeModel {
   return newNode;
 }
 
+
+
   @override
-  FlipNode copy() => copyWith();
+  NodeModel copy() => copyWith();
 
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
-    map['type'] = 'FlipNode';
+    map['type'] = 'SimpleFlipNode';
+    map['flipX'] = flipX;
+    map['flipY'] = flipY;
     return map;
   }
 
-  static FlipNode fromJson(Map<String, dynamic> json) {
-    final node = FlipNode(position: OffsetJson.fromJson(json['position']))
-      ..id = json['id']
-      ..isConnected = json['isConnected'] ?? false;
+  static SimpleFlipNode fromJson(Map<String, dynamic> json) {
+    final node = SimpleFlipNode(
+      flipX: json['flipX'] ?? false,
+      flipY: json['flipY'] ?? false,
+      position: OffsetJson.fromJson(json['position']),
+    )..id = json['id']
+     ..isConnected = json['isConnected'] ?? false;
 
     node.connectionPoints = (json['connectionPoints'] as List)
         .map((e) => ConnectionPointModel.fromJson(e, node))

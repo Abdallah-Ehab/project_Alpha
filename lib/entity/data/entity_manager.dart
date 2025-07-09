@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 enum EntityType { actors, cameras, lights, sounds }
 
-enum CameraType { main, game }
+
 
 extension EntityTypeExtension on EntityType {
   String get name => toString().split('.').last;

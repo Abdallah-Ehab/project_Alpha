@@ -588,7 +588,7 @@ class _ControlPanelState extends State<ControlPanel> {
         ...List.generate(nodeComponents.length, (index) {
           final nodeComponent = nodeComponents[index];
           return Card(
-            color: Color(0xFF222222),
+            color: Color(0xffE8E8E8),
             child: ListTile(
               title: Text(
                 'Node Component #$index',
@@ -739,8 +739,6 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
   late TextEditingController widthController;
   late TextEditingController heightController;
 
-  late int selectedLayer;
-
   @override
   void initState() {
     super.initState();
@@ -757,8 +755,6 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
     rotationController = TextEditingController(text: entity.rotation.toStringAsFixed(2));
     widthController = TextEditingController(text: entity.widthScale.toStringAsFixed(2));
     heightController = TextEditingController(text: entity.heigthScale.toStringAsFixed(2));
-
-    selectedLayer = entity.layerNumber;
   }
 
   void _updateControllers() {
@@ -771,8 +767,6 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
     rotationController.text = entity.rotation.toStringAsFixed(2);
     widthController.text = entity.widthScale.toStringAsFixed(2);
     heightController.text = entity.heigthScale.toStringAsFixed(2);
-    
-    selectedLayer = entity.layerNumber;
   }
 
   @override
@@ -824,7 +818,9 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                         controller: nameController,
                         keyboardType: TextInputType.text,
                         hintText: 'Name',
-                        onChanged: (value) => entity.setName(value),
+                        onFieldSubmitted: (value) {
+                          entity.setName(value);
+                        },
                       ),
           
                       const SizedBox(height: 10),
@@ -834,7 +830,9 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                         controller: tagController,
                         keyboardType: TextInputType.text,
                         hintText: 'Tag',
-                        onChanged: (value) => entity.tag = value,
+                        onFieldSubmitted: (value) {
+                          entity.tag = value;
+                        },
                       ),
           
                       const SizedBox(height: 10),
@@ -847,7 +845,7 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                               controller: xController,
                               hintText: 'Position X',
                               keyboardType: TextInputType.number,
-                              onChanged: (value) {
+                              onFieldSubmitted: (value) {
                                 final x = double.tryParse(value);
                                 if (x != null) entity.teleport(dx: x);
                               },
@@ -860,7 +858,7 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                               controller: yController,
                               hintText: 'Position Y',
                               keyboardType: TextInputType.number,
-                              onChanged: (value) {
+                              onFieldSubmitted: (value) {
                                 final y = double.tryParse(value);
                                 if (y != null) entity.teleport(dy: y);
                               },
@@ -871,11 +869,12 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
           
                       const SizedBox(height: 10),
           
-                      PixelatedTextField(
+                      PixelatedTextFormField(
+                        label: 'R',
                         controller: rotationController,
                         hintText: 'Rotation (degrees)',
                         keyboardType: TextInputType.number,
-                        onChanged: (value) {
+                        onFieldSubmitted: (value) {
                           final rotation = double.tryParse(value);
                           if (rotation != null) entity.rotate(rotation);
                         },
@@ -883,11 +882,12 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
           
                       const SizedBox(height: 10),
           
-                      PixelatedTextField(
+                      PixelatedTextFormField(
+                        label: 'W',
                         controller: widthController,
                         hintText: 'Width Scale',
                         keyboardType: TextInputType.number,
-                        onChanged: (value) {
+                        onFieldSubmitted: (value) {
                           final width = double.tryParse(value);
                           if (width != null) entity.setWidth(width);
                         },
@@ -895,11 +895,12 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
           
                       const SizedBox(height: 10),
           
-                      PixelatedTextField(
+                      PixelatedTextFormField(
+                        label: 'H',
                         controller: heightController,
                         hintText: 'Height Scale',
                         keyboardType: TextInputType.number,
-                        onChanged: (value) {
+                        onFieldSubmitted: (value) {
                           final height = double.tryParse(value);
                           if (height != null) entity.setHeight(height);
                         },
@@ -922,14 +923,10 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                         spacing: 8,
                         runSpacing: 8,
                         children: List.generate(10, (index) {
-                          final layerNumber = index + 1;
-                          final isSelected = selectedLayer == layerNumber;
+                          final isSelected = index == entity.layerNumber;
                           return GestureDetector(
                             onTap: () {
-                              setState(() {
-                                selectedLayer = layerNumber;
-                                entity.layerNumber = layerNumber;
-                              });
+                              entity.setLayerNumber(index);
                             },
                             child: Container(
                               width: 30,
@@ -940,7 +937,7 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                '$layerNumber',
+                                '$index',
                                 style: const TextStyle(
                                   fontFamily: 'PressStart2P',
                                   fontSize: 10,
@@ -962,8 +959,6 @@ class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
     );
   }
 }
-
-
 class RigidBodyComponentPanel extends StatefulWidget {
   final Entity entity;
 
