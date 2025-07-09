@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/ui_element/alignment_picker.dart';
 import 'package:scratch_clone/ui_element/joystick/data/joy_stick_element.dart';
+import 'package:scratch_clone/ui_element/text_ui_element/text_ui_element.dart';
 import 'package:scratch_clone/ui_element/ui_button/data/hold_button.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/four_button_config.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/three_button_config.dart';
@@ -17,7 +18,8 @@ enum UIElementType {
   button,
   twoButtons,
   threeButtons,
-  fourButtons
+  fourButtons,
+  text
 }
 
 
@@ -124,6 +126,10 @@ class _AddUIElementDialogState extends State<_AddUIElementDialog> {
                 element = FourButtonConfiguration(
                   alignment: selectedAlignment,
                 );
+              case 'text':
+              element = TextElement(
+                alignment: selectedAlignment,
+              );
               default:
                 element = JoyStickElement(alignment: selectedAlignment);
                 break;
