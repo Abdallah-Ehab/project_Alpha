@@ -46,13 +46,22 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void spawnPrefab(String name, Offset position) {
+  void spawnPrefabAtPosition(String name, Offset position) {
     final prefab = prefabs[name];
     if (prefab == null) return;
 
     final clone = prefab.copy();
     clone.position = position;
     spawnEntityLater(clone);
+  }
+
+  void spawnPrefab(String name){
+    final prefab = prefabs[name];
+    if (prefab == null) return;
+
+    final clone = prefab.copy();
+    spawnEntityLater(clone);
+
   }
 
   void addGlobalVariable(String name, dynamic value) {
@@ -80,6 +89,12 @@ class EntityManager extends ChangeNotifier {
   
   Map<String, Entity> getEntitiesByType(EntityType type) {
     return _entities[type] ?? {};
+  }
+
+  CameraEntity getActiveCamera(){
+    CameraEntity? activeCamera = _entities[EntityType.cameras]!.values.firstWhereOrNull((camera)=>(camera as CameraEntity).isActive) as CameraEntity?;
+    activeCamera ??= _entities[EntityType.cameras]!["mainCamera"] as CameraEntity;
+    return activeCamera;
   }
   
   List<Entity>? getLights() {
@@ -122,7 +137,7 @@ class EntityManager extends ChangeNotifier {
 
     // Get animation component to calculate destroy duration
     final animComp = entity.getComponent<AnimationControllerComponent>();
-    Duration destroyDuration = Duration(milliseconds: 500); // Default fallback
+    Duration destroyDuration = Duration(milliseconds: 500);
 
     if (animComp != null) {
       final destroyTrack = animComp.getDestroyAnimationTrack();

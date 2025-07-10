@@ -15,13 +15,14 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class AnimationTrack with ChangeNotifier {
   String name;
   List<KeyFrame> frames;
+  Offset position;
   int fps;
   bool isLooping;
   bool mustFinish;
   bool isDestroyAnimationTrack; // New attribute for destroy animation
 
-  AnimationTrack(this.name, this.frames, this.isLooping, this.mustFinish, 
-      {this.fps = 10, this.isDestroyAnimationTrack = false});
+  AnimationTrack(this.name, this.frames, this.isLooping, this.mustFinish,
+      {this.fps = 10, this.isDestroyAnimationTrack = false,this.position = Offset.zero});
 
   AnimationTrack copy() {
     return AnimationTrack(name, frames.map((e) => e.copy()).toList(), 
@@ -33,6 +34,7 @@ class AnimationTrack with ChangeNotifier {
     return {
       'name': name,
       'fps': fps,
+      'position' : {'dx':position.dx, 'dy' : position.dy},
       'frames': frames.map((frame) => frame.toJson()).toList(),
       'isLooping': isLooping,
       'mustFinish': mustFinish,
@@ -49,8 +51,14 @@ class AnimationTrack with ChangeNotifier {
       json['isLooping'],
       json['mustFinish'], 
       fps: json['fps'] as int? ?? 10,
+      position: OffsetJson.fromJson(json['position']),
       isDestroyAnimationTrack: json['isDestroyAnimationTrack'] as bool? ?? false,
     );
+  }
+
+  void setPosition(Offset position){
+    this.position = position;
+    notifyListeners();
   }
 
   void setIsLooping(bool isLooping) {

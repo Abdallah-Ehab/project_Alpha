@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
@@ -14,30 +15,26 @@ class NodeComponent extends Component {
   late List<NodeModel> workspaceNodes;
   NodeWorkspaceCamera? _camera;
   Size? _viewportSize;
-  
+
   NodeComponent(
       {super.isActive = true,
       NodeModel? startNode,
       List<NodeModel>? workspaceNodes}) {
     this.startNode = startNode ?? StartNode();
-    this.workspaceNodes = workspaceNodes ??
-        [this.startNode!];
+    this.workspaceNodes = workspaceNodes ?? [this.startNode!];
   }
 
-  
-  
-  
   // Set camera for this specific node component
   void setCamera(NodeWorkspaceCamera camera, Size viewportSize) {
     _camera = camera;
     _viewportSize = viewportSize;
     notifyListeners();
   }
-  
+
   // Getters for camera and viewport
   NodeWorkspaceCamera? get camera => _camera;
   Size? get viewportSize => _viewportSize;
-  
+
   // Convert screen to world coordinates using component's camera
   Offset? screenToWorld(Offset screenPosition) {
     if (_camera != null && _viewportSize != null) {
@@ -105,6 +102,36 @@ class NodeComponent extends Component {
       }
     }
 
+    // 3rd pass to connect value nodes
+    final allPoints = nodeList
+        .whereType<InputNodeWithValue>()
+        .expand((n) => n.connectionPoints)
+        .whereType<ValueConnectionPoint>()
+        .toList();
+    final idToPoint = {
+      for (final p in allPoints) p.id: p,
+    };
+
+    for (final point in allPoints) {
+      if (point is ValueConnectionPoint) {
+        final dynamic p = point;
+
+        final sourceId = p._sourcePointId;
+        final destinationId = p._destinationPointId;
+
+        if (sourceId != null && idToPoint[sourceId] is ValueConnectionPoint) {
+          p.sourcePoint = idToPoint[sourceId] as ValueConnectionPoint;
+        }
+
+        if (destinationId != null &&
+            idToPoint[destinationId] is ValueConnectionPoint) {
+          p.destinationPoint = idToPoint[destinationId] as ValueConnectionPoint;
+        }
+
+        // Mark connection state
+        point.isConnected = p.sourcePoint != null;
+      }
+    }
     return NodeComponent(
       isActive: json['isActive'] as bool? ?? true,
       startNode: startNode,

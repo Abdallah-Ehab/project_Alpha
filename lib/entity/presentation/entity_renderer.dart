@@ -6,23 +6,9 @@ import 'package:scratch_clone/animation_editor/data/sketch_model.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/entity/data/light_entity.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_widget.dart';
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -214,7 +200,7 @@ Widget applyLightingToEntity({
 
   return ClipRRect(
     child: ColorFiltered(
-      colorFilter: ColorFilter.mode(finalLightColor, BlendMode.multiply),
+      colorFilter: ColorFilter.mode(finalLightColor, BlendMode.modulate),
       child: child,
     ),
   );

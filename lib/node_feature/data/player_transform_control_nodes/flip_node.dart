@@ -35,10 +35,10 @@ class SimpleFlipNode extends NodeModel {
     if (activeEntity == null) return Result.failure(errorMessage: "No active entity");
 
     if (flipX) {
-      activeEntity.setWidth(activeEntity.widthScale * -1);
+      activeEntity.flipX();
     }
     if (flipY) {
-      activeEntity.setHeight(activeEntity.heigthScale * -1);
+      activeEntity.flipY();
     }
 
     return Result.success();

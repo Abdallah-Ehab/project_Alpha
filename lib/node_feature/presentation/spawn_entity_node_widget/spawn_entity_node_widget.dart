@@ -47,6 +47,25 @@ class SpawnEntityNodeWidget extends StatelessWidget {
                   }
                 },
               ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Checkbox(
+                    value: node.isOnce,
+                    onChanged: (value) {
+                      if (value != null) {
+                        node.setIsOnce(value);
+                        
+                      }
+                    },
+                    side: const BorderSide(color: Colors.white),
+                    activeColor: Colors.white,
+                    checkColor: Colors.black,
+                  ),
+                  const Text("Spawn Once", style: TextStyle(color: Colors.white)),
+                ],
+              ),
             ],
           ),
         ),

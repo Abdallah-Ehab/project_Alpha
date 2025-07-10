@@ -22,7 +22,7 @@ import 'package:uuid/uuid.dart';
 // acyclic here is used loosy goosy cause a node can't connect to itself but it can be an intermediate node between a node that is connected to itself
 // so in short a node can't connect to itself directly
 abstract class ConnectionPointModel {
-  final String id;
+  String id;
   final Offset position;
   final Color color;
   final double width;
@@ -44,7 +44,6 @@ abstract class ConnectionPointModel {
       'position': {'dx': position.dx, 'dy': position.dy},
       'width': width,
       'isConnected': isConnected,
-      // Note: We don't serialize ownerNode to avoid circular references
       ..._extraData(),
     };
   }
@@ -55,8 +54,8 @@ abstract class ConnectionPointModel {
     } else if (this is ValueConnectionPoint) {
       return {
         'valueIndex': (this as ValueConnectionPoint).valueIndex,
-        'sourcePoint': (this as ValueConnectionPoint).sourcePoint?.id,
-        'destinationPoint': (this as ValueConnectionPoint).destinationPoint?.id,
+        'sourcePointid': (this as ValueConnectionPoint).sourcePoint?.id,
+        'destinationPointid': (this as ValueConnectionPoint).destinationPoint?.id,
         'isLeft': (this as ValueConnectionPoint).isLeft,
       };
     }
@@ -97,9 +96,14 @@ abstract class ConnectionPointModel {
           valueIndex: json['valueIndex'] as int,
           ownerNode: ownerNode,
           isConnected: isConnected,
-        );
+        )
+          ..id = json['id']
+          ..value = null;
         vcp.destinationPoint = vcp;
         vcp.sourcePoint = null;
+
+        (vcp as dynamic)._sourcePointId = json['sourcePointid'];
+        (vcp as dynamic)._destinationPointId = json['destinationPointid'];
         return vcp;
       default:
         throw UnimplementedError(
@@ -122,9 +126,8 @@ abstract class ConnectionPointModel {
   Offset computeOffset();
   void handlePanEndBehaviour(BuildContext context);
   void handleDoubleTapBehaviour(BuildContext context);
-  
-  void disconnect();
 
+  void disconnect();
 
   ConnectionPointModel copyWith({
     Offset? position,
@@ -174,7 +177,7 @@ class InputConnectionPoint extends ConnectionPointModel {
   }
 
   @override
-  void handlePanEndBehaviour(BuildContext context){
+  void handlePanEndBehaviour(BuildContext context) {
     // Input points don't initiate connections
     return;
   }
@@ -182,16 +185,13 @@ class InputConnectionPoint extends ConnectionPointModel {
   @override
   void disconnect() {
     if (ownerNode is HasInput) {
-      
       (ownerNode as HasInput).disconnectInput(cp: this);
     }
-    
   }
-  
+
   @override
   void handleDoubleTapBehaviour(BuildContext context) {
     disconnect();
-    
   }
 }
 
@@ -237,55 +237,57 @@ class OutputConnectionPoint extends ConnectionPointModel {
     if (ownerNode is HasInput) {
       (ownerNode as HasInput).disconnectInput(cp: this);
     }
-    
   }
 
   @override
-void handlePanEndBehaviour(BuildContext context) {
-  final entityManager = Provider.of<EntityManager>(context, listen: false);
-  final provider = Provider.of<ConnectionProvider>(context, listen: false);
-  final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
-  final activeEntity = entityManager.activeEntity;
-  final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
+  void handlePanEndBehaviour(BuildContext context) {
+    final entityManager = Provider.of<EntityManager>(context, listen: false);
+    final provider = Provider.of<ConnectionProvider>(context, listen: false);
+    final indexProvider =
+        Provider.of<NodeComponentIndexProvider>(context, listen: false);
+    final activeEntity = entityManager.activeEntity;
+    final nodeComponent =
+        activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index]
+            as NodeComponent?;
 
-  if (nodeComponent == null) {
-    log("No NodeComponent found");
-    return;
-  }
+    if (nodeComponent == null) {
+      log("No NodeComponent found");
+      return;
+    }
 
-  final endPos = provider.currentPosition; // Already in world coordinates
-  final nodes = nodeComponent.workspaceNodes;
+    final endPos = provider.currentPosition; // Already in world coordinates
+    final nodes = nodeComponent.workspaceNodes;
 
-  if (endPos == null) {
-    provider.clear();
-    return;
-  }
+    if (endPos == null) {
+      provider.clear();
+      return;
+    }
 
-  for (var targetNode in nodes) {
-    if (targetNode.id == ownerNode.id) continue;
+    for (var targetNode in nodes) {
+      if (targetNode.id == ownerNode.id) continue;
 
-    for (var point in targetNode.connectionPoints) {
-      if (point is! InputConnectionPoint) continue;
+      for (var point in targetNode.connectionPoints) {
+        if (point is! InputConnectionPoint) continue;
 
-      // Both positions are now in world coordinates
-      final pointPos = targetNode.position + point.computeOffset();
-      
-      if ((endPos - pointPos).distance <= 20) {
-        if (ownerNode is HasOutput && targetNode is HasInput) {
-          (ownerNode as HasOutput).connectOutput(targetNode);
-          (targetNode as HasInput).connectInput(ownerNode);
-          isConnected = true;
-          point.isConnected = true;
-          log('output node $ownerNode is connected to input node $targetNode');
-          provider.clear();
-          return;
+        // Both positions are now in world coordinates
+        final pointPos = targetNode.position + point.computeOffset();
+
+        if ((endPos - pointPos).distance <= 20) {
+          if (ownerNode is HasOutput && targetNode is HasInput) {
+            (ownerNode as HasOutput).connectOutput(targetNode);
+            (targetNode as HasInput).connectInput(ownerNode);
+            isConnected = true;
+            point.isConnected = true;
+            log('output node $ownerNode is connected to input node $targetNode');
+            provider.clear();
+            return;
+          }
         }
       }
     }
-  }
 
-  provider.clear();
-}
+    provider.clear();
+  }
 
   @override
   void handleDoubleTapBehaviour(BuildContext context) {
@@ -343,8 +345,11 @@ class ConnectConnectionPoint extends ConnectionPointModel {
 
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
-    final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
+    final indexProvider =
+        Provider.of<NodeComponentIndexProvider>(context, listen: false);
+    final nodeComponent =
+        activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index]
+            as NodeComponent?;
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
@@ -397,18 +402,16 @@ class ConnectConnectionPoint extends ConnectionPointModel {
   @override
   void disconnect() {
     if (isTop) {
-      
-      ownerNode.disconnectIfTop(cp : this);
+      ownerNode.disconnectIfTop(cp: this);
     } else {
       isConnected = false;
-      ownerNode.disconnectIfBottom(cp : this);
+      ownerNode.disconnectIfBottom(cp: this);
     }
-    
   }
-  
+
   @override
   void handleDoubleTapBehaviour(BuildContext context) {
-   disconnect();
+    disconnect();
   }
 }
 
@@ -477,8 +480,11 @@ class ValueConnectionPoint extends ConnectionPointModel {
   void handlePanEndBehaviour(BuildContext context) {
     final entityManager = Provider.of<EntityManager>(context, listen: false);
     final activeEntity = entityManager.activeEntity;
-    final indexProvider = Provider.of<NodeComponentIndexProvider>(context, listen: false);
-    final nodeComponent = activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index] as NodeComponent?;
+    final indexProvider =
+        Provider.of<NodeComponentIndexProvider>(context, listen: false);
+    final nodeComponent =
+        activeEntity?.getAllComponents<NodeComponent>()?[indexProvider.index]
+            as NodeComponent?;
 
     if (nodeComponent == null) {
       log("No NodeComponent found");
@@ -503,7 +509,8 @@ class ValueConnectionPoint extends ConnectionPointModel {
         final targetPointPos =
             targetNode.position + targetPoint.computeOffset();
         if ((endPos - targetPointPos).distance <= 20) {
-          if (targetNode is OutputNodeWithValue && ownerNode is InputNodeWithValue) {
+          if (targetNode is OutputNodeWithValue &&
+              ownerNode is InputNodeWithValue) {
             (ownerNode as InputNodeWithValue).connectValue(this, targetPoint);
             isConnected = true;
             targetPoint.isConnected = true;
@@ -548,9 +555,9 @@ class ValueConnectionPoint extends ConnectionPointModel {
     }
     isConnected = false;
   }
-  
+
   @override
   void handleDoubleTapBehaviour(BuildContext context) {
-   disconnect();
+    disconnect();
   }
 }
