@@ -86,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 40),
                       PixelatedTextField(
-                        maxLength: 100,
+                       maxLength: 100,
                         hintText: "Email",
                         controller: _emailController,
                         borderColor: Colors.white,
@@ -95,7 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 16),
                       PixelatedTextField(
-                        maxLength: 100,
+                       maxLength: 100,
                         hintText: "Password",
                         controller: _passwordController,
                         borderColor: Colors.white,

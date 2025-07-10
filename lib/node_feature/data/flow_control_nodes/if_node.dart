@@ -33,7 +33,7 @@ class IfNode extends InputOutputNode {
           
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     if (input != null) {
       Result<bool> conditionResult =
           input!.execute(activeEntity) as Result<bool>;

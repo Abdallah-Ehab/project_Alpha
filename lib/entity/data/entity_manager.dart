@@ -11,7 +11,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 
-enum EntityType { actors, cameras, lights, sounds }
+enum EntityType { actors, cameras, lights }
 
 
 

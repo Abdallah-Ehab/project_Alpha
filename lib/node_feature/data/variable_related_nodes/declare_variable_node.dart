@@ -34,7 +34,7 @@ class DeclareVariableNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     return Result.success(result: "Variable '$variableName' updated to $value.");
   }
 

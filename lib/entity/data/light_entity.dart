@@ -17,6 +17,7 @@ class LightEntity extends Entity {
     this.color = Colors.white,
     this.radius = 200.0,
     super.layerNumber,
+    
   });
 
   @override

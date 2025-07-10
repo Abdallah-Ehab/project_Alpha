@@ -36,7 +36,7 @@ class DetectCollisionNode extends InputNode {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     if (activeEntity == null) {
       hasError = true;
       return Result.failure(errorMessage: "No active entity.");

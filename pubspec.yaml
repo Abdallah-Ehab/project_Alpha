@@ -28,7 +28,8 @@ dependencies:
   file_picker: ^10.2.0
   path_provider: ^2.1.5
   intl: ^0.20.2
-
+  tflite_flutter: ^0.11.0
+  camera: ^0.11.2
 dev_dependencies:
   build_runner: ^2.3.0
   json_serializable: ^6.0.1
@@ -54,3 +55,4 @@ flutter:
     - assets/sounds/
     - assets/lottie/joy_stick.json
     - assets/lottie/coin.json
+    - assets/models/posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite

@@ -71,6 +71,7 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
+            maxLength: 20,
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (value) {
@@ -81,6 +82,7 @@ class _ButtonConfigDialogState extends State<ButtonConfigDialog> {
           ),
           SizedBox(height: 16,),
           PixelatedTextField(
+            maxLength: 20,
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (value) {

@@ -44,7 +44,7 @@ class StatementGroupNode extends OutputNode {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     for (final node in statements) {
       final result = node.execute(activeEntity);
       if (result.errorMessage != null) {
