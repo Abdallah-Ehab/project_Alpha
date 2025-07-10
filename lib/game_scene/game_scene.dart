@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
+
 import 'package:scratch_clone/entity/presentation/add_component_button.dart';
 import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
@@ -11,6 +12,8 @@ import 'package:scratch_clone/entity/presentation/prefab_card.dart';
 import 'package:scratch_clone/game_scene/add_global_variable_button.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_state/save_game.dart';
+import 'package:scratch_clone/login_and_signup/presentation/cubit/authentacation_cubit.dart';
+import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_button.dart';
 import 'package:scratch_clone/ui_element/ui_elements_layer.dart';
 
@@ -41,6 +44,10 @@ class GameScene extends StatelessWidget {
           SizedBox(height: 20,),
           AddVariableButton(),
           Spacer(),
+          PixelArtButton(text: "log out", callback: () {
+            context.read<AuthCubit>().signOut();
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+          }, fontsize: 12),
           SaveGameButton()
 
         ],

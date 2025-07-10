@@ -12,6 +12,10 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  equatable: ^2.0.7
+  lottie: ^3.1.0
+  flutter_bloc: ^9.1.1
+  supabase_flutter: ^2.9.1
   uuid: ^4.5.1
   google_fonts: ^6.2.1
   provider: ^6.1.2
@@ -23,8 +27,8 @@ dependencies:
   collection: ^1.19.1
   file_picker: ^10.2.0
   path_provider: ^2.1.5
-  tflite_flutter: ^0.11.0
-  camera: ^0.11.2
+  intl: ^0.20.2
+
 dev_dependencies:
   build_runner: ^2.3.0
   json_serializable: ^6.0.1
@@ -48,3 +52,5 @@ flutter:
     - assets/grid_image.jpg
     - assets/icons/
     - assets/sounds/
+    - assets/lottie/joy_stick.json
+    - assets/lottie/coin.json
