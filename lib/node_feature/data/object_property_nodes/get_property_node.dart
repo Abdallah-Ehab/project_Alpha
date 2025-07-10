@@ -109,7 +109,6 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
     newNode.isConnected = isConnected ?? this.isConnected;
     newNode.child = null;
     newNode.parent = null;
-    newNode.output = null;
 
     newNode.connectionPoints = connectionPoints != null
         ? connectionPoints

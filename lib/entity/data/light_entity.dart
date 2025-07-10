@@ -68,4 +68,18 @@ class LightEntity extends Entity {
       layerNumber: json['layerNumber'],
     );
   }
+
+  void setRadius(double radius){
+    this.radius = radius;
+    notifyListeners();
+  }
+  void setLightIntensity(double intensity){
+    this.intensity = intensity;
+    notifyListeners();
+  }
+
+  void setSelectedColor(Color color){
+    this.color = color;
+    notifyListeners();
+  }
 }

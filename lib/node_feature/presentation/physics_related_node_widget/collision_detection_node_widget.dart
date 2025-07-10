@@ -11,6 +11,7 @@ class DetectCollisionNodeWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showTagDialog(context),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Container(
             width: nodeModel.width,

@@ -37,8 +37,11 @@ class AnimationEditorScreen extends StatelessWidget {
                     onPanStart: (details) {
                       if (currentFrame != null) {
                         final tool = context.read<ToolSettings>();
+                        final trackPosition = animComponent.currentAnimationTrack.position;
+                        final adjustedPosition = details.localPosition - trackPosition;
+                        
                         final sketch = SketchModel(
-                          points: [details.localPosition],
+                          points: [adjustedPosition],
                           color: tool.isEraser
                               ? Colors.transparent
                               : tool.currentColor,
@@ -50,12 +53,14 @@ class AnimationEditorScreen extends StatelessWidget {
                     onPanUpdate: (details) {
                       if (currentFrame == null) return;
                       final tool = context.read<ToolSettings>();
+                      final trackPosition = animComponent.currentAnimationTrack.position;
+                      final adjustedPosition = details.localPosition - trackPosition;
         
                       if (tool.isEraser) {
-                        currentFrame.removePointFromSketch(details.localPosition);
+                        currentFrame.removePointFromSketch(adjustedPosition);
                       } else if (currentFrame.sketches.isNotEmpty) {
                         currentFrame
-                            .addPointToCurrentSketch(details.localPosition);
+                            .addPointToCurrentSketch(adjustedPosition);
                       }
                     },
                     child: SizedBox(
@@ -75,6 +80,7 @@ class AnimationEditorScreen extends StatelessWidget {
                                           onion.enabled ? onion.prevFrames : 0,
                                       nextFrames:
                                           onion.enabled ? onion.nextFrames : 0,
+                                      trackPosition: animComponent.currentAnimationTrack.position,
                                     ),
                                     size: const Size(600, 600),
                                   );
@@ -99,29 +105,29 @@ class AnimationPainter extends CustomPainter {
   final int currentIndex;
   final int prevFrames;
   final int nextFrames;
+  final Offset trackPosition;
 
   AnimationPainter({
     required this.frames,
     required this.currentIndex,
     required this.prevFrames,
     required this.nextFrames,
+    required this.trackPosition,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-
     // Draw gray background
-  canvas.drawRect(
-    Offset.zero & size,
-    Paint()..color = Colors.grey[300]!,
-  );
-
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = Colors.grey[300]!,
+    );
 
     // Paint previous frames
     for (int i = 1; i <= prevFrames; i++) {
       int index = currentIndex - i;
       if (index >= 0) {
-        _paintFrame(canvas, frames[index], Colors.red.withAlpha(100),size);
+        _paintFrame(canvas, frames[index], Colors.red.withAlpha(100), size);
       }
     }
 
@@ -129,23 +135,20 @@ class AnimationPainter extends CustomPainter {
     for (int i = 1; i <= nextFrames; i++) {
       int index = currentIndex + i;
       if (index < frames.length) {
-        _paintFrame(canvas, frames[index], Colors.green.withAlpha(100),size);
+        _paintFrame(canvas, frames[index], Colors.green.withAlpha(100), size);
       }
     }
 
     // Paint current frame normally
-    _paintFrame(canvas, frames[currentIndex], null,size);
+    _paintFrame(canvas, frames[currentIndex], null, size);
   }
 
-  void _paintFrame(Canvas canvas, KeyFrame keyFrame, Color? overrideColor,Size size) {
-    
-    
-
+  void _paintFrame(Canvas canvas, KeyFrame keyFrame, Color? overrideColor, Size size) {
     for (var sketch in keyFrame.sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
         canvas.drawLine(
-          sketch.points[i],
-          sketch.points[i + 1],
+          sketch.points[i] + trackPosition,
+          sketch.points[i + 1] + trackPosition,
           Paint()
             ..color = overrideColor ?? sketch.color
             ..strokeWidth = sketch.strokeWidth
@@ -157,11 +160,13 @@ class AnimationPainter extends CustomPainter {
     if (keyFrame.image != null) {
       canvas.drawImage(
         keyFrame.image!,
-        Offset.zero,
+        Offset(
+          size.width/2 - keyFrame.image!.width/2 + trackPosition.dx, 
+          size.height/2 - keyFrame.image!.height/2 + trackPosition.dy
+        ),
         Paint()..color = overrideColor ?? Colors.white,
       );
     }
-
   }
 
   @override

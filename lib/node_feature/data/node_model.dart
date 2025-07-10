@@ -63,16 +63,13 @@ abstract class NodeModel with ChangeNotifier {
     if (this is HasOutput) {
       map['outputId'] = (this as HasOutput).output?.id;
     }
-    // if (this is HasValue) {
-    //   map['sourceNodeId'] = (this as HasValue).sourceNode?.id;
-    // }
 
     return map;
   }
 
-  /// Factory to deserialize the correct subclass
+  // static because it's abstract you know 
   static NodeModel fromJson(Map<String, dynamic> json) {
-    final type = json['type'] as String;
+    final type = json['type'] ;
 
     switch (type) {
       case 'StartNode':
@@ -91,6 +88,7 @@ abstract class NodeModel with ChangeNotifier {
         return StatementGroupNode.fromJson(json);
       case 'SetVariableNode':
       return SetVariableNode.fromJson(json);
+      
 
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
@@ -116,7 +114,7 @@ abstract class NodeModel with ChangeNotifier {
   /// For rendering in the UI
   Widget buildNode();
 
-  /// Position update helper
+  // updates the position
   void updatePosition(Offset newPosition) {
     position = newPosition;
     notifyListeners();
@@ -159,7 +157,7 @@ abstract class NodeModel with ChangeNotifier {
   }
 }
 
-//Todo this will have only one connection point which is 'connect' aka the 'grey' one
+
 class StartNode extends NodeModel {
   StartNode({
     super.position = Offset.zero,

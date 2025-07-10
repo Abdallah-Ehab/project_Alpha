@@ -29,6 +29,8 @@ abstract class Entity with ChangeNotifier {
   bool onTapVariable;
   bool onLongPressVariable;
   bool onDoubleTapVariable;
+  bool isFlippedX;
+  bool isFlippedY;
 
   Entity({
     required this.name,
@@ -42,7 +44,9 @@ abstract class Entity with ChangeNotifier {
     this.layerNumber = 0,
     this.onDoubleTapVariable = false,
     this.onTapVariable = false,
-    this.onLongPressVariable = false
+    this.onLongPressVariable = false,
+    this.isFlippedX = false,
+    this.isFlippedY = false,
   }):components = {},variables = {
     'ontap' : false,
   },lists = {};
@@ -71,6 +75,16 @@ abstract class Entity with ChangeNotifier {
       'x': offset.dx,
       'y': offset.dy,
   };
+  }
+
+  void  flipX(){
+    isFlippedX = !isFlippedX;
+    notifyListeners();
+  }
+
+  void  flipY(){
+    isFlippedY = !isFlippedY;
+    notifyListeners();
   }
 
   void setOnTapVariable(bool value){
@@ -210,11 +224,15 @@ abstract class Entity with ChangeNotifier {
 
   void setWidth(double width){
     this.width = width;
+    final collider = getComponent<ColliderComponent>();
+    collider?.setWidth(width);
     notifyListeners();
   }
 
   void setHeight(double height){
     this.height = height;
+    final collider = getComponent<ColliderComponent>();
+    collider?.setHeight(height);
     notifyListeners();
   }
 

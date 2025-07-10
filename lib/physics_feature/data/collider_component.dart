@@ -87,7 +87,8 @@ class ColliderComponent extends Component {
           final double dx = (a.center.dx < b.center.dx) ? -overlapX : overlapX;
           final double dy = (a.center.dy < b.center.dy) ? -overlapY : overlapY;
 
-          if (activeIsHeavier) {
+          if (activeIsHeavier && activeRigidBody.isStatic == false) {
+            
             if (overlapX < overlapY) {
               other.move(x: -dx);
               otherRigidBody.setVelocity(
@@ -102,7 +103,7 @@ class ColliderComponent extends Component {
               if (dy > 0) otherRigidBody.landOnGround();
               activeRigidBody.setVelocity(activeRigidBody.velocity.dx, 0);
             }
-          } else if (otherIsHeavier) {
+          } else if (otherIsHeavier && otherRigidBody.isStatic == false) {
             if (overlapX < overlapY) {
               activeEntity.move(x: dx);
               activeRigidBody.setVelocity(

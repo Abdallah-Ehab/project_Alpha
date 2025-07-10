@@ -84,6 +84,89 @@ class AnimationTrackControlPanel extends StatelessWidget {
                   
                   const Divider(),
                   
+                  // Position Controls
+                  ChangeNotifierProvider.value(
+                    value: currentTrack,
+                    child: Consumer<AnimationTrack>(
+                      builder: (context, currentTrack, child) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Position", style: Theme.of(context).textTheme.titleSmall),
+                              const SizedBox(height: 8),
+                              
+                              // X Position Slider
+                              Row(
+                                children: [
+                                  const Text("X: "),
+                                  Expanded(
+                                    child: Slider(
+                                      value: currentTrack.position.dx,
+                                      min: -300.0,
+                                      max: 300.0,
+                                      divisions: 600,
+                                      label: currentTrack.position.dx.round().toString(),
+                                      onChanged: (value) {
+                                        currentTrack.setPosition(Offset(value, currentTrack.position.dy));
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 60,
+                                    child: Text(
+                                      currentTrack.position.dx.round().toString(),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                              // Y Position Slider
+                              Row(
+                                children: [
+                                  const Text("Y: "),
+                                  Expanded(
+                                    child: Slider(
+                                      value: currentTrack.position.dy,
+                                      min: -300.0,
+                                      max: 300.0,
+                                      divisions: 600,
+                                      label: currentTrack.position.dy.round().toString(),
+                                      onChanged: (value) {
+                                        currentTrack.setPosition(Offset(currentTrack.position.dx, value));
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 60,
+                                    child: Text(
+                                      currentTrack.position.dy.round().toString(),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                              // Reset Position Button
+                              Center(
+                                child: TextButton(
+                                  onPressed: () {
+                                    currentTrack.setPosition(Offset.zero);
+                                  },
+                                  child: const Text("Reset Position"),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  
+                  const Divider(),
+                  
                   // Checkboxes for looping, mustFinish, and destroy animation
                   ChangeNotifierProvider.value(
                     value: currentTrack,
@@ -111,7 +194,7 @@ class AnimationTrackControlPanel extends StatelessWidget {
                     ),
                   ),
                   
-                  // NEW: Destroy Animation Checkbox
+                  // Destroy Animation Checkbox
                   ChangeNotifierProvider.value(
                     value: currentTrack,
                     child: Consumer<AnimationTrack>(
@@ -130,7 +213,7 @@ class AnimationTrackControlPanel extends StatelessWidget {
                     ),
                   ),
                   
-                  // NEW: Trigger Destroy Button (for testing)
+                  // Trigger Destroy Button (for testing)
                   if (animComp.hasDestroyAnimation())
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -178,7 +261,7 @@ class AnimationTrackControlPanel extends StatelessWidget {
     final frameCountController = TextEditingController(text: "1");
     bool isLooping = true;
     bool mustFinish = false;
-    bool isDestroyAnimation = false; // NEW
+    bool isDestroyAnimation = false;
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -206,7 +289,6 @@ class AnimationTrackControlPanel extends StatelessWidget {
                 value: mustFinish,
                 onChanged: (val) => setState(() => mustFinish = val ?? false),
               ),
-              // NEW: Destroy Animation Checkbox
               CheckboxListTile(
                 title: const Text("Destroy Animation"),
                 subtitle: const Text("Creates transitions from all other animations"),

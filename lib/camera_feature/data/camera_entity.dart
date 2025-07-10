@@ -3,9 +3,11 @@ import 'package:scratch_clone/entity/data/entity.dart';
 
 
 class CameraEntity extends Entity {
-  double zoom;
+  double zoom = 1.0;
+  Size viewportSize = Size.zero;
+  bool isActive;
   bool isEditorCamera;
-
+  
   CameraEntity({
     super.tag = 'camera',
     required super.name,
@@ -16,6 +18,7 @@ class CameraEntity extends Entity {
     super.layerNumber,
     this.zoom = 1.0,
     this.isEditorCamera = true,
+    this.isActive = false
   });
 
   factory CameraEntity.fromJson(Map<String, dynamic> json) {
@@ -48,14 +51,60 @@ class CameraEntity extends Entity {
     };
   }
 
+  
+
+  void setViewportSize(Size size) {
+    viewportSize = size;
+    notifyListeners();
+  }
+
   void pan(Offset delta) {
-    position += delta;
+  position += delta;
     notifyListeners();
   }
 
   void setZoom(double newZoom) {
-    zoom = newZoom.clamp(0.2, 4.0);
+    zoom = newZoom.clamp(0.1, 5.0);
     notifyListeners();
+  }
+
+  void zoomAt(Offset point, double delta) {
+    final newZoom = (zoom * delta).clamp(0.1, 5.0);
+    final zoomFactor = newZoom / zoom;
+    position = point - (point - position) * zoomFactor;
+    zoom = newZoom;
+    notifyListeners();
+  }
+
+  // Convert screen coordinates to world coordinates
+  Offset screenToWorld(Offset screenPoint) {
+    return (screenPoint / zoom) + position;
+  }
+
+  // Convert world coordinates to screen coordinates
+  Offset worldToScreen(Offset worldPoint) {
+    return (worldPoint - position) * zoom;
+  }
+
+  // Check if a world rectangle is visible in the viewport
+  bool isRectVisible(Rect worldRect) {
+    final viewportRect = Rect.fromLTWH(
+      position.dx,
+      position.dy,
+    viewportSize.width / zoom,
+      viewportSize.height / zoom,
+    );
+    return viewportRect.overlaps(worldRect);
+  }
+
+  // Get the world bounds visible in the viewport
+  Rect getVisibleWorldBounds() {
+    return Rect.fromLTWH(
+      position.dx,
+      position.dy,
+      viewportSize.width / zoom,
+      viewportSize.height / zoom,
+    );
   }
 
   @override
@@ -79,3 +128,70 @@ class CameraEntity extends Entity {
       ..heigthScale = heigthScale;
   }
 }
+
+
+
+
+// class GameCamera extends ChangeNotifier {
+//   Offset _position = Offset.zero;
+//   double _zoom = 1.0;
+//   Size _viewportSize = Size.zero;
+
+//   Offset get position => _position;
+//   double get zoom => _zoom;
+//   Size get viewportSize => _viewportSize;
+
+//   void setViewportSize(Size size) {
+//     _viewportSize = size;
+//     notifyListeners();
+//   }
+
+//   void pan(Offset delta) {
+//     _position += delta;
+//     notifyListeners();
+//   }
+
+//   void setZoom(double newZoom) {
+//     _zoom = newZoom.clamp(0.1, 5.0);
+//     notifyListeners();
+//   }
+
+//   void zoomAt(Offset point, double delta) {
+//     final newZoom = (_zoom * delta).clamp(0.1, 5.0);
+//     final zoomFactor = newZoom / _zoom;
+//     _position = point - (point - _position) * zoomFactor;
+//     _zoom = newZoom;
+//     notifyListeners();
+//   }
+
+//   // Convert screen coordinates to world coordinates
+//   Offset screenToWorld(Offset screenPoint) {
+//     return (screenPoint / _zoom) + _position;
+//   }
+
+//   // Convert world coordinates to screen coordinates
+//   Offset worldToScreen(Offset worldPoint) {
+//     return (worldPoint - _position) * _zoom;
+//   }
+
+//   // Check if a world rectangle is visible in the viewport
+//   bool isRectVisible(Rect worldRect) {
+//     final viewportRect = Rect.fromLTWH(
+//       _position.dx,
+//       _position.dy,
+//       _viewportSize.width / _zoom,
+//       _viewportSize.height / _zoom,
+//     );
+//     return viewportRect.overlaps(worldRect);
+//   }
+
+//   // Get the world bounds visible in the viewport
+//   Rect getVisibleWorldBounds() {
+//     return Rect.fromLTWH(
+//       _position.dx,
+//       _position.dy,
+//       _viewportSize.width / _zoom,
+//       _viewportSize.height / _zoom,
+//     );
+//   }
+// }

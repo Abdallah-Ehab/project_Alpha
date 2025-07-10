@@ -11,10 +11,12 @@ class TextElement extends UIElement {
   String? entityName;
   String? fontFamily;
   String? value;
+  Color ?color;
 
   TextElement({
     required super.alignment,
     this.boundVariable,
+    this.color,
     this.entityName,
     this.fontFamily,
     this.value,
@@ -42,7 +44,7 @@ class TextElement extends UIElement {
               displayValue ?? '',
               style: TextStyle(
                 fontFamily: fontFamily ?? 'PressStart2P',
-                color: Colors.white,
+                color: color,
                 fontSize: 12,
               ),
             ),

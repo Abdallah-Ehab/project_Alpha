@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -14,14 +12,18 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class SpawnEntityNode extends NodeModel {
   String prefabName;
+  bool isOnce;
+  bool hasSpawned;
 
   SpawnEntityNode({
     this.prefabName = '',
+    this.isOnce = false,
+    this.hasSpawned  =false,
     super.position = Offset.zero,
   }) : super(
           image: 'assets/icons/SpawnEntityNode.png',
           width: 200,
-          height: 100,
+          height: 200,
           color: Colors.black,
           connectionPoints: [],
         ) {
@@ -38,9 +40,18 @@ class SpawnEntityNode extends NodeModel {
     notifyListeners();
   }
 
+  void setIsOnce(bool value){
+    isOnce = value;
+    notifyListeners();
+  }
+
   @override
   Result execute([Entity? activeEntity]) {
     final entityManager = EntityManager();
+
+    if (isOnce && hasSpawned) {
+      return Result.success(); // Skip execution
+    }
 
     if (activeEntity == null) {
       return Result.failure(
@@ -49,10 +60,10 @@ class SpawnEntityNode extends NodeModel {
 
     final position = activeEntity.position;
 
-    entityManager.spawnPrefab(prefabName, position);
+    entityManager.spawnPrefab(prefabName);
+    hasSpawned = true;
 
     log("Spawned prefab '$prefabName' at $position.");
-
     return Result.success(result: "Spawned prefab '$prefabName' at $position.");
   }
 
@@ -65,58 +76,65 @@ class SpawnEntityNode extends NodeModel {
   }
 
   @override
-SpawnEntityNode copyWith({
-  Offset? position,
-  Color? color,
-  double? width,
-  double? height,
-  bool? isConnected,
-  NodeModel? child,
-  NodeModel? parent,
-  List<ConnectionPointModel>? connectionPoints,
-  String? prefabName,
-}) {
-  final newNode = SpawnEntityNode(
-    prefabName: prefabName ?? this.prefabName,
-    position: position ?? this.position,
-  )
-    ..isConnected = isConnected ?? this.isConnected
-    ..child = null
-    ..parent = null;
+  SpawnEntityNode copyWith({
+    Offset? position,
+    Color? color,
+    double? width,
+    double? height,
+    bool? isConnected,
+    NodeModel? child,
+    NodeModel? parent,
+    List<ConnectionPointModel>? connectionPoints,
+    String? prefabName,
+    bool? isOnce,
+    
+  }) {
+    final newNode = SpawnEntityNode(
+      prefabName: prefabName ?? this.prefabName,
+      position: position ?? this.position,
+      isOnce: isOnce ?? this.isOnce
+    )
+      ..isConnected = isConnected ?? this.isConnected
+      ..child = null
+      ..parent = null;
 
-  newNode.connectionPoints = connectionPoints != null
-      ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
-      : this.connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList();
+    newNode.connectionPoints = connectionPoints != null
+        ? connectionPoints.map((cp) => cp.copyWith(ownerNode: newNode)).toList()
+        : this
+            .connectionPoints
+            .map((cp) => cp.copyWith(ownerNode: newNode))
+            .toList();
 
-  return newNode;
-}
+    return newNode;
+  }
 
   @override
   SpawnEntityNode copy() {
-    return copyWith(
-    );
+    return copyWith();
   }
+
   @override
-Map<String, dynamic> baseToJson() {
-  final map = super.baseToJson();
-  map['type'] = 'SpawnEntityNode';
-  map['prefabName'] = prefabName;
-  return map;
-}
+  Map<String, dynamic> baseToJson() {
+    final map = super.baseToJson();
+    map['type'] = 'SpawnEntityNode';
+    map['prefabName'] = prefabName;
+    map['isOnce'] = isOnce;
+    return map;
+  }
 
-static SpawnEntityNode fromJson(Map<String, dynamic> json) {
-  final node = SpawnEntityNode(
-    prefabName: json['prefabName'] ?? '',
-    position: OffsetJson.fromJson(json['position'])
-  )
-    ..id = json['id']
-    ..isConnected = json['isConnected'] ?? false;
+  static SpawnEntityNode fromJson(Map<String, dynamic> json) {
+    final node = SpawnEntityNode(
+        prefabName: json['prefabName'] ?? '',
+        isOnce: json['isOnce'],
+        hasSpawned: false,
+        position: OffsetJson.fromJson(json['position']))
+      ..id = json['id']
+      ..isConnected = json['isConnected'] ?? false;
 
-  node.connectionPoints = (json['connectionPoints'] as List)
-      .map((e) => ConnectionPointModel.fromJson(e, node))
-      .toList();
+    node.connectionPoints = (json['connectionPoints'] as List)
+        .map((e) => ConnectionPointModel.fromJson(e, node))
+        .toList();
 
-  return node;
-}
-
+    return node;
+  }
 }
