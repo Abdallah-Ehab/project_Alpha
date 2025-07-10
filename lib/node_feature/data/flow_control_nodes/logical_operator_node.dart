@@ -27,7 +27,7 @@ class LogicOperatorNode extends LogicElementNode {
   }) : super(connectionPoints: []);
 
   @override
-  Result<bool> execute([Entity? entity]) {
+  Result<bool> execute([Entity? entity,Duration? dt]) {
     throw UnimplementedError("OperatorNode does not execute alone.");
   }
 

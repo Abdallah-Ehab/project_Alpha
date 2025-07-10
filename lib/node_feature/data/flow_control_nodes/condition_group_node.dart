@@ -59,7 +59,7 @@ class ConditionGroupNode extends InputNode {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     if (!isValidSequence()) {
       return Result.failure(
           errorMessage: "Invalid condition sequence (missing or misplaced logical operator).");

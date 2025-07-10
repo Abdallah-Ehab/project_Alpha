@@ -16,7 +16,7 @@ class TextElement extends UIElement {
   TextElement({
     required super.alignment,
     this.boundVariable,
-    this.color,
+    this.color = Colors.black,
     this.entityName,
     this.fontFamily,
     this.value,
@@ -41,7 +41,7 @@ class TextElement extends UIElement {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              displayValue ?? '',
+              displayValue ?? 'Hello',
               style: TextStyle(
                 fontFamily: fontFamily ?? 'PressStart2P',
                 color: color,

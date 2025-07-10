@@ -40,7 +40,7 @@ class SetVariableNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "No active entity.");
     }

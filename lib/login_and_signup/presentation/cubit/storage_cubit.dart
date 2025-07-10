@@ -16,7 +16,7 @@ class StorageCubit extends Cubit<StorageState> {
   final supabase = Supabase.instance.client;
 
   Future<void> uploadCurrentJson() async {
-    final filename= await readCurrentProject();
+    final filename = await readCurrentProject();
     if (filename == null) {
       log("No current project file found");
       emit(StorageError("No current project file found"));

@@ -24,7 +24,7 @@ class InternalConditionNode extends LogicElementNode with HasOutput {
 
   @override
   @override
-Result<bool> execute([Entity? entity]) {
+Result<bool> execute([Entity? entity,Duration? dt]) {
   if (firstOperand == null || secondOperand == null || comparisonOperator.isEmpty) {
     return Result.failure(errorMessage: "Missing operand or operator.");
   }

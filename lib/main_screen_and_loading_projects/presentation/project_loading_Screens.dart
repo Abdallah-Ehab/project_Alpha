@@ -114,7 +114,7 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
     } catch (e) {
       log('Supabase list error: $e');
     }
-
+    if (!mounted) return;
     setState(() {
       projects = loaded;
     });
@@ -164,7 +164,7 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
           children: [
             const SizedBox(height: 16),
             PixelatedTextField(
-              maxLength: 20,
+              maxLength: 100,
               borderColor: Colors.white,
               keyboardType: TextInputType.text,
               onChanged: (v) {},

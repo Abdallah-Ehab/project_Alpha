@@ -91,6 +91,7 @@ class _PrefabNameDialogState extends State<PrefabNameDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
+            maxLength: 10,
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             controller: _controller,

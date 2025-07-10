@@ -6,6 +6,7 @@ import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
+import 'package:scratch_clone/pose_detection_feature/data/pose_detection_component.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 class AddComponentButton extends StatelessWidget {
@@ -69,7 +70,8 @@ class _ComponentSelectionDialogState extends State<ComponentSelectionDialog> {
     'Collider',
     'NodeComponent',
     'soundComponent',
-    'rigidBodyComponent'
+    'rigidBodyComponent',
+    'PoseDetectionComponent'
   ];
 
   @override

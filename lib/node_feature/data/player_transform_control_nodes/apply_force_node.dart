@@ -32,7 +32,7 @@ class ApplyForceNode extends NodeModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity]) {
+  Result<String> execute([Entity? activeEntity,Duration? dt]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "Active entity not provided");
     }

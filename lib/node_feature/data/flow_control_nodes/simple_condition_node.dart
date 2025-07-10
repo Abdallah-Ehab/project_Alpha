@@ -30,7 +30,7 @@ class SimpleConditionNode extends NodeModel with HasOutput {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     double? op1;
     double? op2;
 

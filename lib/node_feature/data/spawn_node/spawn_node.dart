@@ -46,7 +46,7 @@ class SpawnEntityNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     final entityManager = EntityManager();
 
     if (isOnce && hasSpawned) {

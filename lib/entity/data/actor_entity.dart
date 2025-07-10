@@ -14,6 +14,7 @@ class ActorEntity extends Entity{
     super.height,
     super.layerNumber,
     this.children = const [],
+  
   });
 
   factory ActorEntity.fromJson(Map<String, dynamic> json) {
@@ -29,7 +30,8 @@ class ActorEntity extends Entity{
             ?.map((childJson) => Entity.fromJson(childJson as Map<String, dynamic>))
             .toList() ??
         [],
-  );
+    
+  )..variables = Map<String,dynamic>.from(json['variables']);
 
   // 🔧 Deserialize components if they exist
   final componentJsonMap = json['components'] as Map<String, dynamic>?;
@@ -55,12 +57,14 @@ class ActorEntity extends Entity{
     return {
       'type': 'actor',
       'name': name,
+      'tag': tag,
       'position': Entity.offsetToJson(position),
       'rotation': rotation,
       'width': width,
       'height': height,
       'layerNumber': layerNumber,
       'children': children.map((c) => c.toJson()).toList(),
+      'variables': variables,
       'components': components.map((key, value) => MapEntry(key.toString(), value.map((e) => e.toJson()).toList())),
     };
   }

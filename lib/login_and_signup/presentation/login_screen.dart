@@ -74,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const LottieAnimation(),
                       const SizedBox(height: 40),
                       PixelatedTextField(
+                        maxLength: 100,
                         hintText: "Username",
                         controller: _usernameController,
                         borderColor: Colors.white,
