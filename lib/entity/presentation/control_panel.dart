@@ -5,10 +5,10 @@ import 'package:scratch_clone/animation_feature/data/animation_controller_compon
 import 'package:scratch_clone/core/ui_widgets/animation_component.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_slider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
-import 'package:scratch_clone/core/ui_widgets/pixelated_text_form_field.dart';
 import 'package:scratch_clone/core/ui_widgets/sound_component_widget.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/entity/presentation/entity_properties_panel.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/node_feature/data/node_component_index_provider.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
@@ -68,7 +68,7 @@ class _ControlPanelState extends State<ControlPanel> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  EntityPropertiesWidget(entity:entity),
+                  EntityPropertiesWidget(entity: entity),
                   const Divider(),
                   _buildComponentPanels(context, entity),
                   const Divider(),
@@ -81,171 +81,6 @@ class _ControlPanelState extends State<ControlPanel> {
       },
     );
   }
-
-//   Widget _buildEntityProperties(BuildContext context, Entity entity) {
-//   final TextEditingController rotationController =
-//       TextEditingController(text: entity.rotation.toStringAsFixed(2));
-//   final TextEditingController widthController =
-//       TextEditingController(text: entity.widthScale.toStringAsFixed(2));
-//   final TextEditingController heightController =
-//       TextEditingController(text: entity.heigthScale.toStringAsFixed(2));
-//   final TextEditingController tagController =
-//       TextEditingController(text: entity.tag);
-
-//   int selectedLayer = entity.layerNumber;
-
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       Card(
-//         color: const Color(0xffE8E8E8),
-//         child: Padding(
-//           padding: const EdgeInsets.all(12.0),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text(
-//                 'Entity: ${entity.name}',
-//                 style: const TextStyle(
-//                   fontFamily: 'PressStart2P',
-//                   fontSize: 16,
-//                 ),
-//               ),
-//               const SizedBox(height: 16),
-
-//               PixelatedTextField(
-//                 keyboardType: TextInputType.text,
-//                 controller: nameController,
-//                 hintText: 'Name',
-//                 onChanged: (value) => entity.setName(value),
-//               ),
-
-//               const SizedBox(height: 10),
-
-//               PixelatedTextField(
-//                 keyboardType: TextInputType.text,
-//                 controller: tagController,
-//                 hintText: 'Tag',
-//                 onChanged: (value) => entity.tag = value,
-//               ),
-
-//               const SizedBox(height: 10),
-
-//               Row(
-//                 children: [
-//                   Expanded(
-//                     child: PixelatedTextField(
-//                       controller: xController,
-//                       hintText: 'Position X',
-//                       keyboardType: TextInputType.number,
-//                       onChanged: (value) {
-//                         final x = double.tryParse(value);
-//                         if (x != null) entity.teleport(dx: x);
-//                       },
-//                     ),
-//                   ),
-//                   const SizedBox(width: 10),
-//                   Expanded(
-//                     child: PixelatedTextField(
-//                       controller: yController,
-//                       hintText: 'Position Y',
-//                       keyboardType: TextInputType.number,
-//                       onChanged: (value) {
-//                         final y = double.tryParse(value);
-//                         if (y != null) entity.teleport(dy: y);
-//                       },
-//                     ),
-//                   ),
-//                 ],
-//               ),
-
-//               const SizedBox(height: 10),
-
-//               PixelatedTextField(
-//                 controller: rotationController,
-//                 hintText: 'Rotation (degrees)',
-//                 keyboardType: TextInputType.number,
-//                 onChanged: (value) {
-//                   final rotation = double.tryParse(value);
-//                   if (rotation != null) entity.rotate(rotation);
-//                 },
-//               ),
-
-//               const SizedBox(height: 10),
-
-//               PixelatedTextField(
-//                 controller: widthController,
-//                 hintText: 'Width Scale',
-//                 keyboardType: TextInputType.number,
-//                 onChanged: (value) {
-//                   final width = double.tryParse(value);
-//                   if (width != null) entity.setWidth(width);
-//                 },
-//               ),
-
-//               const SizedBox(height: 10),
-
-//               PixelatedTextField(
-//                 controller: heightController,
-//                 hintText: 'Height Scale',
-//                 keyboardType: TextInputType.number,
-//                 onChanged: (value) {
-//                   final height = double.tryParse(value);
-//                   if (height != null) entity.setHeight(height);
-//                 },
-//               ),
-
-//               const SizedBox(height: 16),
-
-//               Text(
-//                 'Select Layer',
-//                 style: const TextStyle(
-//                   fontFamily: 'PressStart2P',
-//                   fontSize: 10,
-//                   color: Colors.black,
-//                 ),
-//               ),
-
-//               const SizedBox(height: 8),
-
-//               Wrap(
-//                 spacing: 8,
-//                 runSpacing: 8,
-//                 children: List.generate(10, (index) {
-//                   final layerNumber = index + 1;
-//                   final isSelected = selectedLayer == layerNumber;
-//                   return GestureDetector(
-//                     onTap: () {
-//                       selectedLayer = layerNumber;
-//                       entity.layerNumber = layerNumber;
-//                     },
-//                     child: Container(
-//                       width: 30,
-//                       height: 30,
-//                       decoration: BoxDecoration(
-//                         color: isSelected ? Colors.blueAccent : Colors.grey[700],
-//                         border: Border.all(color: Colors.white),
-//                       ),
-//                       alignment: Alignment.center,
-//                       child: Text(
-//                         '$layerNumber',
-//                         style: const TextStyle(
-//                           fontFamily: 'PressStart2P',
-//                           fontSize: 10,
-//                           color: Colors.white,
-//                         ),
-//                       ),
-//                     ),
-//                   );
-//                 }),
-//               ),
-//             ],
-//           ),
-//         ),
-//       )
-//     ],
-//   );
-// }
 
 
   Widget _buildComponentPanels(BuildContext context, Entity entity) {
@@ -333,247 +168,6 @@ class _ControlPanelState extends State<ControlPanel> {
     );
   }
 
-  // Widget _buildRigidBodyComponentPanel(BuildContext context, Entity entity) {
-  //   final comp = entity.getComponent<RigidBodyComponent>()!;
-
-  //   return ChangeNotifierProvider.value(
-  //     value: comp,
-  //     child: Consumer<RigidBodyComponent>(
-  //       builder: (context, comp, child) => Card(
-  //         color: Color(0xFF333333),
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(12.0),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 'Rigid Body Component',
-  //                 style: TextStyle(
-  //                   fontFamily: 'PressStart2P',
-  //                   fontSize: 14,
-  //                   color: Colors.white,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 16),
-
-  //               // Component Active Toggle
-  //               Row(
-  //                 children: [
-  //                   Checkbox(
-  //                     value: comp.isActive,
-  //                     onChanged: (value) {
-  //                       entity.toggleComponent(RigidBodyComponent, 0);
-  //                     },
-  //                     checkColor: Colors.white,
-  //                     fillColor: WidgetStateProperty.all(Colors.transparent),
-  //                     side: const BorderSide(color: Colors.white, width: 2.0),
-  //                     shape: RoundedRectangleBorder(
-  //                       borderRadius: BorderRadius.circular(4),
-  //                     ),
-  //                   ),
-  //                   const Text(
-  //                     'Active',
-  //                     style: TextStyle(
-  //                       fontFamily: 'PressStart2P',
-  //                       fontSize: 12,
-  //                       color: Colors.white,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 12),
-
-  //               // Mass Control
-  //               PixelatedTextField(
-  //                 label: 'mass',
-  //                 labelColor: Colors.white,
-  //                 controller:
-  //                     TextEditingController(text: comp.mass.toStringAsFixed(2)),
-  //                 hintText: 'Mass',
-  //                 keyboardType: TextInputType.number,
-  //                 onChanged: (value) {
-  //                   final mass = double.tryParse(value) ?? comp.mass;
-  //                   if (mass > 0) {
-  //                     comp.setMass(mass);
-  //                   }
-  //                 },
-  //               ),
-  //               const SizedBox(height: 10),
-
-  //               // Gravity Control
-  //               PixelatedTextField(
-  //                 label: 'gravity',
-  //                 labelColor: Colors.white,
-  //                 controller: TextEditingController(
-  //                     text: comp.gravity.toStringAsFixed(2)),
-  //                 hintText: 'Gravity',
-  //                 keyboardType: TextInputType.number,
-  //                 onChanged: (value) {
-  //                   final gravity = double.tryParse(value) ?? comp.gravity;
-  //                   comp.setGravity(gravity);
-  //                 },
-  //               ),
-  //               const SizedBox(height: 10),
-  //               PixelatedTextField(
-  //                 label: 'fallspeed',
-  //                 labelColor: Colors.white,
-  //                 controller: TextEditingController(
-  //                     text: comp.maxFallSpeed.toString()),
-  //                 hintText: 'fallSpeed',
-  //                 keyboardType: TextInputType.number,
-  //                 onChanged: (value) {
-  //                   final maxSpeed =
-  //                       double.tryParse(value) ?? comp.maxFallSpeed;
-  //                   comp.setMaxFall(maxSpeed);
-  //                 },
-  //               ),
-  //              SizedBox(height: 10,),
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: PixelatedTextField(
-  //                       label: 'res',
-  //                       labelColor: Colors.white,
-  //                       controller: TextEditingController(
-  //                           text: comp.velocity.dx.toStringAsFixed(2)),
-  //                       hintText: 'Resistance',
-  //                       keyboardType: TextInputType.number,
-  //                       onChanged: (value) {
-  //                         final resistance =
-  //                             double.tryParse(value) ?? comp.velocity.dx;
-  //                         comp.setResistance(resistance);
-  //                       },
-  //                     ),
-  //                   ),
-  //                   const SizedBox(width: 10),
-  //                   Expanded(
-  //                     child: PixelatedTextField(
-  //                       label: 'friction',
-  //                       labelColor: Colors.white,
-  //                       controller: TextEditingController(
-  //                           text: comp.velocity.dy.toStringAsFixed(2)),
-  //                       hintText: 'Friction',
-  //                       keyboardType: TextInputType.number,
-  //                       onChanged: (value) {
-  //                         final friction =
-  //                             double.tryParse(value) ?? comp.velocity.dy;
-  //                         comp.setFriction(friction);
-  //                       },
-  //                     ),
-  //                   ),
-                     
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 12),
-
-  //               // Use Gravity Toggle
-  //               Row(
-  //                 children: [
-  //                   Checkbox(
-  //                     value: comp.useGravity,
-  //                     onChanged: (value) {
-  //                       comp.setUseGravity(value ?? comp.useGravity);
-  //                     },
-  //                     checkColor: Colors.white,
-  //                     fillColor: WidgetStateProperty.all(Colors.transparent),
-  //                     side: const BorderSide(color: Colors.white, width: 2.0),
-  //                     shape: RoundedRectangleBorder(
-  //                       borderRadius: BorderRadius.circular(4),
-  //                     ),
-  //                   ),
-  //                   const Text(
-  //                     'Use Gravity',
-  //                     style: TextStyle(
-  //                       fontFamily: 'PressStart2P',
-  //                       fontSize: 10,
-  //                       color: Colors.white,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 8),
-
-  //               // Static Toggle
-  //               Row(
-  //                 children: [
-  //                   Checkbox(
-  //                     value: comp.isStatic,
-  //                     onChanged: (value) {
-  //                       comp.setIsStatic(value ?? comp.isStatic);
-  //                     },
-  //                     checkColor: Colors.white,
-  //                     fillColor: WidgetStateProperty.all(Colors.transparent),
-  //                     side: const BorderSide(color: Colors.white, width: 2.0),
-  //                     shape: RoundedRectangleBorder(
-  //                       borderRadius: BorderRadius.circular(4),
-  //                     ),
-  //                   ),
-  //                   const Text(
-  //                     'Static',
-  //                     style: TextStyle(
-  //                       fontFamily: 'PressStart2P',
-  //                       fontSize: 10,
-  //                       color: Colors.white,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 8),
-
-  //               // Status indicators
-  //               Row(
-  //                 children: [
-  //                   Container(
-  //                     width: 12,
-  //                     height: 12,
-  //                     decoration: BoxDecoration(
-  //                       color: comp.isGrounded ? Colors.green : Colors.red,
-  //                       shape: BoxShape.circle,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(width: 8),
-  //                   Text(
-  //                     comp.isGrounded ? 'Grounded' : 'Airborne',
-  //                     style: const TextStyle(
-  //                       fontFamily: 'PressStart2P',
-  //                       fontSize: 10,
-  //                       color: Colors.white,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 8),
-
-  //               // Fall Progress Bar
-  //               if (!comp.isGrounded && comp.fallProgress > 0)
-  //                 Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       'Fall Progress: ${comp.fallProgress.toStringAsFixed(1)}',
-  //                       style: const TextStyle(
-  //                         fontFamily: 'PressStart2P',
-  //                         fontSize: 10,
-  //                         color: Colors.white,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 4),
-  //                     LinearProgressIndicator(
-  //                       value: (comp.fallProgress / comp.maxFallSpeed)
-  //                           .clamp(0.0, 1.0),
-  //                       backgroundColor: Colors.grey[800],
-  //                       valueColor:
-  //                           const AlwaysStoppedAnimation<Color>(Colors.orange),
-  //                     ),
-  //                   ],
-  //                 ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildNodeComponentPanel(BuildContext context, Entity entity) {
     final nodeComponents = entity.getAllComponents<NodeComponent>();
@@ -582,13 +176,13 @@ class _ControlPanelState extends State<ControlPanel> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        Text('Node Components (${nodeComponents?.length})',
+        Text('Node Components (${nodeComponents.length})',
             style: TextStyle(fontFamily: 'PressStart2P', fontSize: 15)),
         const SizedBox(height: 8),
         ...List.generate(nodeComponents.length, (index) {
           final nodeComponent = nodeComponents[index];
           return Card(
-            color: Color(0xffE8E8E8),
+            color: Color(0xFF333333),
             child: ListTile(
               title: Text(
                 'Node Component #$index',
@@ -720,252 +314,14 @@ class _ControlPanelState extends State<ControlPanel> {
 
 
 
-
-class EntityPropertiesWidget extends StatefulWidget {
-  final Entity entity;
-
-  const EntityPropertiesWidget({Key? key, required this.entity}) : super(key: key);
-
-  @override
-  _EntityPropertiesWidgetState createState() => _EntityPropertiesWidgetState();
-}
-
-class _EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
-  late TextEditingController nameController;
-  late TextEditingController tagController;
-  late TextEditingController xController;
-  late TextEditingController yController;
-  late TextEditingController rotationController;
-  late TextEditingController widthController;
-  late TextEditingController heightController;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeControllers();
-  }
-
-  void _initializeControllers() {
-    final entity = widget.entity;
-    
-    nameController = TextEditingController(text: entity.name);
-    tagController = TextEditingController(text: entity.tag);
-    xController = TextEditingController(text: entity.position.dx.toStringAsFixed(2));
-    yController = TextEditingController(text: entity.position.dy.toStringAsFixed(2));
-    rotationController = TextEditingController(text: entity.rotation.toStringAsFixed(2));
-    widthController = TextEditingController(text: entity.widthScale.toStringAsFixed(2));
-    heightController = TextEditingController(text: entity.heigthScale.toStringAsFixed(2));
-  }
-
-  void _updateControllers() {
-    final entity = widget.entity;
-    
-    nameController.text = entity.name;
-    tagController.text = entity.tag;
-    xController.text = entity.position.dx.toStringAsFixed(2);
-    yController.text = entity.position.dy.toStringAsFixed(2);
-    rotationController.text = entity.rotation.toStringAsFixed(2);
-    widthController.text = entity.widthScale.toStringAsFixed(2);
-    heightController.text = entity.heigthScale.toStringAsFixed(2);
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    tagController.dispose();
-    xController.dispose();
-    yController.dispose();
-    rotationController.dispose();
-    widthController.dispose();
-    heightController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final entity = widget.entity;
-
-    return ChangeNotifierProvider.value(
-      value: entity,
-      child: Consumer<Entity>(
-        builder: (context, entity, child) {
-          // Update controllers when entity changes
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _updateControllers();
-          });
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                color: const Color(0xffE8E8E8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Entity: ${entity.name}',
-                        style: const TextStyle(
-                          fontFamily: 'PressStart2P',
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-          
-                      PixelatedTextFormField(
-                        label: 'Name',
-                        controller: nameController,
-                        keyboardType: TextInputType.text,
-                        hintText: 'Name',
-                        onFieldSubmitted: (value) {
-                          entity.setName(value);
-                        },
-                      ),
-          
-                      const SizedBox(height: 10),
-          
-                      PixelatedTextFormField(
-                        label: 'Tag',
-                        controller: tagController,
-                        keyboardType: TextInputType.text,
-                        hintText: 'Tag',
-                        onFieldSubmitted: (value) {
-                          entity.tag = value;
-                        },
-                      ),
-          
-                      const SizedBox(height: 10),
-          
-                      Row(
-                        children: [
-                          Expanded(
-                            child: PixelatedTextFormField(
-                              label: 'X',
-                              controller: xController,
-                              hintText: 'Position X',
-                              keyboardType: TextInputType.number,
-                              onFieldSubmitted: (value) {
-                                final x = double.tryParse(value);
-                                if (x != null) entity.teleport(dx: x);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: PixelatedTextFormField(
-                              label: 'Y',
-                              controller: yController,
-                              hintText: 'Position Y',
-                              keyboardType: TextInputType.number,
-                              onFieldSubmitted: (value) {
-                                final y = double.tryParse(value);
-                                if (y != null) entity.teleport(dy: y);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-          
-                      const SizedBox(height: 10),
-          
-                      PixelatedTextFormField(
-                        label: 'R',
-                        controller: rotationController,
-                        hintText: 'Rotation (degrees)',
-                        keyboardType: TextInputType.number,
-                        onFieldSubmitted: (value) {
-                          final rotation = double.tryParse(value);
-                          if (rotation != null) entity.rotate(rotation);
-                        },
-                      ),
-          
-                      const SizedBox(height: 10),
-          
-                      PixelatedTextFormField(
-                        label: 'W',
-                        controller: widthController,
-                        hintText: 'Width Scale',
-                        keyboardType: TextInputType.number,
-                        onFieldSubmitted: (value) {
-                          final width = double.tryParse(value);
-                          if (width != null) entity.setWidth(width);
-                        },
-                      ),
-          
-                      const SizedBox(height: 10),
-          
-                      PixelatedTextFormField(
-                        label: 'H',
-                        controller: heightController,
-                        hintText: 'Height Scale',
-                        keyboardType: TextInputType.number,
-                        onFieldSubmitted: (value) {
-                          final height = double.tryParse(value);
-                          if (height != null) entity.setHeight(height);
-                        },
-                      ),
-          
-                      const SizedBox(height: 16),
-          
-                      Text(
-                        'Select Layer',
-                        style: const TextStyle(
-                          fontFamily: 'PressStart2P',
-                          fontSize: 10,
-                          color: Colors.black,
-                        ),
-                      ),
-          
-                      const SizedBox(height: 8),
-          
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: List.generate(10, (index) {
-                          final isSelected = index == entity.layerNumber;
-                          return GestureDetector(
-                            onTap: () {
-                              entity.setLayerNumber(index);
-                            },
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.blueAccent : Colors.grey[700],
-                                border: Border.all(color: Colors.white),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$index',
-                                style: const TextStyle(
-                                  fontFamily: 'PressStart2P',
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
 class RigidBodyComponentPanel extends StatefulWidget {
   final Entity entity;
 
   const RigidBodyComponentPanel({super.key, required this.entity});
 
   @override
-  State<RigidBodyComponentPanel> createState() => _RigidBodyComponentPanelState();
+  State<RigidBodyComponentPanel> createState() =>
+      _RigidBodyComponentPanelState();
 }
 
 class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
@@ -980,10 +336,14 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
     super.initState();
     final comp = widget.entity.getComponent<RigidBodyComponent>()!;
     massController = TextEditingController(text: comp.mass.toStringAsFixed(2));
-    gravityController = TextEditingController(text: comp.gravity.toStringAsFixed(2));
-    fallSpeedController = TextEditingController(text: comp.maxFallSpeed.toString());
-    resistanceController = TextEditingController(text: comp.velocity.dx.toStringAsFixed(2));
-    frictionController = TextEditingController(text: comp.velocity.dy.toStringAsFixed(2));
+    gravityController =
+        TextEditingController(text: comp.gravity.toStringAsFixed(2));
+    fallSpeedController =
+        TextEditingController(text: comp.maxFallSpeed.toString());
+    resistanceController =
+        TextEditingController(text: comp.velocity.dx.toStringAsFixed(2));
+    frictionController =
+        TextEditingController(text: comp.velocity.dy.toStringAsFixed(2));
   }
 
   @override
@@ -1051,8 +411,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                 PixelatedTextField(
                   label: 'mass',
                   labelColor: Colors.white,
-                  controller:
-                   massController,
+                  controller: massController,
                   hintText: 'Mass',
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
@@ -1089,7 +448,9 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                     comp.setMaxFall(maxSpeed);
                   },
                 ),
-               SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -1121,7 +482,6 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                         },
                       ),
                     ),
-                     
                   ],
                 ),
                 const SizedBox(height: 12),

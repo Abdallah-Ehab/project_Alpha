@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_text_feild.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
@@ -18,6 +19,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
   late TextEditingController entityController;
   late TextEditingController variableController;
   late String selectedFont;
+  Color selectedColor = Colors.white;
   String? error;
 
   final List<String> availableFonts = [
@@ -34,13 +36,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
     entityController = TextEditingController(text: widget.textElement.entityName ?? '');
     variableController = TextEditingController(text: widget.textElement.boundVariable);
     selectedFont = widget.textElement.fontFamily ?? 'PressStart2P';
-  }
-
-  @override
-  void dispose() {
-    entityController.dispose();
-    variableController.dispose();
-    super.dispose();
+    selectedColor = widget.textElement.color ?? Colors.white;
   }
 
   void _submit() {
@@ -60,8 +56,36 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
     widget.textElement.entityName = entityName;
     widget.textElement.boundVariable = variableName;
     widget.textElement.fontFamily = selectedFont;
+    widget.textElement.color = selectedColor;
 
     Navigator.pop(context);
+  }
+
+  void _pickColor() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF333333),
+          title: const Text("Pick Text Color", style: TextStyle(color: Colors.white)),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: selectedColor,
+              onColorChanged: (color) => setState(() => selectedColor = color),
+              enableAlpha: false,
+              labelTypes: const [ColorLabelType.rgb],
+              pickerAreaHeightPercent: 0.6,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Close", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -74,11 +98,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
       ),
       title: const Text(
         "Configure Text UI",
-        style: TextStyle(
-          fontFamily: 'PressStart2P',
-          fontSize: 18,
-          color: Colors.white,
-        ),
+        style: TextStyle(fontFamily: 'PressStart2P', fontSize: 18, color: Colors.white),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -101,27 +121,39 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Text(
-                'Font:',
-                style: TextStyle(color: Colors.white),
-              ),
+              const Text('Font:', style: TextStyle(color: Colors.white)),
               const SizedBox(width: 12),
               DropdownButton<String>(
                 value: selectedFont,
                 dropdownColor: const Color(0xFF333333),
                 style: const TextStyle(color: Colors.white),
                 iconEnabledColor: Colors.white,
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => selectedFont = value);
-                  }
-                },
-                items: availableFonts
-                    .map((font) => DropdownMenuItem(
-                          value: font,
-                          child: Text(font, style: TextStyle(fontFamily: font)),
-                        ))
-                    .toList(),
+                onChanged: (value) => setState(() => selectedFont = value!),
+                items: availableFonts.map((font) {
+                  return DropdownMenuItem(
+                    value: font,
+                    child: Text(font, style: TextStyle(fontFamily: font)),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Text("Color:", style: TextStyle(color: Colors.white)),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: _pickColor,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: selectedColor,
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
               ),
             ],
           ),

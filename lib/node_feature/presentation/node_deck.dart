@@ -16,10 +16,12 @@ import 'package:scratch_clone/node_feature/data/object_property_nodes/get_proper
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/physics_related_nodes/collision_detection_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/flip_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/destroy_entity_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
+import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_position.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_list_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
@@ -36,12 +38,14 @@ class NodeDeck extends StatelessWidget {
     ConditionGroupNode(logicSequence: []),
     SimpleConditionNode(),
     DetectCollisionNode(),
+    
   ];
 
   final List<NodeModel> playerTransformNodes = [
     TeleportNode(),
     MoveNode(),
-    ApplyForceNode()
+    ApplyForceNode(),
+    SimpleFlipNode()
   ];
 
   final List<NodeModel> variableNodes = [
@@ -53,6 +57,7 @@ class NodeDeck extends StatelessWidget {
   final List<NodeModel> entityNodes = [
     GetPropertyFromEntityNode(),
     SpawnEntityNode(),
+    SpawnAtNode(),
     DestroyEntityNode()
   ];
 

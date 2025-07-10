@@ -10,7 +10,7 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/player_transform_node_widgets/teleport_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class TeleportNode extends NodeModel {
+class TeleportNode extends InputNodeWithValue {
   TeleportNode({super.position = Offset.zero})
       : super(
           image: 'assets/icons/TeleportNode.png',

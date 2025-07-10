@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/logic_element.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
@@ -82,6 +83,9 @@ Result<bool> execute([Entity? entity]) {
       }
 
       // Normal variable lookup
+      if(EntityManager().globalVariables.containsKey(val)){
+        return EntityManager().globalVariables[val];
+      }
       if (entity.variables.containsKey(val)) {
         return entity.variables[val];
       }

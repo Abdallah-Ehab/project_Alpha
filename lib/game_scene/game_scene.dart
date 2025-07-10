@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/entity/presentation/add_component_button.dart';
 import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
 import 'package:scratch_clone/entity/presentation/create_entity_button.dart';
 import 'package:scratch_clone/entity/presentation/entity_drop_down_button.dart';
+import 'package:scratch_clone/entity/presentation/prefab_card.dart';
 import 'package:scratch_clone/game_scene/add_global_variable_button.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_state/save_game.dart';
@@ -23,8 +27,7 @@ class GameScene extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.transparent,
       ),
-      
-      drawer: Column(
+      drawer : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

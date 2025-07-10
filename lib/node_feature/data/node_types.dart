@@ -101,7 +101,7 @@ abstract class MultipleInputNode extends NodeModel with HasMultipleInputs,HasOut
 }
 
 
-abstract class InputNodeWithValue extends NodeModel with HasValue,HasOutput {
+abstract class InputNodeWithValue extends NodeModel with HasValue {
   InputNodeWithValue({super.position,required super.color, required super.width, required super.height, required super.connectionPoints,required super.image});
 }
 
