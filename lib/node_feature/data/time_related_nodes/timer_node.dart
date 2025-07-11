@@ -1,10 +1,4 @@
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:scratch_clone/core/result.dart';
-import 'package:scratch_clone/entity/data/entity.dart';
-import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
-import 'package:scratch_clone/node_feature/data/node_model.dart';
 
 // class TimerNode extends NodeModel {
 //   double targetTime; // in seconds

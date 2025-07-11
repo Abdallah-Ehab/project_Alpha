@@ -275,7 +275,7 @@ class OutputConnectionPoint extends ConnectionPointModel {
         if ((endPos - pointPos).distance <= 20) {
           if (ownerNode is HasOutput && targetNode is HasInput) {
             (ownerNode as HasOutput).connectOutput(targetNode);
-            (targetNode as HasInput).connectInput(ownerNode);
+            (targetNode).connectInput(ownerNode);
             isConnected = true;
             point.isConnected = true;
             log('output node $ownerNode is connected to input node $targetNode');

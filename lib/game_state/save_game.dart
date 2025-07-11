@@ -1,12 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
-import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 import '../login_and_signup/presentation/cubit/storage_cubit.dart';
 

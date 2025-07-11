@@ -69,9 +69,10 @@ class MyTimeline extends StatelessWidget {
                                 builder: (context, animComp, _) {
                                   final isSelected = animComp.currentFrame == index;
                                   return Container(
+                                    decoration: BoxDecoration( color: isSelected ? Colors.white : Colors.grey,borderRadius: BorderRadius.circular(8)),
                                     width: 60,
                                     margin: const EdgeInsets.all(4),
-                                    color: isSelected ? Colors.orange : Colors.grey,
+                                   
                                     child: InkWell(
                                       onTap: () => animComp.setFrame(index),
                                       onDoubleTap: () {
@@ -81,7 +82,7 @@ class MyTimeline extends StatelessWidget {
                                               currentTrack.frames.length - 1),
                                         );
                                       },
-                                      child: Center(child: Text("$index")),
+                                      child: Center(child: Text("$index",style: TextStyle(fontFamily: "PressStart2P",fontSize: 14),)),
                                     ),
                                   );
                                 },
@@ -91,10 +92,11 @@ class MyTimeline extends StatelessWidget {
                         } else {
                           // Add new frame
                           return Container(
+                            decoration: BoxDecoration(color: Color(0xff888888),borderRadius: BorderRadius.circular(12)),
                             width: 60,
                             key: ValueKey('add'),
                             margin: const EdgeInsets.all(4),
-                            color: Colors.green,
+                            
                             child: GestureDetector(
                               onTap: () {
                                 currentTrack.addFrame(KeyFrame(sketches: []));

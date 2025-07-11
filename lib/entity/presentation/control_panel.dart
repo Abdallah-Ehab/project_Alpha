@@ -87,7 +87,7 @@ class _ControlPanelState extends State<ControlPanel> {
     return SizedBox(
       width: double.infinity,
       child: Card(
-        color: Color(0xffE8E8E8),
+        color: Color(0xffCCCCCC),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -237,7 +237,7 @@ class _ControlPanelState extends State<ControlPanel> {
     return SizedBox(
       width: double.infinity,
       child: Card(
-        color: Color(0xffE8E8E8),
+        color: Color(0xffCCCCCC),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -261,20 +261,21 @@ class _ControlPanelState extends State<ControlPanel> {
                   final value = entry.value;
                   if (value is bool) {
                     return CheckboxListTile(
+                      tileColor: Color(0xff222222),
                       checkColor: Colors.white,
                       fillColor:
-                          MaterialStateProperty.resolveWith<Color>((states) {
+                          WidgetStateProperty.resolveWith<Color>((states) {
                         return Colors.transparent;
                       }),
                       side: const BorderSide(color: Colors.white, width: 2.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       title: Text(key,
                           style: TextStyle(
                               fontFamily: 'PressStart2P',
-                              color: Colors.black,
-                              fontSize: 12)),
+                              color: Colors.white,
+                              fontSize: 14)),
                       value: value,
                       onChanged: (newValue) {
                         if (newValue != null) {

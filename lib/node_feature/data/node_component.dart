@@ -113,25 +113,23 @@ class NodeComponent extends Component {
     };
 
     for (final point in allPoints) {
-      if (point is ValueConnectionPoint) {
-        final dynamic p = point;
+      final dynamic p = point;
 
-        final sourceId = p._sourcePointId;
-        final destinationId = p._destinationPointId;
+      final sourceId = p._sourcePointId;
+      final destinationId = p._destinationPointId;
 
-        if (sourceId != null && idToPoint[sourceId] is ValueConnectionPoint) {
-          p.sourcePoint = idToPoint[sourceId] as ValueConnectionPoint;
-        }
-
-        if (destinationId != null &&
-            idToPoint[destinationId] is ValueConnectionPoint) {
-          p.destinationPoint = idToPoint[destinationId] as ValueConnectionPoint;
-        }
-
-        // Mark connection state
-        point.isConnected = p.sourcePoint != null;
+      if (sourceId != null && idToPoint[sourceId] is ValueConnectionPoint) {
+        p.sourcePoint = idToPoint[sourceId] as ValueConnectionPoint;
       }
-    }
+
+      if (destinationId != null &&
+          idToPoint[destinationId] is ValueConnectionPoint) {
+        p.destinationPoint = idToPoint[destinationId] as ValueConnectionPoint;
+      }
+
+      // Mark connection state
+      point.isConnected = p.sourcePoint != null;
+        }
     return NodeComponent(
       isActive: json['isActive'] as bool? ?? true,
       startNode: startNode,
@@ -211,18 +209,18 @@ class NodeComponent extends Component {
       }
 
       // Connect input
-      if (original is HasInput && (original as HasInput).input != null) {
+      if (original is HasInput && (original).input != null) {
         final inputIndex =
-            workspaceNodes.indexOf((original as HasInput).input!);
+            workspaceNodes.indexOf((original).input!);
         if (inputIndex != -1 && copy is HasInput) {
           copy.connectInput(copiedNodes[inputIndex]);
         }
       }
 
       // Connect output
-      if (original is HasOutput && (original as HasOutput).output != null) {
+      if (original is HasOutput && (original).output != null) {
         final outputIndex =
-            workspaceNodes.indexOf((original as HasOutput).output!);
+            workspaceNodes.indexOf((original).output!);
         if (outputIndex != -1 && copy is HasOutput) {
           copy.connectOutput(copiedNodes[outputIndex]);
         }

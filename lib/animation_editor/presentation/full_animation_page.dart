@@ -62,17 +62,41 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text("Animation Editor"),
+          backgroundColor: Color(0xff222222),
+          title: const Text(
+            "Animation Editor",
+            style: TextStyle(
+                fontFamily: "PressStart2P", fontSize: 16, color: Colors.white),
+          ),
           bottom: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: "Editor"),
-              Tab(text: "Transitions"),
+            tabs: [
+              Tab(
+                  child: Text(
+                "Editor",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PressStart2P",
+                  fontSize: 12,
+                ),
+              )),
+              Tab(
+                  child: Text(
+                "Transitions",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PressStart2P",
+                  fontSize: 12,
+                ),
+              )),
             ],
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.brush),
+              icon: const Icon(
+                Icons.brush,
+                color: Colors.white,
+              ),
               onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
             )
           ],
@@ -97,14 +121,24 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
                         ),
                       );
                     },
-                    icon: const Icon(Icons.graphic_eq),
-                    label: const Text("Visualize"),
+                    backgroundColor: Color(0xff333333),
+                    icon: const Icon(Icons.graphic_eq, color: Colors.white),
+                    label: const Text(
+                      "Visualize",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: "PressStart2P",
+                        fontSize: 12,
+                      ),
+                    ),
                     heroTag: 'visualize',
                   ),
                   const SizedBox(height: 12),
 
                   // Add button (at the bottom)
                   FloatingActionButton(
+                    
+                    backgroundColor: Color(0xff333333),
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -114,7 +148,10 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
                       );
                     },
                     heroTag: 'add',
-                    child: const Icon(Icons.add),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -133,8 +170,13 @@ class _FullAnimationEditorPageState extends State<FullAnimationEditorPage>
                 const Expanded(flex: 20, child: AnimationEditorScreen()),
                 Expanded(
                     flex: 5,
-                    child: PlayBackControlPanel()),
-                Expanded(flex: 8, child: MyTimeline()),
+                    child: Container(
+                        color: Color(0xff222222),
+                        child: PlayBackControlPanel())),
+                Expanded(
+                    flex: 8,
+                    child: Container(
+                        color: Color(0xff222222), child: MyTimeline())),
               ],
             ),
             const AnimationTransitionsPage(),

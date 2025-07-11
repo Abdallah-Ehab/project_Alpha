@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -60,22 +59,23 @@ class StorageCubit extends Cubit<StorageState> {
     final uid = Supabase.instance.client.auth.currentUser?.id;
     final dir = await getApplicationDocumentsDirectory();
     final localFile = File('${dir.path}/$uid/$filename.json');
-
     try {
       if (uid == null) throw Exception('Not authenticated');
-
+      log('Attempting to download $uid/$filename.json from Supabase');
       final bytes = await Supabase.instance.client
           .storage
           .from('userstorage')
           .download('$uid/$filename.json');
-
       final jsonString = utf8.decode(bytes);
+      if (jsonString.isEmpty) {
+        log('Downloaded file is empty');
+        return false;
+      }
       await localFile.writeAsString(jsonString);
       log('✅ File downloaded to ${localFile.path}');
       return true;
     } on StorageException catch (e) {
       log('❌ Storage error (${e.statusCode}): ${e.message}');
-      // delete any old file
       if (await localFile.exists()) {
         await localFile.delete();
         log('🗑️ Deleted stale file ${localFile.path}');

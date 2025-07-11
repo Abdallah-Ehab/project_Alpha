@@ -64,7 +64,7 @@ class NodeWorkspaceCamera extends ChangeNotifier {
 class NodeWorkspaceTest extends StatefulWidget {
   final NodeComponent nodeComponent; // Pass the NodeComponent directly
 
-  NodeWorkspaceTest({super.key, required this.nodeComponent});
+  const NodeWorkspaceTest({super.key, required this.nodeComponent});
 
   @override
   State<NodeWorkspaceTest> createState() => _NodeWorkspaceTestState();

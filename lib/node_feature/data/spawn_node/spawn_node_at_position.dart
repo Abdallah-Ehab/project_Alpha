@@ -61,10 +61,8 @@ class SpawnAtNode extends NodeModel {
     final valX = _evaluate(connectionPoints[2] as ValueConnectionPoint, x, activeEntity);
     final valY = _evaluate(connectionPoints[3] as ValueConnectionPoint, y, activeEntity);
     
-        if (prefabName != null) {
-      EntityManager().spawnPrefabAtPosition(prefabName, Offset(valX, valY));
-    }
-
+    EntityManager().spawnPrefabAtPosition(prefabName, Offset(valX, valY));
+  
     return Result.success();
   }
 

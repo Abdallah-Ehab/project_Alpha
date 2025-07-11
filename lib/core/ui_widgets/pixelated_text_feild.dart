@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class PixelatedTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
@@ -16,6 +18,7 @@ class PixelatedTextField extends StatelessWidget {
     this.label,
     this.labelColor,
     Color? borderColor,
+
   }) : borderColor = borderColor ?? Colors.black;
 
   @override
@@ -34,7 +37,6 @@ class PixelatedTextField extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,
-            maxLength: 5,
             cursorColor: Colors.white,
             cursorWidth: 4,
             style: const TextStyle(
