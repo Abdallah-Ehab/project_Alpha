@@ -20,7 +20,7 @@ class SimpleFlipNode extends NodeModel {
           image: 'assets/icons/flip.png',
           color: Colors.deepPurple,
           width: 180,
-          height: 140,
+          height: 180,
           connectionPoints: [],
         ) {
     connectionPoints = [
@@ -30,7 +30,7 @@ class SimpleFlipNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     if (activeEntity == null) return Result.failure(errorMessage: "No active entity");
 
     if (flipX) {

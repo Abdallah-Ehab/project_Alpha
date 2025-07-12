@@ -16,6 +16,8 @@ import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_card_widget.dart';
+import 'package:scratch_clone/pose_detection_feature/data/pose_detection_component.dart';
+import 'package:scratch_clone/pose_detection_feature/presentation/pose_detection_page.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 import 'package:scratch_clone/sound_feature/presentation/full_sound_page.dart';
 
@@ -109,6 +111,7 @@ class _ControlPanelState extends State<ControlPanel> {
                 _buildSoundComponentControl(context, entity),
               if (entity.getComponent<RigidBodyComponent>() != null)
                 RigidBodyComponentPanel(entity: entity),
+              
             ],
           ),
         ),
@@ -234,78 +237,83 @@ class _ControlPanelState extends State<ControlPanel> {
   }
 
   Widget _buildVariablesDisplay(BuildContext context, Entity entity) {
-    return SizedBox(
-      width: double.infinity,
-      child: Card(
-        color: Color(0xffCCCCCC),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Variables',
-                  style: TextStyle(
-                      fontFamily: 'PressStart2P',
-                      color: Colors.black,
-                      fontSize: 18)),
-              const SizedBox(height: 10),
-              if (entity.variables.isEmpty)
-                const Text('No variables declared',
-                    style: TextStyle(
-                        fontFamily: 'PressStart2P',
-                        color: Colors.black,
-                        fontSize: 12))
-              else
-                ...entity.variables.entries.map((entry) {
-                  final key = entry.key;
-                  final value = entry.value;
-                  if (value is bool) {
-                    return CheckboxListTile(
-                      tileColor: Color(0xff222222),
-                      checkColor: Colors.white,
-                      fillColor:
-                          WidgetStateProperty.resolveWith<Color>((states) {
-                        return Colors.transparent;
-                      }),
-                      side: const BorderSide(color: Colors.white, width: 2.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      title: Text(key,
-                          style: TextStyle(
-                              fontFamily: 'PressStart2P',
-                              color: Colors.white,
-                              fontSize: 14)),
-                      value: value,
-                      onChanged: (newValue) {
-                        if (newValue != null) {
-                          entity.setVariableXToValueY(key, newValue);
-                        }
-                      },
-                    );
-                  } else if (value is int || value is double) {
-                    return PixelatedSlider(
-                      value: (value as num).toDouble(),
-                      min: -1.0,
-                      max: 1.0,
-                      onChanged: (newValue) {
-                        entity.setVariableXToValueY(
-                            key, value is int ? newValue.round() : newValue);
-                      },
-                      label: '$key: $value',
-                      divisions: 100,
-                    );
-                  } else {
-                    return PixelatedTextField(
-                      controller: TextEditingController(text: value.toString()),
-                      hintText: key,
-                      onChanged: (newValue) {
-                        entity.setVariableXToValueY(key, newValue);
-                      },
-                    );
-                  }
-                }),
-            ],
+   return ChangeNotifierProvider.value(
+      value: entity,
+      child: Consumer<Entity>(
+        builder: (context, entity, child) =>  SizedBox(
+          width: double.infinity,
+          child: Card(
+            color: Color(0xffE8E8E8),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Variables',
+                      style: TextStyle(
+                          fontFamily: 'PressStart2P',
+                          color: Colors.black,
+                          fontSize: 18)),
+                  const SizedBox(height: 10),
+                  if (entity.variables.isEmpty)
+                    const Text('No variables declared',
+                        style: TextStyle(
+                            fontFamily: 'PressStart2P',
+                            color: Colors.black,
+                            fontSize: 12))
+                  else
+                    ...entity.variables.entries.map((entry) {
+                      final key = entry.key;
+                      final value = entry.value;
+                      if (value is bool) {
+                        return CheckboxListTile(
+                          checkColor: Colors.white,
+                          fillColor:
+                              MaterialStateProperty.resolveWith<Color>((states) {
+                            return Colors.transparent;
+                          }),
+                          side: const BorderSide(color: Colors.white, width: 2.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          title: Text(key,
+                              style: TextStyle(
+                                  fontFamily: 'PressStart2P',
+                                  color: Colors.black,
+                                  fontSize: 12)),
+                          value: value,
+                          onChanged: (newValue) {
+                            if (newValue != null) {
+                              entity.setVariableXToValueY(key, newValue);
+                            }
+                          },
+                        );
+                      } else if (value is int || value is double) {
+                        return PixelatedSlider(
+                          value: (value as num).toDouble(),
+                          min: -1.0,
+                          max: 1.0,
+                          onChanged: (newValue) {
+                            entity.setVariableXToValueY(
+                                key, value is int ? newValue.round() : newValue);
+                          },
+                          label: '$key: $value',
+                          divisions: 100,
+                        );
+                      } else {
+                        return PixelatedTextField(
+                          
+                          controller: TextEditingController(text: value.toString()),
+                          hintText: key,
+                          onChanged: (newValue) {
+                            entity.setVariableXToValueY(key, newValue);
+                          },
+                        );
+                      }
+                    }),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -410,6 +418,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
 
                 // Mass Control
                 PixelatedTextField(
+                  
                   label: 'mass',
                   labelColor: Colors.white,
                   controller: massController,
@@ -426,6 +435,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
 
                 // Gravity Control
                 PixelatedTextField(
+                 
                   label: 'gravity',
                   labelColor: Colors.white,
                   controller: gravityController,
@@ -438,6 +448,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                 ),
                 const SizedBox(height: 10),
                 PixelatedTextField(
+                 
                   label: 'fallspeed',
                   labelColor: Colors.white,
                   controller: fallSpeedController,
@@ -456,6 +467,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                   children: [
                     Expanded(
                       child: PixelatedTextField(
+                        
                         label: 'res',
                         labelColor: Colors.white,
                         controller: resistanceController,
@@ -471,6 +483,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: PixelatedTextField(
+                        
                         label: 'friction',
                         labelColor: Colors.white,
                         controller: frictionController,

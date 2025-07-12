@@ -498,7 +498,7 @@ class InfiniteArrowPainter extends CustomPainter {
         }
       }
 
-      if (node is OutputNodeWithValue) {
+      if (node is HasValue) {
         final targetPoints =
             node.connectionPoints.whereType<ValueConnectionPoint>();
 

@@ -1,0 +1,2 @@
+D:/abdallah_stuff/abdallah_projects/scratch_clone/android/app/.cxx/Debug/12216122/x86/CMakeFiles/edit_cache.dir
+D:/abdallah_stuff/abdallah_projects/scratch_clone/android/app/.cxx/Debug/12216122/x86/CMakeFiles/rebuild_cache.dir

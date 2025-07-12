@@ -8,6 +8,7 @@ class PixelatedTextField extends StatelessWidget {
   final Color borderColor;
   final Color? labelColor;
   final String? label;
+  
 
   const PixelatedTextField({
     super.key,
@@ -17,6 +18,7 @@ class PixelatedTextField extends StatelessWidget {
     this.keyboardType = const TextInputType.numberWithOptions(),
     this.label,
     this.labelColor,
+    
     Color? borderColor,
 
   }) : borderColor = borderColor ?? Colors.black;

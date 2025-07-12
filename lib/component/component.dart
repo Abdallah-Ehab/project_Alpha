@@ -5,6 +5,7 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
+import 'package:scratch_clone/pose_detection_feature/data/pose_detection_component.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 
@@ -45,6 +46,8 @@ abstract class Component with ChangeNotifier {
         return RigidBodyComponent.fromJson(json);
       case 'node_component':
         return NodeComponent.fromJson(json);
+      case "SoundControllerComponent":
+        return SoundControllerComponent.fromJson(json);
       default:
         throw Exception('Unknown component type: $type');
     }

@@ -4,10 +4,11 @@ import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
+import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/math_node_widgets/math_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class DivideNode extends NodeModel {
+class DivideNode extends InputNodeWithValue {
   DivideNode({super.position})
       : super(
           image: 'assets/icons/divideNode.png',
@@ -42,7 +43,7 @@ class DivideNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     final a = _getInputValue(0, activeEntity);
     final b = _getInputValue(1, activeEntity);
 

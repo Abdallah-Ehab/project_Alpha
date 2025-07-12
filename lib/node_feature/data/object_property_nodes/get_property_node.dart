@@ -62,7 +62,7 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     final value = _getPropertyValue();
 
     if (selectedProperty == Property.position && value is Offset) {

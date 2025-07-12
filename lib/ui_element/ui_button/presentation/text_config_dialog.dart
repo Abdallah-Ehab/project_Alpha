@@ -103,6 +103,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
+            
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (_) {},
@@ -111,6 +112,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
           ),
           const SizedBox(height: 16),
           PixelatedTextField(
+            
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (_) {},

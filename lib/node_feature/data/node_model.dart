@@ -6,8 +6,11 @@ import 'package:scratch_clone/node_feature/data/flow_control_nodes/condition_gro
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
+import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
+import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
@@ -88,8 +91,12 @@ abstract class NodeModel with ChangeNotifier {
         return StatementGroupNode.fromJson(json);
       case 'SetVariableNode':
       return SetVariableNode.fromJson(json);
-      
-
+      case 'TeleportNode':
+      return TeleportNode.fromJson(json);
+      case 'GetPropertyFromEntityNode':
+      return GetPropertyFromEntityNode.fromJson(json);
+      case 'WaitForNode':
+      return WaitForNode.fromJson(json);
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
     }
@@ -109,7 +116,7 @@ abstract class NodeModel with ChangeNotifier {
   });
 
   /// Used for actual node logic
-  Result execute([Entity? activeEntity]);
+  Result execute([Entity? activeEntity,Duration? dt]);
 
   /// For rendering in the UI
   Widget buildNode();
@@ -229,7 +236,7 @@ class StartNode extends NodeModel {
   }
 
   @override
-  Result<String> execute([Entity? activeEntity]) {
+  Result<String> execute([Entity? activeEntity,Duration? dt]) {
     return Result.success(result: "I'm just a cute starting node");
   }
 

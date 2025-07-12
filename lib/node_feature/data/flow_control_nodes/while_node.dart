@@ -28,7 +28,7 @@ class WhileNode extends InputOutputNode {
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity]) {
+  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     if (input == null) {
       return Result.failure(
           errorMessage: "WhileNode is missing a condition input.");

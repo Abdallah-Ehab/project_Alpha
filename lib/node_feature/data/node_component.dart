@@ -8,6 +8,7 @@ import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dar
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
+import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 
 class NodeComponent extends Component {
@@ -113,10 +114,10 @@ class NodeComponent extends Component {
     };
 
     for (final point in allPoints) {
-      final dynamic p = point;
+     final dynamic p = point;
 
-      final sourceId = p._sourcePointId;
-      final destinationId = p._destinationPointId;
+      final sourceId = p.sourcePointId;
+      final destinationId = p.destinationPointId;
 
       if (sourceId != null && idToPoint[sourceId] is ValueConnectionPoint) {
         p.sourcePoint = idToPoint[sourceId] as ValueConnectionPoint;
@@ -151,38 +152,47 @@ class NodeComponent extends Component {
 
   NodeModel? _current;
   @override
-  void update(Duration dt, {required Entity activeEntity}) {
-    _current = startNode;
+void update(Duration dt, {required Entity activeEntity}) {
+  _current = startNode;
 
-    while (_current != null) {
-      log('${_current?.child} is child of $_current of id : ${_current?.id}');
-      final result = _current!.execute(activeEntity);
-      if (result.errorMessage != null) {
-        log("Execution error: ${result.errorMessage}");
-        break;
-      }
+  while (_current != null) {
+    log('${_current?.child} is child of $_current of id : ${_current?.id}');
 
-      // Special case: IfNode false condition
-      if (_current is IfNode &&
-          result is Result<bool> &&
-          result.result == false) {
-        final elseNode = _current!.child;
-        if (elseNode is ElseNode) {
-          final elseResult = elseNode.execute(activeEntity);
-          if (elseResult.errorMessage != null) {
-            log("Else block error: ${elseResult.errorMessage}");
-            break;
-          }
-          _current = elseNode.child;
-          continue;
-        }
-      }
+    final result = _current!.execute(activeEntity, dt);
 
-      _current = _current!.child;
+    if (result.errorMessage != null) {
+      log("Execution error: ${result.errorMessage}");
+      break;
     }
 
-    notifyListeners();
+    if (_current is IfNode &&
+        result is Result<bool> &&
+        result.result == false) {
+      final elseNode = _current!.child;
+      if (elseNode is ElseNode) {
+        final elseResult = elseNode.execute(activeEntity, dt);
+        if (elseResult.errorMessage != null) {
+          log("Else block error: ${elseResult.errorMessage}");
+          break;
+        }
+        _current = elseNode.child;
+        continue;
+      }
+    }
+
+    // WaitForNode: pause execution if result is false
+    if (_current is WaitForNode &&
+        result is Result<bool> &&
+        result.result == false) {
+      break;
+    }
+
+    _current = _current!.child;
   }
+
+  notifyListeners();
+}
+
 
   @override
   void reset() {

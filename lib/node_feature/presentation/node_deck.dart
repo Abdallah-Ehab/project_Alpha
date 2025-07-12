@@ -21,6 +21,7 @@ import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/t
 import 'package:scratch_clone/node_feature/data/spawn_node/destroy_entity_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_position.dart';
+import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_list_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
@@ -55,6 +56,8 @@ class _NodeDeckState extends State<NodeDeck> with TickerProviderStateMixin {
     MoveNode(): "MOVE NODE",
     ApplyForceNode(): "APPLY FORCE NODE",
     SimpleFlipNode(): "FLIP NODE",
+    WaitForNode(): "WAIT FOR NODE",
+    
   };
 
   final Map<NodeModel, String> variableNodes = {

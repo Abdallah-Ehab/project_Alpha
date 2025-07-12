@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _usernameController,
                             borderColor: Colors.white,
                             keyboardType: TextInputType.text,
-                            onChanged: (String value) {},
+                            onChanged: (String value) {}, 
                           ),
                           const SizedBox(height: 20),
                           PixelatedTextField(

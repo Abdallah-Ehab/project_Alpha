@@ -44,12 +44,12 @@ class SpawnAtNode extends NodeModel {
 
       // Value inputs (x, y)
       ValueConnectionPoint(
-        position: Offset(0, 60),
+        position: Offset.zero,
         isLeft: true,
         ownerNode: this, valueIndex: 0, width: 30,
       ),
       ValueConnectionPoint(
-        position: Offset(0, 100),
+        position: Offset.zero,
         isLeft: true,
         ownerNode: this, valueIndex: 1, width: 30,
       ),
@@ -57,7 +57,7 @@ class SpawnAtNode extends NodeModel {
   }
 
   @override
-  Result execute([Entity? activeEntity]) {
+  Result execute([Entity? activeEntity,Duration? dt]) {
     final valX = _evaluate(connectionPoints[2] as ValueConnectionPoint, x, activeEntity);
     final valY = _evaluate(connectionPoints[3] as ValueConnectionPoint, y, activeEntity);
     

@@ -23,7 +23,7 @@ abstract class Entity with ChangeNotifier {
   double widthScale;
   double heigthScale;
   Map<Type, List<Component>> components;
-  Map<String, dynamic> variables;
+  Map<String, dynamic> variables = {'ontap' : false};
   Map<String, List<dynamic>> lists;
   int layerNumber;
   bool onTapVariable;
@@ -47,9 +47,7 @@ abstract class Entity with ChangeNotifier {
     this.onLongPressVariable = false,
     this.isFlippedX = false,
     this.isFlippedY = false,
-  }):components = {},variables = {
-    'ontap' : false,
-  },lists = {};
+  }):components = {},lists = {};
 
   dynamic getProperty(Property property) {
     switch (property) {
@@ -111,10 +109,10 @@ abstract class Entity with ChangeNotifier {
     switch (json['type']) {
       case 'actor':
         return ActorEntity.fromJson(
-            json); // Replace with your specific Entity subclasses
+            json);
       case 'camera':
         return CameraEntity.fromJson(
-            json); // Replace with your specific Entity subclasses
+            json);
       case 'light':
       return LightEntity.fromJson(json);
       default:

@@ -102,8 +102,8 @@ abstract class ConnectionPointModel {
         vcp.destinationPoint = vcp;
         vcp.sourcePoint = null;
 
-        (vcp as dynamic)._sourcePointId = json['sourcePointid'];
-        (vcp as dynamic)._destinationPointId = json['destinationPointid'];
+        vcp.sourcePointId = json['sourcePointid'];
+        vcp.destinationPointId = json['destinationPointid'];
         return vcp;
       default:
         throw UnimplementedError(
@@ -421,6 +421,8 @@ class ValueConnectionPoint extends ConnectionPointModel {
   ValueConnectionPoint? destinationPoint;
   bool isLeft;
   dynamic value;
+  String? sourcePointId;
+  String? destinationPointId;
 
   ValueConnectionPoint({
     required super.ownerNode,
@@ -509,8 +511,8 @@ class ValueConnectionPoint extends ConnectionPointModel {
         final targetPointPos =
             targetNode.position + targetPoint.computeOffset();
         if ((endPos - targetPointPos).distance <= 20) {
-          if (targetNode is OutputNodeWithValue &&
-              ownerNode is InputNodeWithValue) {
+          if (targetNode is HasValue &&
+              ownerNode is HasValue) {
             (ownerNode as InputNodeWithValue).connectValue(this, targetPoint);
             isConnected = true;
             targetPoint.isConnected = true;
