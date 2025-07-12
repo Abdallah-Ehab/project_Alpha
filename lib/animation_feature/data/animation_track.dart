@@ -19,7 +19,7 @@ class AnimationTrack with ChangeNotifier {
   int fps;
   bool isLooping;
   bool mustFinish;
-  bool isDestroyAnimationTrack; // New attribute for destroy animation
+  bool isDestroyAnimationTrack; 
 
   AnimationTrack(this.name, this.frames, this.isLooping, this.mustFinish,
       {this.fps = 10, this.isDestroyAnimationTrack = false,this.position = Offset.zero});

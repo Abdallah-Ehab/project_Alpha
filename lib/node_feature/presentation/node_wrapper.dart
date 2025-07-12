@@ -94,7 +94,6 @@ class NodeWrapper extends StatelessWidget {
               node.highlightNode(false);
               nodeComponent.removeNodeFromWorkspace(nodeModel);
             }
-
             break;
           }
         }

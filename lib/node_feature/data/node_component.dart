@@ -130,7 +130,7 @@ class NodeComponent extends Component {
 
       // Mark connection state
       point.isConnected = p.sourcePoint != null;
-        }
+    }
     return NodeComponent(
       isActive: json['isActive'] as bool? ?? true,
       startNode: startNode,
@@ -152,47 +152,46 @@ class NodeComponent extends Component {
 
   NodeModel? _current;
   @override
-void update(Duration dt, {required Entity activeEntity}) {
-  _current = startNode;
+  void update(Duration dt, {required Entity activeEntity}) {
+    _current = startNode;
 
-  while (_current != null) {
-    log('${_current?.child} is child of $_current of id : ${_current?.id}');
+    while (_current != null) {
+      log('${_current?.child} is child of $_current of id : ${_current?.id}');
 
-    final result = _current!.execute(activeEntity, dt);
+      final result = _current!.execute(activeEntity, dt);
 
-    if (result.errorMessage != null) {
-      log("Execution error: ${result.errorMessage}");
-      break;
-    }
-
-    if (_current is IfNode &&
-        result is Result<bool> &&
-        result.result == false) {
-      final elseNode = _current!.child;
-      if (elseNode is ElseNode) {
-        final elseResult = elseNode.execute(activeEntity, dt);
-        if (elseResult.errorMessage != null) {
-          log("Else block error: ${elseResult.errorMessage}");
-          break;
-        }
-        _current = elseNode.child;
-        continue;
+      if (result.errorMessage != null) {
+        log("Execution error: ${result.errorMessage}");
+        break;
       }
+      //for flow control
+      if (_current is IfNode &&
+          result is Result<bool> &&
+          result.result == false) {
+        final elseNode = _current!.child;
+        if (elseNode is ElseNode) {
+          final elseResult = elseNode.execute(activeEntity, dt);
+          if (elseResult.errorMessage != null) {
+            log("Else block error: ${elseResult.errorMessage}");
+            break;
+          }
+          _current = elseNode.child;
+          continue;
+        }
+      }
+
+      // WaitForNode: pause execution if result is false
+      if (_current is WaitForNode &&
+          result is Result<bool> &&
+          result.result == false) {
+        break;
+      }
+
+      _current = _current!.child;
     }
 
-    // WaitForNode: pause execution if result is false
-    if (_current is WaitForNode &&
-        result is Result<bool> &&
-        result.result == false) {
-      break;
-    }
-
-    _current = _current!.child;
+    notifyListeners();
   }
-
-  notifyListeners();
-}
-
 
   @override
   void reset() {

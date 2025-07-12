@@ -29,6 +29,7 @@ class GameScene extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.transparent,
       ),
+
       drawer : Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -54,6 +55,7 @@ class GameScene extends StatelessWidget {
         
           ],
         ),
+
       ),
       body: Column(
         children: [

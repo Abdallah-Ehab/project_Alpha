@@ -38,21 +38,19 @@ class TestApp extends StatelessWidget {
           return entityManager.activeEntity;
         }),
       ],
-
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(Supabase.instance.client),
           ),
           BlocProvider(
-            create: (context) =>StorageCubit(),
+            create: (context) => StorageCubit(),
           ),
-
         ],
+
         child: const MaterialApp(
           home: GamepadScreen(),
         ),
-
       ),
     );
   }

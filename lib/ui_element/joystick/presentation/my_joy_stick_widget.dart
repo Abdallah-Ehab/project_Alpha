@@ -14,11 +14,15 @@ class MyJoyStickWidget extends StatelessWidget {
     return Consumer<GameState>(builder: (context, value, child) {
       final isPlaying = value.isPlaying;
       if (isPlaying) {
-      return Joystick(
-        includeInitialAnimation: false,
-        listener: (details) {
-          joyStickElement.control(details.x, details.y);
-        },
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Joystick(
+          base: Container(color: Colors.black,),
+          includeInitialAnimation: false,
+          listener: (details) {
+            joyStickElement.control(details.x, details.y);
+          },
+        ),
       );
     } else {
       return GestureDetector(

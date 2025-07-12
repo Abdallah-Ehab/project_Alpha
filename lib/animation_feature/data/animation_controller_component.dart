@@ -23,22 +23,8 @@ class AnimationControllerComponent extends Component {
         animationPlaying = animationPlaying ?? false,
         lastUpdate = lastUpdate ?? Duration.zero,
         _currentAnimationTrackName = currentAnimationTrackName ?? "idle",
-        transitions = transitions ??
-            [
-              Transition(
-                startTrackName: "idle",
-                condition: Condition(
-                    entityVariable: "x", secondOperand: 'true', operator: "=="),
-                targetTrackName: "walk",
-              ),
-            ],
-        animationTracks = animationTracks ??
-            {
-              "idle":
-                  AnimationTrack("idle", [KeyFrame(sketches: [])], false, true),
-              "walk":
-                  AnimationTrack("walk", [KeyFrame(sketches: [])], false, false)
-            },
+        transitions = transitions ??[],
+        animationTracks = animationTracks ??{'idle':AnimationTrack('idle',[],true,false)},
         super(isActive: isActive ?? true);
 
   void setFrame(int index) {

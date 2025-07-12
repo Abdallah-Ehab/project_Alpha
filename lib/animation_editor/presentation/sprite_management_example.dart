@@ -235,8 +235,8 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
                           child: Slider(
                             value: columns.toDouble(),
                             min: 1,
-                            max: 20,
-                            divisions: 19,
+                            max: 40,
+                            divisions: 40,
                             onChanged: (value) {
                               setState(() {
                                 columns = value.round();
@@ -256,8 +256,8 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
                           child: Slider(
                             value: rows.toDouble(),
                             min: 1,
-                            max: 20,
-                            divisions: 19,
+                            max: 40,
+                            divisions: 40,
                             onChanged: (value) {
                               setState(() {
                                 rows = value.round();
@@ -350,7 +350,7 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
                         Expanded(
                           child: Slider(
                             value: offsetX,
-                            min: 0,
+                            min: -100,
                             max: 100,
                             onChanged: (value) {
                               setState(() {
@@ -369,7 +369,7 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
                         Expanded(
                           child: Slider(
                             value: offsetY,
-                            min: 0,
+                            min: -100,
                             max: 100,
                             onChanged: (value) {
                               setState(() {
@@ -568,105 +568,109 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
   }
 
   Future<void> _extractSprites() async {
-  List<ui.Image> sprites = [];
-  
-  double spriteWidth = (widget.spriteSheet.width - offsetX * 2 - spacing * (columns - 1)) / columns;
-  double spriteHeight = (widget.spriteSheet.height - offsetY * 2 - spacing * (rows - 1)) / rows;
-  
-  int currentSpriteIndex = 1;
-  
-  for (int row = 0; row < rows; row++) {
-    for (int col = 0; col < columns; col++) {
-      if (currentSpriteIndex >= startSprite && currentSpriteIndex <= endSprite) {
-        double x = offsetX + col * (spriteWidth + spacing);
-        double y = offsetY + row * (spriteHeight + spacing);
-        
-        ui.Image sprite = await _cropImage(
-          widget.spriteSheet,
-          x.round(),
-          y.round(),
-          spriteWidth.round(),
-          spriteHeight.round(),
-        );
-        
-        // Apply color keying if enabled - to the CROPPED sprite, not the original image
-        if (enableColorKeying) {
-          sprite = await _applyColorKeying(sprite);
+    List<ui.Image> sprites = [];
+    
+    // Use double precision for calculations
+    double spriteWidth = (widget.spriteSheet.width - offsetX * 2 - spacing * (columns - 1)) / columns;
+    double spriteHeight = (widget.spriteSheet.height - offsetY * 2 - spacing * (rows - 1)) / rows;
+    
+    int currentSpriteIndex = 1;
+    
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < columns; col++) {
+        if (currentSpriteIndex >= startSprite && currentSpriteIndex <= endSprite) {
+          double x = offsetX + col * (spriteWidth + spacing);
+          double y = offsetY + row * (spriteHeight + spacing);
+          
+          // Use precise coordinates without rounding prematurely
+          ui.Image sprite = await _cropImagePrecise(
+            widget.spriteSheet,
+            x,
+            y,
+            spriteWidth,
+            spriteHeight,
+          );
+          
+          // Apply color keying if enabled
+          if (enableColorKeying) {
+            sprite = await _applyColorKeying(sprite);
+          }
+          
+          sprites.add(sprite);
         }
-        
-        sprites.add(sprite);
+        currentSpriteIndex++;
       }
-      currentSpriteIndex++;
     }
+    
+    widget.onSpritesExtracted(sprites);
   }
-  
-  widget.onSpritesExtracted(sprites);
-}
 
-  Future<ui.Image> _cropImage(
-      ui.Image image, int x, int y, int width, int height) async {
+  Future<ui.Image> _cropImagePrecise(
+      ui.Image image, double x, double y, double width, double height) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
-    final srcRect = Rect.fromLTWH(
-        x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble());
-    final dstRect = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    // Use precise coordinates and dimensions
+    final srcRect = Rect.fromLTWH(x, y, width, height);
+    final dstRect = Rect.fromLTWH(0, 0, width, height);
 
-    canvas.drawImageRect(image, srcRect, dstRect, Paint());
+    // Use high-quality paint settings
+    final paint = Paint()
+      ..filterQuality = FilterQuality.none
+      ..isAntiAlias = false; // For pixel art, disable anti-aliasing
+
+    canvas.drawImageRect(image, srcRect, dstRect, paint);
 
     final picture = recorder.endRecording();
-    return await picture.toImage(width, height);
+    // Use ceil to ensure we don't lose pixels
+    return await picture.toImage(width.ceil(), height.ceil());
   }
 
- Future<ui.Image> _applyColorKeying(ui.Image image) async {
-  ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-  if (byteData == null) return image;
-  
-  Uint8List originalPixels = byteData.buffer.asUint8List();
-  Uint8List modifiedPixels = Uint8List.fromList(originalPixels); // Create a copy
-  
-  // Extract key color components (convert to 0-255 range)
-  int keyR = (keyColor.r * 255).round();
-  int keyG = (keyColor.g * 255).round();
-  int keyB = (keyColor.b * 255).round();
-  
-  // Calculate tolerance threshold
-  double threshold = colorTolerance * 255;
-  
-  // Process each pixel
-  for (int i = 0; i < modifiedPixels.length; i += 4) {
-    int r = modifiedPixels[i];
-    int g = modifiedPixels[i + 1];
-    int b = modifiedPixels[i + 2];
+  Future<ui.Image> _applyColorKeying(ui.Image image) async {
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) return image;
     
-    // Calculate color distance
-    double distance = _colorDistance(r, g, b, keyR, keyG, keyB);
+    Uint8List originalPixels = byteData.buffer.asUint8List();
+    Uint8List modifiedPixels = Uint8List.fromList(originalPixels);
     
-    // If pixel is within tolerance of key color, make it completely transparent
-    if (distance <= threshold) {
-      modifiedPixels[i] = 0;     
-      modifiedPixels[i + 1] = 0; 
-      modifiedPixels[i + 2] = 0; 
-      modifiedPixels[i + 3] = 0;
+    // Extract key color components
+    int keyR = (keyColor.r * 255).round();
+    int keyG = (keyColor.g * 255).round();
+    int keyB = (keyColor.b * 255).round();
+    
+    // Calculate tolerance threshold
+    double threshold = colorTolerance * 255;
+    
+    // Process each pixel
+    for (int i = 0; i < modifiedPixels.length; i += 4) {
+      int r = modifiedPixels[i];
+      int g = modifiedPixels[i + 1];
+      int b = modifiedPixels[i + 2];
+      
+      // Calculate color distance
+      double distance = _colorDistance(r, g, b, keyR, keyG, keyB);
+      
+      // If pixel is within tolerance of key color, make it transparent
+      if (distance <= threshold) {
+        modifiedPixels[i + 3] = 0; // Only change alpha, preserve RGB
+      }
     }
+    
+    // Create new image with modified pixels
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    
+    ui.decodeImageFromPixels(
+      modifiedPixels,
+      image.width,
+      image.height,
+      ui.PixelFormat.rgba8888,
+      (ui.Image result) {
+        completer.complete(result);
+      },
+    );
+    
+    return completer.future;
   }
-  
-  // Create new image with modified pixels
-  final Completer<ui.Image> completer = Completer<ui.Image>();
-  
-  ui.decodeImageFromPixels(
-    modifiedPixels,
-    image.width,
-    image.height,
-    ui.PixelFormat.rgba8888,
-    (ui.Image result) {
-      completer.complete(result);
-    },
-  );
-  
-  return completer.future;
-}
-
 double _colorDistance(int r1, int g1, int b1, int r2, int g2, int b2) {
   // Calculate Euclidean distance in RGB space
   double dr = (r1 - r2).toDouble();

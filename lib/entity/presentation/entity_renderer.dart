@@ -152,7 +152,7 @@ class EntityPainter extends CustomPainter {
           Rect.fromLTWH(0, 0, keyFrame.image!.width.toDouble(),
               keyFrame.image!.height.toDouble()),
           Rect.fromLTWH(0, 0, size.width, size.height),
-          Paint()..filterQuality = FilterQuality.high);
+          Paint()..filterQuality = FilterQuality.none);
     }
   }
 
@@ -167,7 +167,7 @@ Widget applyLightingToEntity({
   required Entity entity,
   required List<Entity> lights,
 }) {
-  if (entity is LightEntity) return child; // Don't light the lights themselves
+  if (entity is LightEntity) return child;
 
   Offset entityCenter = Offset(
     entity.position.dx + entity.width / 2,
