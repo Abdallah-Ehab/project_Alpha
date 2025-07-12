@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +89,7 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Card(
-                color: const Color(0xffE8E8E8),
+                color: const Color(0xffCCCCCC),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(

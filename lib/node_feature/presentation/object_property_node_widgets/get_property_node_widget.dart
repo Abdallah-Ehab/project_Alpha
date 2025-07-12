@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
-import 'package:scratch_clone/node_feature/presentation/connection_point_widget.dart';
 
 class GetPropertyFromEntityNodeWidget extends StatelessWidget {
   final GetPropertyFromEntityNode nodeModel;

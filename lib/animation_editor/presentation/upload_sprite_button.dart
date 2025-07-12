@@ -60,18 +60,6 @@ class UploadSpriteButton extends StatelessWidget {
                   builder: (context, animationComponent, _) {
                     final currentTrack =
                         animationComponent.currentAnimationTrack;
-                    if (currentTrack == null) {
-                      return const Center(
-                        child: Text(
-                          'No animation track selected',
-                          style: TextStyle(
-                            fontFamily: 'PressStart2P',
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }
 
                     return PixelArtButton(
                       text: "Upload Sprite Sheet",

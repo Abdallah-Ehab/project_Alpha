@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/load_game_page.dart';
 import 'package:scratch_clone/login_and_signup/presentation/signUp_screen.dart';
+import 'package:scratch_clone/login_and_signup/presentation/widgets/shooting_stars.dart';
 import 'package:scratch_clone/main_screen_and_loading_projects/presentation/project_loading_Screens.dart';
 import '../../core/ui_widgets/pixelated_buttons.dart';
 import '../../core/ui_widgets/pixelated_text_feild.dart';
@@ -54,87 +55,92 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return Scaffold(
           backgroundColor: Colors.black,
-          body: SafeArea(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Login",
-                        style: TextStyle(
-                          fontFamily: "PressStart2P",
-                          fontSize: 32,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const LottieAnimation(),
-                      const SizedBox(height: 40),
-                      PixelatedTextField(
-                        maxLength: 100,
-                        hintText: "Username",
-                        controller: _usernameController,
-                        borderColor: Colors.white,
-                        keyboardType: TextInputType.text,
-                        onChanged: (String value) {},
-                      ),
-                      const SizedBox(height: 20),
-                      PixelatedTextField(
-                        maxLength: 100,
-                        hintText: "Password",
-                        controller: _passwordController,
-                        borderColor: Colors.white,
-                        keyboardType: TextInputType.visiblePassword,
-                        onChanged: (String value) {},
-                      ),
-                      const SizedBox(height: 30),
-                      isLoading
-                          ? const CircularProgressIndicator()
-                          : PixelArtButton(
-                              fontsize: 14,
-                              text: "Login",
-                              callback: () {
-                                final username = _usernameController.text.trim();
-                                final password = _passwordController.text;
-                  
-                                if (username.isEmpty || password.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Username and password required",
-                                        style:
-                                            TextStyle(fontFamily: "PressStart2P"),
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-                  
-                                context
-                                    .read<AuthCubit>()
-                                    .signIn(username, password);
-                              },
+          body: Stack(
+            children: [
+              ShootingStarsBackground(),
+              SafeArea(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Login",
+                            style: TextStyle(
+                              fontFamily: "PressStart2P",
+                              fontSize: 32,
+                              color: Colors.white,
                             ),
-                      SizedBox(
-                        height: 60,
+                          ),
+                          const SizedBox(height: 16),
+                          const LottieAnimation(),
+                          const SizedBox(height: 40),
+                          PixelatedTextField(
+                            hintText: "Username",
+                            controller: _usernameController,
+                            borderColor: Colors.white,
+                            keyboardType: TextInputType.text,
+                            onChanged: (String value) {}, 
+                          ),
+                          const SizedBox(height: 20),
+                          PixelatedTextField(
+                            hintText: "Password",
+                            controller: _passwordController,
+                            borderColor: Colors.white,
+                            keyboardType: TextInputType.visiblePassword,
+                            onChanged: (String value) {},
+                          ),
+                          const SizedBox(height: 30),
+                          isLoading
+                              ? const CircularProgressIndicator(color: Color(0xffcccccc),)
+                              : PixelArtButton(
+                                  fontsize: 14,
+                                  text: "Login",
+                                  callback: () {
+                                    final username =
+                                        _usernameController.text.trim();
+                                    final password = _passwordController.text;
+
+                                    if (username.isEmpty || password.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            "Username and password required",
+                                            style: TextStyle(
+                                                fontFamily: "PressStart2P"),
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    context
+                                        .read<AuthCubit>()
+                                        .signIn(username, password);
+                                  },
+                                ),
+                          SizedBox(
+                            height: 60,
+                          ),
+                          NoAccountText(
+                            highLightedText: 'SignUp',
+                            text: 'No account ?! no problem make one now ',
+                            onSignUpTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpScreen(),
+                                )),
+                          )
+                        ],
                       ),
-                      NoAccountText(
-                        highLightedText: 'SignUp',
-                        text: 'No account ?! no problem make one now ',
-                        onSignUpTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            )),
-                      )
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         );
       },
@@ -203,7 +209,12 @@ class NoAccountText extends StatefulWidget {
   final VoidCallback onSignUpTap;
   final String text;
   final String highLightedText;
-  const NoAccountText({Key? key, required this.onSignUpTap, required this.text, required this.highLightedText}) : super(key: key);
+
+  const NoAccountText(
+      {super.key,
+      required this.onSignUpTap,
+      required this.text,
+      required this.highLightedText});
 
   @override
   State<NoAccountText> createState() => _NoAccountTextState();
@@ -211,7 +222,6 @@ class NoAccountText extends StatefulWidget {
 
 class _NoAccountTextState extends State<NoAccountText> {
   late TapGestureRecognizer _tapRecognizer;
-
 
   @override
   void initState() {
@@ -228,7 +238,6 @@ class _NoAccountTextState extends State<NoAccountText> {
   @override
   Widget build(BuildContext context) {
     return RichText(
-
       textAlign: TextAlign.center,
       text: TextSpan(
         text: widget.text,
@@ -241,11 +250,10 @@ class _NoAccountTextState extends State<NoAccountText> {
           TextSpan(
             text: widget.highLightedText,
             style: const TextStyle(
-              color: Colors.orange,
-              decoration: TextDecoration.underline,
-              fontWeight: FontWeight.bold,
-              height: 2
-            ),
+                color: Colors.orange,
+                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
+                height: 2),
             recognizer: _tapRecognizer,
           ),
         ],

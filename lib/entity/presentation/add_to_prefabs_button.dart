@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
@@ -91,7 +90,7 @@ class _PrefabNameDialogState extends State<PrefabNameDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
-            maxLength: 10,
+            
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             controller: _controller,

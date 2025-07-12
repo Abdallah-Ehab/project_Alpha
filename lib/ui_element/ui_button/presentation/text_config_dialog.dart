@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
@@ -104,7 +103,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           PixelatedTextField(
-            maxLength: 20,
+            
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (_) {},
@@ -113,7 +112,7 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
           ),
           const SizedBox(height: 16),
           PixelatedTextField(
-            maxLength: 20,
+            
             keyboardType: TextInputType.text,
             borderColor: Colors.white,
             onChanged: (_) {},

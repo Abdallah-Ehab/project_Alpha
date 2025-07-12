@@ -36,7 +36,6 @@ class UploadFramesButton extends StatelessWidget {
                   builder: (context, animationComponent, _) {
                     final currentTrack =
                         animationComponent.currentAnimationTrack;
-                    if (currentTrack == null) return const SizedBox.shrink();
 
                     return PixelArtButton(
                         text: "Upload Frames",

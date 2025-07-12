@@ -8,7 +8,6 @@ import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
 import 'package:scratch_clone/entity/presentation/create_entity_button.dart';
 import 'package:scratch_clone/entity/presentation/entity_drop_down_button.dart';
-import 'package:scratch_clone/entity/presentation/prefab_card.dart';
 import 'package:scratch_clone/game_scene/add_global_variable_button.dart';
 import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_state/save_game.dart';
@@ -30,27 +29,31 @@ class GameScene extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.transparent,
       ),
-      drawer : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CreateEntityButton(),
-          SizedBox(height: 20,),
-          AddToPrefabsButton(),
-          SizedBox(height: 20,),
-          AddComponentButton(),
-          SizedBox(height: 20,),
-          AddUIElementButton(),
-          SizedBox(height: 20,),
-          AddVariableButton(),
-          Spacer(),
-          PixelArtButton(text: "log out", callback: () {
-            context.read<AuthCubit>().signOut();
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
-          }, fontsize: 12),
-          SaveGameButton()
-
-        ],
+      drawer : Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CreateEntityButton(),
+            SizedBox(height: 20,),
+            AddToPrefabsButton(),
+            SizedBox(height: 20,),
+            AddComponentButton(),
+            SizedBox(height: 20,),
+            AddUIElementButton(),
+            SizedBox(height: 20,),
+            AddVariableButton(),
+            Spacer(),
+            PixelArtButton(text: "log out", callback: () {
+              context.read<AuthCubit>().signOut();
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+            }, fontsize: 12),
+            SizedBox(height: 20,),
+            SaveGameButton()
+        
+          ],
+        ),
       ),
       body: Column(
         children: [
