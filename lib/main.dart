@@ -42,21 +42,26 @@ class TestApp extends StatelessWidget {
           return entityManager.activeEntity;
         }),
       ],
-
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(Supabase.instance.client),
           ),
           BlocProvider(
-            create: (context) =>StorageCubit(),
+            create: (context) => StorageCubit(),
           ),
-
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                devicePixelRatio: 1.0, // Force 1:1 pixel ratio
+              ),
+              child: child!,
+            );
+          },
           home: LoginScreen(),
         ),
-
       ),
     );
   }

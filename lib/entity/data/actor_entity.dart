@@ -14,7 +14,6 @@ class ActorEntity extends Entity{
     super.height,
     super.layerNumber,
     this.children = const [],
-  
   });
 
   factory ActorEntity.fromJson(Map<String, dynamic> json) {

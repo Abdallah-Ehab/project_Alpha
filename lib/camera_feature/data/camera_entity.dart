@@ -59,7 +59,7 @@ class CameraEntity extends Entity {
   }
 
   void pan(Offset delta) {
-  position += delta;
+    position += delta;
     notifyListeners();
   }
 

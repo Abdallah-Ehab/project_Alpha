@@ -22,6 +22,8 @@ extension EntityTypeExtension on EntityType {
 class EntityManager extends ChangeNotifier {
   late Map<EntityType, Map<String, Entity>> _entities;
 
+  bool isRelease = false;
+
   Entity? _activeEntity;
   CameraEntity? _activeCamera;
   static final EntityManager _instance = EntityManager._internal();
@@ -74,13 +76,14 @@ class EntityManager extends ChangeNotifier {
       EntityType.cameras: {
         "mainCamera": CameraEntity(
           name: "mainCamera",
-          position: const Offset(0, 100),
+          position: Offset.zero,
           rotation: 0,
           zoom: 1.0,
           isEditorCamera: true,
         ),
       }
     };
+    isRelease = false;
     _activeEntity = null;
     _activeCamera = _entities[EntityType.cameras]!["mainCamera"] as CameraEntity;
   }
@@ -224,9 +227,6 @@ class EntityManager extends ChangeNotifier {
   void update(Duration dt) {
     for (var type in _entities.values) {
       for (var entity in type.values) {
-        if (entity.name == 'fire') {
-          log('spawn and fire babyyyyy');
-        }
         entity.update(dt);
       }
     }
@@ -257,7 +257,7 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Entity> getAllEntitiesSortedByLayerNumber() {
+  List<Entity> getAllEntitiesSortedByLayerNumber(){
     return _entities.values
         .expand((map) => map.values.whereNot((value) => value is CameraEntity))
         .toList()
@@ -370,6 +370,7 @@ class EntityManager extends ChangeNotifier {
 
   Map<String, dynamic> toJson() {
     return {
+      'release' : isRelease,
       'entities': _entities.map((type, entitiesMap) {
         return MapEntry(
           type.name,
@@ -388,6 +389,7 @@ class EntityManager extends ChangeNotifier {
     for (var timer in _destroyTimers.values) {
       timer.cancel();
     }
+    isRelease = json['release'];
     _destroyTimers.clear();
     _entitiesBeingDestroyed.clear();
 

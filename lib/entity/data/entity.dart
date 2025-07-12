@@ -26,9 +26,6 @@ abstract class Entity with ChangeNotifier {
   Map<String, dynamic> variables = {'ontap' : false};
   Map<String, List<dynamic>> lists;
   int layerNumber;
-  bool onTapVariable;
-  bool onLongPressVariable;
-  bool onDoubleTapVariable;
   bool isFlippedX;
   bool isFlippedY;
 
@@ -42,9 +39,6 @@ abstract class Entity with ChangeNotifier {
     this.width = 100,
     this.height = 100,
     this.layerNumber = 0,
-    this.onDoubleTapVariable = false,
-    this.onTapVariable = false,
-    this.onLongPressVariable = false,
     this.isFlippedX = false,
     this.isFlippedY = false,
   }):components = {},lists = {};
@@ -85,20 +79,6 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
-  void setOnTapVariable(bool value){
-    onTapVariable = value;
-    notifyListeners();
-  }
-
-  void setOnDoubleTapVariable(bool value){
-    onDoubleTapVariable = value;
-    notifyListeners();
-  }
-
-  void setOnLongPressVariable(bool value){
-    onLongPressVariable = value;
-    notifyListeners();
-  }
 
   // Convert the 'ui.Offset' from a Map during deserialization
   static ui.Offset offsetFromJson(Map<String, dynamic> json) {

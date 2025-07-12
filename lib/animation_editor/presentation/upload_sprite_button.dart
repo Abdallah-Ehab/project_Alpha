@@ -77,10 +77,8 @@ class UploadSpriteButton extends StatelessWidget {
                       text: "Upload Sprite Sheet",
                       fontsize: 16,
                       callback: () async {
-                        final navigator =
-                            Navigator.of(context); // capture early
-                        final scaffoldContext =
-                            context; // keep a reference to show dialog if needed
+                        final navigator = Navigator.of(context);
+                        final scaffoldContext = context;
 
                         try {
                           log('Button pressed - starting file picker');
@@ -104,26 +102,15 @@ class UploadSpriteButton extends StatelessWidget {
                           log('Reading file bytes...');
                           final bytes = await file.readAsBytes();
 
-                          log('Decoding image...');
-                          final decoded = img.decodeImage(bytes);
-                          if (decoded == null) {
-                            log('Failed to decode image');
-                            return;
-                          }
-
-                          log('Processing image...');
-                          final resized =
-                              img.copyResize(decoded, width: 3000, height: 3000);
-                          final pngBytes = img.encodePng(resized);
-
-                          final codec = await ui.instantiateImageCodec(
-                              Uint8List.fromList(pngBytes));
+                          log('Creating UI Image directly...');
+                          // Create UI Image directly without unnecessary conversions
+                          final codec = await ui.instantiateImageCodec(bytes);
                           final frameInfo = await codec.getNextFrame();
                           final image = frameInfo.image;
 
+                          log('Original image size: ${image.width}x${image.height}');
                           log('Navigating to SpriteSheetSlicer...');
 
-                          // Use navigator captured earlier
                           await navigator.push(
                             MaterialPageRoute(
                               builder: (_) => SpriteSheetSlicer(

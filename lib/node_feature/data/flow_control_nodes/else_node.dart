@@ -38,7 +38,7 @@ class ElseNode extends InputOutputNode {
         return Result.failure(errorMessage: statementResult.errorMessage);
       }
     }
-    return Result.success(result: null); // Indicate successful execution
+    return Result.success(result: null);
   }
 
   @override
@@ -100,7 +100,6 @@ NodeModel copyWith({
     return node;
   }
 
-  /// ✅ TO JSON
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();

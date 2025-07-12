@@ -4,10 +4,10 @@ import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/utility/pan_end_functions.dart';
 
-class AddVariableButton extends StatelessWidget {
+class AddGlobalVariableButton extends StatelessWidget {
 
 
-  const AddVariableButton({super.key});
+  const AddGlobalVariableButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class AddVariableButton extends StatelessWidget {
   }
 
   void _showAddVariableDialog(BuildContext context) {
-    final entityManager = context.watch<EntityManager>(); 
+    final entityManager = context.read<EntityManager>(); 
     final TextEditingController nameController = TextEditingController();
     final TextEditingController valueController = TextEditingController();
 
