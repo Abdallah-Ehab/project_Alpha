@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:provider/provider.dart';
-import 'package:scratch_clone/animation_editor/presentation/upload_sprite_button.dart';
 
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/game_scene.dart';

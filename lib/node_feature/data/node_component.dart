@@ -114,7 +114,7 @@ class NodeComponent extends Component {
     };
 
     for (final point in allPoints) {
-      final dynamic p = point;
+     final dynamic p = point;
 
       final sourceId = p.sourcePointId;
       final destinationId = p.destinationPointId;
@@ -218,18 +218,18 @@ class NodeComponent extends Component {
       }
 
       // Connect input
-      if (original is HasInput && (original as HasInput).input != null) {
+      if (original is HasInput && (original).input != null) {
         final inputIndex =
-            workspaceNodes.indexOf((original as HasInput).input!);
+            workspaceNodes.indexOf((original).input!);
         if (inputIndex != -1 && copy is HasInput) {
           copy.connectInput(copiedNodes[inputIndex]);
         }
       }
 
       // Connect output
-      if (original is HasOutput && (original as HasOutput).output != null) {
+      if (original is HasOutput && (original).output != null) {
         final outputIndex =
-            workspaceNodes.indexOf((original as HasOutput).output!);
+            workspaceNodes.indexOf((original).output!);
         if (outputIndex != -1 && copy is HasOutput) {
           copy.connectOutput(copiedNodes[outputIndex]);
         }

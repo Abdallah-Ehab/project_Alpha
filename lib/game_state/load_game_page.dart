@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
-import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -103,23 +102,25 @@ class _GameLoaderPageState extends State<GameLoaderPage> {
 
 
 
-Future<String> _loadGameJsonFromFile(String filename) async {
-  final uid = Supabase.instance.client.auth.currentUser?.id;
-  final dir = await getApplicationDocumentsDirectory();
-  final path = '${dir.path}/$uid/$filename.json';
-  final file = File(path);
+  Future<String> _loadGameJsonFromFile(String filename) async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) {
+      return Future.error('User not authenticated');
+    }
+    final dir = await getApplicationDocumentsDirectory();
+    final path = '${dir.path}/$uid/$filename.json';
+    final file = File(path);
 
-  if (!await file.exists()) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const TestGameLoop()),
-    );
-    return Future.error('Game JSON not found');
+    if (!await file.exists()) {
+      return Future.error('Game JSON not found');
+    }
+    final fileContent = await file.readAsString();
+    if (fileContent.isEmpty) {
+      return Future.error('Game JSON is empty');
+    }
+    log('file content: $fileContent');
+    return fileContent;
   }
-  String fileContent = await file.readAsString();
-  log('file content: $fileContent');
-  return fileContent;
-}
 
   @override
   Widget build(BuildContext context) {

@@ -176,7 +176,7 @@ class _CreateEntityDialogState extends State<_CreateEntityDialog> {
             ),
             const SizedBox(height: 16),
             PixelatedTextField(
-              maxLength: 10,
+              
               borderColor: Colors.white,
               keyboardType: TextInputType.text,
               onChanged: (value) {},

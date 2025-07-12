@@ -89,7 +89,7 @@ class _ControlPanelState extends State<ControlPanel> {
     return SizedBox(
       width: double.infinity,
       child: Card(
-        color: Color(0xffE8E8E8),
+        color: Color(0xffCCCCCC),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -237,7 +237,7 @@ class _ControlPanelState extends State<ControlPanel> {
   }
 
   Widget _buildVariablesDisplay(BuildContext context, Entity entity) {
-    return ChangeNotifierProvider.value(
+   return ChangeNotifierProvider.value(
       value: entity,
       child: Consumer<Entity>(
         builder: (context, entity, child) =>  SizedBox(
@@ -302,7 +302,7 @@ class _ControlPanelState extends State<ControlPanel> {
                         );
                       } else {
                         return PixelatedTextField(
-                          maxLength: 10,
+                          
                           controller: TextEditingController(text: value.toString()),
                           hintText: key,
                           onChanged: (newValue) {
@@ -418,7 +418,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
 
                 // Mass Control
                 PixelatedTextField(
-                  maxLength: 10,
+                  
                   label: 'mass',
                   labelColor: Colors.white,
                   controller: massController,
@@ -435,7 +435,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
 
                 // Gravity Control
                 PixelatedTextField(
-                  maxLength: 10,
+                 
                   label: 'gravity',
                   labelColor: Colors.white,
                   controller: gravityController,
@@ -448,7 +448,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                 ),
                 const SizedBox(height: 10),
                 PixelatedTextField(
-                  maxLength: 10,
+                 
                   label: 'fallspeed',
                   labelColor: Colors.white,
                   controller: fallSpeedController,
@@ -467,7 +467,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                   children: [
                     Expanded(
                       child: PixelatedTextField(
-                        maxLength: 10,
+                        
                         label: 'res',
                         labelColor: Colors.white,
                         controller: resistanceController,
@@ -483,7 +483,7 @@ class _RigidBodyComponentPanelState extends State<RigidBodyComponentPanel> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: PixelatedTextField(
-                        maxLength: 10,
+                        
                         label: 'friction',
                         labelColor: Colors.white,
                         controller: frictionController,

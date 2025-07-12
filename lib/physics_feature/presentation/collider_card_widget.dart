@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scratch_clone/core/ui_widgets/pixelated_slider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_text_form_field.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';

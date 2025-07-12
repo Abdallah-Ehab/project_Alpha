@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/simple_scale_node.dart';
 
 class SimpleScaleNodeWidget extends StatelessWidget {

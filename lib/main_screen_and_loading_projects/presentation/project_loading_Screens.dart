@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/load_game_page.dart';
 import 'package:scratch_clone/login_and_signup/presentation/cubit/storage_cubit.dart';
-import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
+import 'package:scratch_clone/login_and_signup/presentation/widgets/shooting_stars.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/ui_widgets/pixelated_buttons.dart';
@@ -27,16 +27,14 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
   final dateFormatter = DateFormat('yyyy-MM-dd');
   final TextEditingController _projectNameController = TextEditingController();
 
-  Future<void> writeJsonFile(String fileName, String content) async {
+  Future<void> writeJsonFile(String fileName, Map<String, dynamic> content) async {
     final supabase = Supabase.instance.client;
     final uid = supabase.auth.currentUser!.id;
     final dir = await getApplicationDocumentsDirectory();
     final userDir = Directory('${dir.path}/$uid');
-
     if (!await userDir.exists()) {
       await userDir.create(recursive: true);
     }
-
     final file = File('${userDir.path}/$fileName.json');
     final data = {
       "createdAt": DateTime.now().toIso8601String(),
@@ -114,16 +112,18 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
     } catch (e) {
       log('Supabase list error: $e');
     }
-    if (!mounted) return;
-    setState(() {
-      projects = loaded;
-    });
+
+    if (mounted) {
+      setState(() {
+        projects = loaded;
+      });
+    }
   }
 
   void _submit() async {
     final name = _projectNameController.text.trim();
     if (name.isNotEmpty) {
-      await writeJsonFile(name, "");
+      await writeJsonFile(name,{"entities": {}});
       _projectNameController.clear();
       Navigator.of(context).pop();
       await loadProjects();
@@ -164,7 +164,6 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
           children: [
             const SizedBox(height: 16),
             PixelatedTextField(
-              maxLength: 100,
               borderColor: Colors.white,
               keyboardType: TextInputType.text,
               onChanged: (v) {},
@@ -195,170 +194,196 @@ class _LoadProjectScreenState extends State<LoadProjectScreen> {
     final projectNames = projects.keys.toList();
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: InkWell(
-                  onTap: _showCreateProjectDialog,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white24,
+      body: Stack(
+        children: [
+
+          ShootingStarsBackground()
+          ,
+           SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: InkWell(
+                    onTap: _showCreateProjectDialog,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white24,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white, size: 20),
                     ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 20),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Center(
-                child: Text(
-                  "Alpha",
+                const SizedBox(height: 16),
+                const Center(
+                  child: Text(
+                    "Alpha",
+                    style: TextStyle(
+                      fontFamily: "PressStart2P",
+                      fontSize: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  "Your Projects",
                   style: TextStyle(
                     fontFamily: "PressStart2P",
-                    fontSize: 48,
-                    color: Colors.white,
+                    fontSize: 14,
+                    color: Colors.white70,
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                "Your Projects",
-                style: TextStyle(
-                  fontFamily: "PressStart2P",
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: projectNames.length,
-                  itemBuilder: (context, index) {
-                    if (projectNames[index] == "current") {
-                      return SizedBox.shrink();
-                    } else {
-                      final name = projectNames[index];
-                      final meta = projects[name] as Map<String, dynamic>;
-                      final createdAt =
-                          DateTime.tryParse(meta['createdAt'] ?? '') ??
-                              DateTime.now();
-                      return Card(
-                        color: Colors.grey[850],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          title: Text(
-                            name,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: "PressStart2P",
-                              fontSize: 16,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: projectNames.length,
+                    itemBuilder: (context, index) {
+                      if (projectNames[index] == "current") {
+                        return SizedBox.shrink();
+                      } else {
+                        final name = projectNames[index];
+                        final meta = projects[name] as Map<String, dynamic>;
+                        final createdAt =
+                            DateTime.tryParse(meta['createdAt'] ?? '') ??
+                                DateTime.now();
+                        return Card(
+                          color: Colors.grey[850],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          subtitle: Text(
-                            "Created: ${dateFormatter.format(createdAt)}",
-                            style: const TextStyle(
-                              color: Colors.white60,
-                              fontSize: 8,
-                              fontFamily: "PressStart2P",
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.redAccent, size: 20),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text("Confirm Delete"),
-                                      content: Text(
-                                          "Delete project '$name' from device and cloud?"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(false),
-                                          child: const Text("Cancel"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(true),
-                                          child: const Text("Delete",
-                                              style:
-                                                  TextStyle(color: Colors.red)),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-
-                                  if (confirm == true) {
-                                    await context
-                                        .read<StorageCubit>()
-                                        .deleteProject(name);
-                                    await loadProjects(); // refresh UI after deletion
-                                  }
-                                },
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            title: Text(
+                              name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: "PressStart2P",
+                                fontSize: 16,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              const Icon(Icons.arrow_forward_ios,
-                                  color: Colors.white38, size: 16),
-                            ],
+                            ),
+                            subtitle: Text(
+                              "Created: ${dateFormatter.format(createdAt)}",
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 8,
+                                fontFamily: "PressStart2P",
+                              ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.redAccent, size: 20),
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text("Confirm Delete"),
+                                        content: Text(
+                                            "Delete project '$name' from device and cloud?"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(ctx).pop(false),
+                                            child: const Text("Cancel"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(ctx).pop(true),
+                                            child: const Text("Delete",
+                                                style:
+                                                    TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await context
+                                          .read<StorageCubit>()
+                                          .deleteProject(name);
+                                      await loadProjects(); // refresh UI after deletion
+                                    }
+                                  },
+                                ),
+                                const Icon(Icons.arrow_forward_ios,
+                                    color: Colors.white38, size: 16),
+                              ],
+                            ),
+                            onTap: () async {
+                              await writeCurrentProject(name);
+                              await writeCurrentProject(name);
+                              // Attempt to download the JSON file from Supabase
+                              final success = await context
+                                  .read<StorageCubit>()
+                                  .downloadJson(name);
+                              if (!success) {
+                                // Show user feedback if download fails
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Failed to download project from cloud')),
+                                );
+                                // Optionally navigate to TestGameLoop with a new project or stay on the screen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => TestGameLoop(),
+                                  ),
+                                );
+                                return;
+                              }
+                              final supabase = Supabase.instance.client;
+                              final uid = supabase.auth.currentUser!.id;
+                              final dir =
+                                  await getApplicationDocumentsDirectory();
+                              final file = File('${dir.path}/$uid/$name.json');
+                              final exists = await file.exists();
+                              final isNonEmpty =
+                                  exists && await file.length() > 0;
+                              if (isNonEmpty) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        GameLoaderPage(filename: name),
+                                  ),
+                                );
+                              } else {
+                                // Show user feedback if file is empty or missing after download
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Project file is empty or missing')),
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => TestGameLoop(),
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                          onTap: () async {
-                            await writeCurrentProject(name);
-                            await context
-                                .read<StorageCubit>()
-                                .downloadJson(name);
-
-                            final supabase = Supabase.instance.client;
-                            final uid = supabase.auth.currentUser!.id;
-                            final dir =
-                                await getApplicationDocumentsDirectory();
-                            final file = File('${dir.path}/$uid/$name.json');
-                            final exists = await file.exists();
-
-                            final isNonEmpty =
-                                exists && await file.length() > 0;
-
-                            if (isNonEmpty) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      GameLoaderPage(filename: name),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      TestGameLoop(), // Add filename if needed
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+        ],
       ),
     );
   }

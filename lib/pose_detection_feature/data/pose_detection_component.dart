@@ -4,8 +4,7 @@ import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 
-import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:camera/camera.dart';
+
 import 'package:image/image.dart' as img;
 import 'dart:typed_data';
 import 'dart:math';

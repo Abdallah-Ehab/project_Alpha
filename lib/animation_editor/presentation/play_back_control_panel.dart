@@ -95,20 +95,68 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.skip_previous),
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xff444444),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.6),
+            blurRadius: 6,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: IconButton(
+          icon: const Icon(Icons.skip_previous, color: Colors.white),
           onPressed: goToPreviousFrame,
         ),
-        IconButton(
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          onPressed: togglePlayPause,
+      ),
+    ),
+    const SizedBox(width: 16),
+    Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xff444444),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.6),
+            blurRadius: 6,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(
+          isPlaying ? Icons.pause : Icons.play_arrow,
+          color: Colors.white,
         ),
-        IconButton(
-          icon: const Icon(Icons.skip_next),
-          onPressed: goToNextFrame,
-        ),
-      ],
-    );
+        onPressed: togglePlayPause,
+      ),
+    ),
+    const SizedBox(width: 16),
+    Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xff444444),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.6),
+            blurRadius: 6,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.skip_next, color: Colors.white),
+        onPressed: goToNextFrame,
+      ),
+    ),
+  ],
+);
   }
 }

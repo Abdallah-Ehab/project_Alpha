@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:equatable/equatable.dart';
 
 
 abstract class AuthState {}
@@ -103,4 +102,9 @@ class AuthCubit extends Cubit<AuthState> {
     _authSub.cancel();
     return super.close();
   }
+
+
+
+
+
 }

@@ -33,10 +33,10 @@ class PixelatedTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(label,
+        Text("$label:",
           style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
+            color: Colors.black,
+            fontSize: 14,
             fontFamily: 'PressStart2P',
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scratch_clone/login_and_signup/presentation/widgets/shooting_stars.dart';
 import '../../core/ui_widgets/pixelated_buttons.dart';
 import '../../core/ui_widgets/pixelated_text_feild.dart';
 import 'cubit/authentacation_cubit.dart';
@@ -69,69 +70,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.black,
-          body: SafeArea(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          fontFamily: "PressStart2P",
-                          fontSize: 32,
-                          color: Colors.white,
+          body: Stack(
+            children: [ShootingStarsBackground(),SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            fontFamily: "PressStart2P",
+                            fontSize: 32,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 40),
-                      PixelatedTextField(
-                       maxLength: 100,
-                        hintText: "Email",
-                        controller: _emailController,
-                        borderColor: Colors.white,
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (String value) {},
-                      ),
-                      const SizedBox(height: 16),
-                      PixelatedTextField(
-                       maxLength: 100,
-                        hintText: "Password",
-                        controller: _passwordController,
-                        borderColor: Colors.white,
-                        keyboardType: TextInputType.visiblePassword,
-                        onChanged: (String value) {},
-                      ),
-                      const SizedBox(height: 16),
-                      PixelatedTextField(
-                        maxLength: 100,
-                        hintText: "Confirm Password",
-                        controller: _confirmController,
-                        borderColor: Colors.white,
-                        keyboardType: TextInputType.visiblePassword,
-                        onChanged: (String value) {},
-                      ),
-                      const SizedBox(height: 32),
-                      PixelArtButton(
-                        fontsize: 14,
-                        text: "Create Account",
-                        callback: _signUp,
-                      ),
-                      const SizedBox(height: 32),
-                      NoAccountText(
-                        highLightedText: "login",
-                        text: "Already have an account?         ",
-                        onSignUpTap: () =>
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            )),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        const SizedBox(height: 40),
+                        PixelatedTextField(
+
+                          hintText: "Email",
+                          controller: _emailController,
+                          borderColor: Colors.white,
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (String value) {},
+                        ),
+                        const SizedBox(height: 16),
+                        PixelatedTextField(
+
+                          hintText: "Password",
+                          controller: _passwordController,
+                          borderColor: Colors.white,
+                          keyboardType: TextInputType.visiblePassword,
+                          onChanged: (String value) {},
+                        ),
+                        const SizedBox(height: 16),
+                        PixelatedTextField(
+
+                          hintText: "Confirm Password",
+                          controller: _confirmController,
+                          borderColor: Colors.white,
+                          keyboardType: TextInputType.visiblePassword,
+                          onChanged: (String value) {},
+                        ),
+                        const SizedBox(height: 32),
+                        PixelArtButton(
+                          fontsize: 14,
+                          text: "Create Account",
+                          callback: _signUp,
+                        ),
+                        const SizedBox(height: 32),
+                        NoAccountText(
+                          highLightedText: "login",
+                          text: "Already have an account?         ",
+                          onSignUpTap: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              )),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ),],
+
           ),
         );
       },

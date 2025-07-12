@@ -3,19 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/api_keys.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
-import 'package:scratch_clone/game_scene/add_components.dart';
-import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
-import 'package:scratch_clone/game_state/load_game_page.dart';
 import 'package:scratch_clone/login_and_signup/presentation/cubit/authentacation_cubit.dart';
-import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
+import 'package:scratch_clone/login_and_signup/presentation/lottie-screen.dart';
 import 'package:scratch_clone/node_feature/data/node_component_index_provider.dart';
 import 'package:scratch_clone/node_feature/domain/connection_provider.dart';
 import 'package:scratch_clone/ui_element/ui_element_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'login_and_signup/presentation/cubit/storage_cubit.dart';
-import 'main_screen_and_loading_projects/presentation/project_loading_Screens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,16 +47,9 @@ class TestApp extends StatelessWidget {
             create: (context) => StorageCubit(),
           ),
         ],
-        child: MaterialApp(
-          builder: (context, child) {
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                devicePixelRatio: 1.0, // Force 1:1 pixel ratio
-              ),
-              child: child!,
-            );
-          },
-          home: LoginScreen(),
+
+        child: const MaterialApp(
+          home: GamepadScreen(),
         ),
       ),
     );

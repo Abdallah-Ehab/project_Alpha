@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 

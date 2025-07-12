@@ -11,14 +11,14 @@ class PixelatedSlider extends StatelessWidget {
 
 
    PixelatedSlider({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.min = 0.0,
     this.max = 1.0,
     this.divisions, required this.label,
     Color?color
-  }):color = color ?? Color(0xFF222222) , super(key: key);
+  }):color = color ?? Color(0xFF222222);
 
 
   @override

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:scratch_clone/ui_element/ui_button/data/hold_button.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_button.dart';
-import 'package:scratch_clone/ui_element/ui_button/presentation/ui_button_wrapper.dart';
 import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class TwoButtonConfigWidget extends StatelessWidget {
