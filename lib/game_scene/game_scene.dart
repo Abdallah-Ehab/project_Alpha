@@ -44,7 +44,7 @@ class GameScene extends StatelessWidget {
             SizedBox(height: 20,),
             AddUIElementButton(),
             SizedBox(height: 20,),
-            AddVariableButton(),
+            AddGlobalVariableButton(),
             Spacer(),
             PixelArtButton(text: "log out", callback: () {
               context.read<AuthCubit>().signOut();

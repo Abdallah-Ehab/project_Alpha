@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/game_scene/game_scene.dart';
+import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/node_feature/data/node_component.dart';
 import 'package:scratch_clone/pose_detection_feature/data/pose_detection_component.dart';

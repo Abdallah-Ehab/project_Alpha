@@ -275,7 +275,7 @@ class EntityContentRenderer extends StatelessWidget {
                   );
 
             return CustomPaint(
-              painter: EntityPainter(keyFrame: keyFrame),
+              painter: EntityPainter(keyFrame: keyFrame,trackPosition :animationController.currentAnimationTrack.position,),
               size: Size(entity.width, entity.height),
             );
           },

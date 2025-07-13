@@ -10,8 +10,6 @@ import 'package:scratch_clone/entity/data/light_entity.dart';
 import 'package:scratch_clone/physics_feature/data/collider_component.dart';
 import 'package:scratch_clone/physics_feature/presentation/collider_widget.dart';
 
-
-
 class EntityRenderer extends StatelessWidget {
   final Entity entity;
   final List<Entity> lights;
@@ -49,7 +47,11 @@ class EntityRenderer extends StatelessWidget {
                   );
 
             return CustomPaint(
-              painter: EntityPainter(keyFrame: keyFrame),
+              painter: EntityPainter(
+                keyFrame: keyFrame,
+                trackPosition:
+                    animationController.currentAnimationTrack.position,
+              ),
               size: Size(entity.width, entity.height),
             );
           },
@@ -107,59 +109,86 @@ class EntityRenderer extends StatelessWidget {
 }
 
 class EntityPainter extends CustomPainter {
-  KeyFrame keyFrame;
-  EntityPainter({required this.keyFrame});
+  final KeyFrame keyFrame;
+  final Offset trackPosition;
+
+  EntityPainter({
+    required this.keyFrame,
+    required this.trackPosition,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (keyFrame.sketches.isEmpty && keyFrame.image == null) {
-      return;
-    }
-    var sketches = keyFrame.sketches;
+    if (keyFrame.sketches.isEmpty && keyFrame.image == null) return;
 
-    // Calculate scaling factors from animation editor size (600x600) to entity size
+    // Define editor canvas size
     const double editorWidth = 600.0;
     const double editorHeight = 600.0;
+
+    // Compute scale from editor size to entity size
     double scaleX = size.width / editorWidth;
     double scaleY = size.height / editorHeight;
 
-    for (var sketch in sketches) {
+    // Scale the animation track position to entity space
+    final Offset scaledTrackOffset = Offset(
+      trackPosition.dx * scaleX,
+      trackPosition.dy * scaleY,
+    );
+
+    // Draw sketches
+    for (var sketch in keyFrame.sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
-        // Scale the points from editor coordinates to entity coordinates
-        Offset scaledPoint1 = Offset(
-          sketch.points[i].dx * scaleX,
-          sketch.points[i].dy * scaleY,
-        );
-        Offset scaledPoint2 = Offset(
-          sketch.points[i + 1].dx * scaleX,
-          sketch.points[i + 1].dy * scaleY,
-        );
+        final p1 = Offset(
+              sketch.points[i].dx * scaleX,
+              sketch.points[i].dy * scaleY,
+            ) +
+            scaledTrackOffset;
+
+        final p2 = Offset(
+              sketch.points[i + 1].dx * scaleX,
+              sketch.points[i + 1].dy * scaleY,
+            ) +
+            scaledTrackOffset;
 
         canvas.drawLine(
-            scaledPoint1,
-            scaledPoint2,
-            Paint()
-              ..color = sketch.color
-              ..strokeWidth =
-                  sketch.strokeWidth * scaleX // Scale stroke width too
-              ..style = PaintingStyle.stroke);
+          p1,
+          p2,
+          Paint()
+            ..color = sketch.color
+            ..strokeWidth = sketch.strokeWidth * scaleX
+            ..style = PaintingStyle.stroke,
+        );
       }
     }
 
+    // Draw image if present
     if (keyFrame.image != null) {
+      final image = keyFrame.image!;
+      final imageRect = Rect.fromLTWH(
+        0,
+        0,
+        image.width.toDouble(),
+        image.height.toDouble(),
+      );
+
+      final dstRect = Rect.fromLTWH(
+        scaledTrackOffset.dx,
+        scaledTrackOffset.dy,
+        size.width,
+        size.height,
+      );
+
       canvas.drawImageRect(
-          keyFrame.image!,
-          Rect.fromLTWH(0, 0, keyFrame.image!.width.toDouble(),
-              keyFrame.image!.height.toDouble()),
-          Rect.fromLTWH(0, 0, size.width, size.height),
-          Paint()..filterQuality = FilterQuality.none);
+        image,
+        imageRect,
+        dstRect,
+        Paint()..filterQuality = FilterQuality.none,
+      );
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 Widget applyLightingToEntity({

@@ -12,7 +12,7 @@ import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 class DestroyEntityNode extends NodeModel {
   DestroyEntityNode({super.position = Offset.zero})
       : super(
-          image: 'assets/icons/destroyNode.png',
+          image: 'assets/icons/DestroyEntityNode.png',
           color: Colors.redAccent,
           width: 160,
           height: 100,

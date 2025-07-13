@@ -55,4 +55,3 @@ flutter:
     - assets/sounds/
     - assets/lottie/joy_stick.json
     - assets/lottie/coin.json
-    - assets/models/posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite

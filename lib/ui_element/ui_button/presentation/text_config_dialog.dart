@@ -52,10 +52,10 @@ class _TextElementConfigDialogState extends State<TextElementConfigDialog> {
       return;
     }
 
-    widget.textElement.entityName = entityName;
-    widget.textElement.boundVariable = variableName;
-    widget.textElement.fontFamily = selectedFont;
-    widget.textElement.color = selectedColor;
+    widget.textElement.setEntityName(entityName);
+    widget.textElement.setVariable( variableName);
+    widget.textElement.setFont(selectedFont);
+    widget.textElement.setColor(selectedColor);
 
     Navigator.pop(context);
   }

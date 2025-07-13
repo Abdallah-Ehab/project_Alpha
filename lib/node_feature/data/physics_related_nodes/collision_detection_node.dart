@@ -19,7 +19,7 @@ class DetectCollisionNode extends InputNode {
     super.position = Offset.zero,
     this.hasError = false,
   }) : super(
-          image: 'assets/icons/CollisionDetection.png',
+          image: 'assets/icons/collider.png',
           color: Colors.deepOrange,
           width: 160,
           height: 60,

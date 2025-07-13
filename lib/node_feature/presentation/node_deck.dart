@@ -12,6 +12,7 @@ import 'package:scratch_clone/node_feature/data/math_nodes/mul_node.dart';
 import 'package:scratch_clone/node_feature/data/math_nodes/subtract_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
+import 'package:scratch_clone/node_feature/data/output_nodes/branch_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
 import 'package:scratch_clone/node_feature/data/physics_related_nodes/collision_detection_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
@@ -24,6 +25,7 @@ import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_positio
 import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_list_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/get_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/node_icon_widget.dart';
 
@@ -49,6 +51,7 @@ class _NodeDeckState extends State<NodeDeck> with TickerProviderStateMixin {
     ConditionGroupNode(logicSequence: []): "CONDITION GROUP",
     SimpleConditionNode(): "SIMPLE CONDITION",
     DetectCollisionNode(): "DETECT COLLISION",
+    BranchNode() : 'BRANCH NODE'
   };
 
   final Map<NodeModel, String> playerTransformNodes = {
@@ -64,6 +67,7 @@ class _NodeDeckState extends State<NodeDeck> with TickerProviderStateMixin {
     DeclareVariableNode(): "DECLARE VARIABLE",
     SetVariableNode(): "SET VARIABLE",
     DeclareListNode(): "DECLARE LIST",
+    GetVariableNode() : 'GET VARIABLE'
   };
 
   final Map<NodeModel, String> entityNodes = {
