@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,35 +7,29 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
-import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/set_variable_node_widget.dart';
+import 'package:scratch_clone/node_feature/presentation/flow_control_node_widgets/get_variable_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class SetVariableNode extends InputNodeWithValue {
+class GetVariableNode extends InputNodeWithValue {
   String variableName;
-  dynamic value;
 
-  SetVariableNode({
+  GetVariableNode({
     this.variableName = "x",
-    this.value,
     super.position = Offset.zero,
   }) : super(
-          image: 'assets/icons/setVariable.png',
-          color: Colors.orange,
-          width: 200,
-          height: 100,
+          image: 'assets/icons/getVariable.png',
+          color: Colors.indigo,
+          width: 180,
+          height: 80,
           connectionPoints: [],
         ) {
     connectionPoints = [
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: true, width: 20, ownerNode: this),
-      ConnectConnectionPoint(
-          position: Offset.zero, isTop: false, width: 20, ownerNode: this),
-      ValueConnectionPoint( // value input
+      ValueConnectionPoint( // output
         position: Offset.zero,
-        isLeft: true,
         width: 30,
-        ownerNode: this,
+        isLeft: false,
         valueIndex: 0,
+        ownerNode: this,
       ),
     ];
   }
@@ -45,29 +39,10 @@ class SetVariableNode extends InputNodeWithValue {
     notifyListeners();
   }
 
-  void setValue(dynamic newValue) { // <-- added setter
-    value = newValue;
-    notifyListeners();
-  }
-
   @override
   Result execute([Entity? activeEntity, Duration? dt]) {
     if (activeEntity == null) {
       return Result.failure(errorMessage: "No active entity.");
-    }
-
-    final inputPoint = connectionPoints[2] as ValueConnectionPoint;
-    dynamic finalValue;
-
-    if (inputPoint.sourcePoint?.ownerNode != null) {
-      final sourceResult = inputPoint.sourcePoint!.ownerNode.execute(activeEntity);
-      if (sourceResult.errorMessage != null) {
-        return Result.failure(errorMessage: sourceResult.errorMessage!);
-      }
-      finalValue = sourceResult.result;
-      log('value is $value');
-    } else {
-      finalValue = value; // fallback to local field
     }
 
     if (!activeEntity.variables.containsKey(variableName)) {
@@ -75,23 +50,22 @@ class SetVariableNode extends InputNodeWithValue {
           errorMessage: "Variable '$variableName' is not declared.");
     }
 
-    activeEntity.setVariableXToValueY(variableName, finalValue);
-    return Result.success(result: "Variable '$variableName' updated.");
+    final value = activeEntity.variables[variableName];
+    return Result.success(result: value);
   }
 
   @override
   Widget buildNode() {
     return ChangeNotifierProvider.value(
       value: this,
-      child: SetVariableNodeWidget(node: this),
+      child: GetVariableNodeWidget(node:  this),
     );
   }
 
   @override
-  SetVariableNode copyWith({
+  GetVariableNode copyWith({
     Offset? position,
     String? variableName,
-    dynamic value,
     List<ConnectionPointModel>? connectionPoints,
     bool? isConnected,
     NodeModel? child,
@@ -100,9 +74,8 @@ class SetVariableNode extends InputNodeWithValue {
     double? height,
     Color? color,
   }) {
-    final newNode = SetVariableNode(
+    final newNode = GetVariableNode(
       variableName: variableName ?? this.variableName,
-      value: value ?? this.value,
       position: position ?? this.position,
     )
       ..isConnected = isConnected ?? this.isConnected
@@ -117,21 +90,19 @@ class SetVariableNode extends InputNodeWithValue {
   }
 
   @override
-  SetVariableNode copy() => copyWith();
+  GetVariableNode copy() => copyWith();
 
   @override
   Map<String, dynamic> baseToJson() {
     final map = super.baseToJson();
-    map['type'] = 'SetVariableNode';
+    map['type'] = 'GetVariableNode';
     map['variableName'] = variableName;
-    map['value'] = value; // <-- save value
     return map;
   }
 
-  static SetVariableNode fromJson(Map<String, dynamic> json) {
-    final node = SetVariableNode(
+  static GetVariableNode fromJson(Map<String, dynamic> json) {
+    final node = GetVariableNode(
       variableName: json['variableName'] as String,
-      value: json['value'], // <-- restore value
       position: OffsetJson.fromJson(json['position']),
     );
     node.id = json['id'];

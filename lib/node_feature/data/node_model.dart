@@ -5,13 +5,22 @@ import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/condition_group_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
+import 'package:scratch_clone/node_feature/data/math_nodes/add_node.dart';
+import 'package:scratch_clone/node_feature/data/math_nodes/div_node.dart';
+import 'package:scratch_clone/node_feature/data/math_nodes/mul_node.dart';
+import 'package:scratch_clone/node_feature/data/math_nodes/subtract_node.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
+import 'package:scratch_clone/node_feature/data/output_nodes/branch_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
+import 'package:scratch_clone/node_feature/data/spawn_node/destroy_entity_node.dart';
+import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_position.dart';
 import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/get_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +30,8 @@ import 'package:uuid/uuid.dart';
 // 2- output node has only one output
 // 3 - input node has only on input
 // 4- connect nodes has only 2 connects
+
+
 
 abstract class NodeModel with ChangeNotifier {
   String id;
@@ -97,6 +108,24 @@ abstract class NodeModel with ChangeNotifier {
       return GetPropertyFromEntityNode.fromJson(json);
       case 'WaitForNode':
       return WaitForNode.fromJson(json);
+      case 'ApplyForceNode':
+      return ApplyForceNode.fromJson(json);
+      case 'BranchNode':
+      return BranchNode.fromJson(json);
+      case 'SpawnAtNode':
+      return SpawnAtNode.fromJson(json);
+      case 'GetVariableNode':
+      return GetVariableNode.fromJson(json);
+      case 'AddNode':
+      return AddNode.fromJson(json);
+      case 'SubtractNode':
+      return SubtractNode.fromJson(json);
+      case 'DivideNode':
+      return DivideNode.fromJson(json);
+      case 'MultiplyNode':
+      return MultiplyNode.fromJson(json);
+      case 'DestroyEntityNode':
+      return DestroyEntityNode.fromJson(json);
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
     }

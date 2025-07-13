@@ -7,10 +7,11 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
+import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/presentation/spawn_entity_node_widget/spawn_node_at_position_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
-class SpawnAtNode extends NodeModel {
+class SpawnAtNode extends InputNodeWithValue {
   double x;
   double y;
   String prefabName;
@@ -24,7 +25,7 @@ class SpawnAtNode extends NodeModel {
           image: 'assets/icons/spawn.png',
           color: Colors.green,
           width: 200,
-          height: 160,
+          height: 190,
           connectionPoints: []
         ) {
     connectionPoints = [
@@ -66,15 +67,23 @@ class SpawnAtNode extends NodeModel {
     return Result.success();
   }
 
-  double _evaluate(ValueConnectionPoint point, double fallback, Entity? entity) {
-    final connected = point.sourcePoint?.ownerNode;
-    if (connected == null) return fallback;
+ double _evaluate(ValueConnectionPoint point, double fallback, Entity? entity) {
+  final connected = point.sourcePoint?.ownerNode;
+  if (connected == null) return fallback;
 
-    final result = connected.execute(entity);
-    if (result.result is num) return (result.result as num).toDouble();
+  final result = connected.execute(entity);
+  final value = result.result;
 
-    return fallback;
+  if (value is List && point.valueIndex < value.length) {
+    final v = value[point.valueIndex];
+    if (v is num) return v.toDouble();
+  } else if (value is num) {
+    return value.toDouble();
   }
+
+  return fallback;
+}
+
 
   @override
   Widget buildNode() => ChangeNotifierProvider.value(

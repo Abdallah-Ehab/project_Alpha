@@ -37,9 +37,11 @@ class AnimationEditorScreen extends StatelessWidget {
                     onPanStart: (details) {
                       if (currentFrame != null) {
                         final tool = context.read<ToolSettings>();
-                        final trackPosition = animComponent.currentAnimationTrack.position;
-                        final adjustedPosition = details.localPosition - trackPosition;
-                        
+                        final trackPosition =
+                            animComponent.currentAnimationTrack.position;
+                        final adjustedPosition =
+                            details.localPosition - trackPosition;
+
                         final sketch = SketchModel(
                           points: [adjustedPosition],
                           color: tool.isEraser
@@ -53,14 +55,15 @@ class AnimationEditorScreen extends StatelessWidget {
                     onPanUpdate: (details) {
                       if (currentFrame == null) return;
                       final tool = context.read<ToolSettings>();
-                      final trackPosition = animComponent.currentAnimationTrack.position;
-                      final adjustedPosition = details.localPosition - trackPosition;
-        
+                      final trackPosition =
+                          animComponent.currentAnimationTrack.position;
+                      final adjustedPosition =
+                          details.localPosition - trackPosition;
+
                       if (tool.isEraser) {
                         currentFrame.removePointFromSketch(adjustedPosition);
                       } else if (currentFrame.sketches.isNotEmpty) {
-                        currentFrame
-                            .addPointToCurrentSketch(adjustedPosition);
+                        currentFrame.addPointToCurrentSketch(adjustedPosition);
                       }
                     },
                     child: SizedBox(
@@ -71,18 +74,27 @@ class AnimationEditorScreen extends StatelessWidget {
                               value: currentFrame,
                               child: Consumer<KeyFrame>(
                                 builder: (context, keyFrame, child) {
-                                  return CustomPaint(
-                                    painter: AnimationPainter(
-                                      frames: animComponent
-                                          .currentAnimationTrack.frames,
-                                      currentIndex: animComponent.currentFrame,
-                                      prevFrames:
-                                          onion.enabled ? onion.prevFrames : 0,
-                                      nextFrames:
-                                          onion.enabled ? onion.nextFrames : 0,
-                                      trackPosition: animComponent.currentAnimationTrack.position,
+                                  return ChangeNotifierProvider.value(
+                                    value: animComponent.currentAnimationTrack,
+                                    child: Consumer<AnimationTrack>(
+                                      builder: (context, track, child) {
+                                        return CustomPaint(
+                                          painter: AnimationPainter(
+                                            frames: track.frames,
+                                            currentIndex:
+                                                animComponent.currentFrame,
+                                            prevFrames: onion.enabled
+                                                ? onion.prevFrames
+                                                : 0,
+                                            nextFrames: onion.enabled
+                                                ? onion.nextFrames
+                                                : 0,
+                                            trackPosition: track.position,
+                                          ),
+                                          size: const Size(600, 600),
+                                        );
+                                      },
                                     ),
-                                    size: const Size(600, 600),
                                   );
                                 },
                               ),
@@ -143,7 +155,8 @@ class AnimationPainter extends CustomPainter {
     _paintFrame(canvas, frames[currentIndex], null, size);
   }
 
-  void _paintFrame(Canvas canvas, KeyFrame keyFrame, Color? overrideColor, Size size) {
+  void _paintFrame(
+      Canvas canvas, KeyFrame keyFrame, Color? overrideColor, Size size) {
     for (var sketch in keyFrame.sketches) {
       for (int i = 0; i < sketch.points.length - 1; i++) {
         canvas.drawLine(
@@ -160,10 +173,8 @@ class AnimationPainter extends CustomPainter {
     if (keyFrame.image != null) {
       canvas.drawImage(
         keyFrame.image!,
-        Offset(
-          size.width/2 - keyFrame.image!.width/2 + trackPosition.dx, 
-          size.height/2 - keyFrame.image!.height/2 + trackPosition.dy
-        ),
+        Offset(size.width / 2 - keyFrame.image!.width / 2 + trackPosition.dx,
+            size.height / 2 - keyFrame.image!.height / 2 + trackPosition.dy),
         Paint()..color = overrideColor ?? Colors.white,
       );
     }

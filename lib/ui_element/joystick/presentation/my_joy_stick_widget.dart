@@ -17,7 +17,6 @@ class MyJoyStickWidget extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Joystick(
-          base: Container(color: Colors.black,),
           includeInitialAnimation: false,
           listener: (details) {
             joyStickElement.control(details.x, details.y);

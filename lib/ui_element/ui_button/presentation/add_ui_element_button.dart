@@ -19,7 +19,7 @@ enum UIElementType {
   twoButtons,
   threeButtons,
   fourButtons,
-  text
+  text,
 }
 
 

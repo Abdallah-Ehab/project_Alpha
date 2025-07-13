@@ -20,7 +20,7 @@ class ConditionGroupNode extends InputNode {
     required this.logicSequence,
     super.position = Offset.zero
   }) : super(
-          image: 'assets/icons/condition',
+          image: 'assets/icons/conditiongroup.png',
           connectionPoints: [],
           width: 300, height: 300, color: Colors.redAccent
         ) {

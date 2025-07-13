@@ -44,4 +44,10 @@ class FourButtonConfiguration extends UIElement {
       ),
     );
   }
+  
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
 }

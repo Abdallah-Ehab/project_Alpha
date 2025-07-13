@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/ui_element/ui_button/data/abstract_button.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/button_config_dialog.dart';
+import 'package:scratch_clone/ui_element/ui_element.dart';
 
 class HoldButton extends UIButtonElement {
   HoldButton({
@@ -50,5 +51,25 @@ class HoldButton extends UIButtonElement {
   @override
   Widget buildUIElementController() {
     return ButtonConfigDialog(buttonElement: this);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.toString(),
+      'alignment': alignmentToJson(alignment),
+      'entityName': entityName,
+      'variableName': variableName,
+      'valueToSet': valueToSet,
+    };
+  }
+
+  static HoldButton fromJson(Map<String, dynamic> json) {
+    return HoldButton(
+      alignment: alignmentFromJson(json['alignment']),
+      entityName: json['entityName'],
+      variableName: json['variableName'],
+      valueToSet: json['valueToSet'] ?? true,
+    );
   }
 }

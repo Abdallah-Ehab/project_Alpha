@@ -652,7 +652,10 @@ class SpriteSheetSlicerState extends State<SpriteSheetSlicer> {
       
       // If pixel is within tolerance of key color, make it transparent
       if (distance <= threshold) {
-        modifiedPixels[i + 3] = 0; // Only change alpha, preserve RGB
+        modifiedPixels[i] = 0;
+        modifiedPixels[i+1] = 0;
+        modifiedPixels[i+2] = 0;
+        modifiedPixels[i + 3] = 0;
       }
     }
     

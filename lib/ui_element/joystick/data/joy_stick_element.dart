@@ -75,4 +75,27 @@ class JoyStickElement extends UIElement with ChangeNotifier {
     return MyJoyStickWidget(joyStickElement: this);
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.toString(),
+      'alignment': alignmentToJson(alignment),
+      'entityName': entityName,
+      'xValue': xValue,
+      'yValue': yValue,
+      'xName': xName,
+      'yName': yName,
+    };
+  }
+
+  static JoyStickElement fromJson(Map<String, dynamic> json) {
+    return JoyStickElement(
+      alignment: alignmentFromJson(json['alignment']),
+      entityName: json['entityName'],
+      xValue: (json['xValue'] ?? 0).toDouble(),
+      yValue: (json['yValue'] ?? 0).toDouble(),
+      xName: json['xName'] ?? "x",
+      yName: json['yName'] ?? "y",
+    );
+  }
+
 }

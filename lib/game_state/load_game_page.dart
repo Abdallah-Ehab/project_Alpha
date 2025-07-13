@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/game_scene/game_view.dart';
 import 'package:scratch_clone/game_scene/test_game_loop.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

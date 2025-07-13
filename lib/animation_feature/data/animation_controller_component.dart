@@ -24,7 +24,7 @@ class AnimationControllerComponent extends Component {
         lastUpdate = lastUpdate ?? Duration.zero,
         _currentAnimationTrackName = currentAnimationTrackName ?? "idle",
         transitions = transitions ??[],
-        animationTracks = animationTracks ??{'idle':AnimationTrack('idle',[],true,false)},
+        animationTracks = animationTracks ??{'idle':AnimationTrack('idle',[KeyFrame(sketches: [])],true,false)},
         super(isActive: isActive ?? true);
 
   void setFrame(int index) {
