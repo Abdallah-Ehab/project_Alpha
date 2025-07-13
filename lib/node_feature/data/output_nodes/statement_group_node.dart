@@ -16,7 +16,7 @@ class StatementGroupNode extends OutputNode {
     required this.statements,
     super.position = Offset.zero
   }) : super(
-            image: 'assets/icons/StatementGroupNode.png',
+            image: 'assets/icons/StatementGroup.png',
             connectionPoints: [],
             color: Colors.green,
             width: 200,
@@ -39,7 +39,7 @@ class StatementGroupNode extends OutputNode {
   }
 
   void _resize() {
-    final double extraHeight = statements.length * 80;
+    final double extraHeight = statements.length * 200;
     setHeight(100 + extraHeight);
   }
 

@@ -48,6 +48,18 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addPrefabFromDrawerAtPosition(String name, Offset position){
+    final prefab = prefabs[name];
+    if (prefab == null) return;
+
+    final clone = prefab.copy();
+    clone.position = position;
+    final prefabWithTheSameName = entities[EntityType.actors]?.values.where((e)=>e.name.startsWith(name)) ?? [];
+    clone.name = clone.name + prefabWithTheSameName.toString();
+    addEntity(EntityType.actors, '${clone.name} + ${prefabWithTheSameName.length}', clone);
+    notifyListeners();
+  }
+
   void spawnPrefabAtPosition(String name, Offset position) {
     final prefab = prefabs[name];
     if (prefab == null) return;

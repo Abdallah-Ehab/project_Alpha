@@ -12,6 +12,7 @@ class DeclareListNode extends NodeModel {
 
   DeclareListNode({this.listName = "myList", super.position = Offset.zero})
       : super(
+          image: 'assets/icons/declare list.png',
           connectionPoints: [],
           color: Colors.deepPurple,
           width: 200,

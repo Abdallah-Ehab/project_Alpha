@@ -19,7 +19,7 @@ class WaitForNode extends NodeModel {
     this.waitSeconds = 1.0,
     super.position = Offset.zero,
   }) : super(
-          image: 'assets/icons/waitNode.png',
+          image: 'assets/icons/wait for node.png',
           connectionPoints: [],
           color: Colors.orange,
           width: 200,

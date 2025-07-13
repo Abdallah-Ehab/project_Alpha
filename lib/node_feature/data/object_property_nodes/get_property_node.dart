@@ -20,7 +20,7 @@ class GetPropertyFromEntityNode extends InputNodeWithValue {
     this.hasTwoOutputs = true,
     super.position,
   }) : super(
-          image: '',
+          image: 'assets/icons/GetPropertyFromEntityNode.png',
           color: Colors.teal,
           width: 180,
           height: 120,

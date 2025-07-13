@@ -15,7 +15,7 @@ class MultiplyNode extends InputNodeWithValue {
 
   MultiplyNode({this.a = 0, this.b = 0, super.position})
       : super(
-          image: 'assets/icons/multiplyNode.png',
+          image: 'assets/icons/muliplyNode.png',
           color: Colors.green,
           width: 160,
           height: 200,

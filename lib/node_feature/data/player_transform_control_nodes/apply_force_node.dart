@@ -18,7 +18,7 @@ class ApplyForceNode extends NodeModel {
     this.fy = 0.0,
     super.position = Offset.zero,
   }) : super(
-          image: 'assets/icons/forceNode.png',
+          image: 'assets/icons/apply force.png',
           connectionPoints: [],
           color: Colors.deepPurple,
           width: 200,
