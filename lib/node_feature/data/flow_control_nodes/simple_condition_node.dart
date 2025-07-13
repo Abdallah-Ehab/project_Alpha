@@ -19,6 +19,7 @@ class SimpleConditionNode extends NodeModel with HasOutput {
     this.secondOperand,
     this.comparisonOperator,
   }) : super(
+    image: 'assets/icons/simple condition.png',
           color: Colors.yellow,
           width: 200,
           height: 100,

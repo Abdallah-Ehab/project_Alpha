@@ -22,7 +22,7 @@ class SpawnAtNode extends InputNodeWithValue {
     super.position = Offset.zero,
     
   }) : super(
-          image: 'assets/icons/spawn.png',
+          image: 'assets/icons/spawn at node.png',
           color: Colors.green,
           width: 200,
           height: 190,

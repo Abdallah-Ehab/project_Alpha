@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/ui_widgets/pixelated_buttons.dart';
-
+import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/entity/presentation/add_component_button.dart';
 import 'package:scratch_clone/entity/presentation/add_to_prefabs_button.dart';
 import 'package:scratch_clone/entity/presentation/control_panel.dart';
@@ -16,11 +16,20 @@ import 'package:scratch_clone/login_and_signup/presentation/login_screen.dart';
 import 'package:scratch_clone/ui_element/ui_button/presentation/add_ui_element_button.dart';
 import 'package:scratch_clone/ui_element/ui_elements_layer.dart';
 
-class GameScene extends StatelessWidget {
+class GameScene extends StatefulWidget {
   const GameScene({super.key});
 
   @override
+  State<GameScene> createState() => _GameSceneState();
+}
+
+class _GameSceneState extends State<GameScene> {
+
+   bool isPrefabExpanded = false;
+  @override
   Widget build(BuildContext context) {
+   
+    final entityManager = context.read<EntityManager>();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -45,6 +54,20 @@ class GameScene extends StatelessWidget {
             AddUIElementButton(),
             SizedBox(height: 20,),
             AddGlobalVariableButton(),
+            SizedBox(height: 20),
+            ChangeNotifierProvider.value(
+              value: entityManager,
+              child: Consumer<EntityManager>(
+                builder: (context, entityManager, child) =>  buildCategory(
+                  title: "Prefabs",
+                  prefabs: entityManager.prefabs,
+                  isExpanded: isPrefabExpanded,
+                  onToggle: () => setState(() {
+                    isPrefabExpanded = !isPrefabExpanded;
+                  }),
+                ),
+              ),
+            ),
             Spacer(),
             PixelArtButton(text: "log out", callback: () {
               context.read<AuthCubit>().signOut();
@@ -86,3 +109,85 @@ class GameScene extends StatelessWidget {
     );
   }
 }
+
+
+Widget buildCategory({
+    required String title,
+    required Map<String, Entity> prefabs,
+    required bool isExpanded,
+    required VoidCallback onToggle,
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Color(0xff555555),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'PressStart2P',
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: onToggle,
+                icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          AnimatedSize(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: Visibility(
+              visible: isExpanded,
+              maintainState: true,
+              maintainAnimation: true,
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: prefabs.values.length,
+                itemBuilder: (context, index) {
+                  final entry = (prefabs.values).toList()[index];
+                  return Draggable<Entity>(
+                    data: entry,
+                    feedback: Container(color: Colors.red,width: 200,height: 200),
+                    onDragStarted: () {
+                      if(Scaffold.of(context).isDrawerOpen){
+                        Scaffold.of(context).closeDrawer();
+                      }
+                    },
+                    child: ListTile(
+                      title: Text(
+                         entry.name,
+                        style: const TextStyle(
+                          fontFamily: 'PressStart2P',
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }

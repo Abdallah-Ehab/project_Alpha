@@ -86,8 +86,7 @@ class _GameViewState extends State<GameView> {
                   child: ClipRect(
                     child: DragTarget<Entity>(
                       onAcceptWithDetails: (details) {
-                        entityManager.spawnPrefabAtPosition(
-                            details.data.name, details.offset);
+                        entityManager.addPrefabFromDrawerAtPosition(details.data.name, details.offset);
                       },
                       builder: (context, candidateData, rejectedData) => Stack(
                         children: [
@@ -186,7 +185,7 @@ class _GameEntityRendererState extends State<GameEntityRenderer> {
                 onTap: () {
                   if (widget.gameState.isPlaying) {
                     entity.setVariableXToValueY('ontap', true);
-                    Future.delayed(const Duration(milliseconds: 500), () {
+                    Future.delayed(const Duration(milliseconds: 50), () {
                       entity.setVariableXToValueY('ontap', false);
                     });
                   } else {

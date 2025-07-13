@@ -84,7 +84,7 @@ class ActorEntity extends Entity{
   
 
   @override
-ActorEntity copy() {
+  ActorEntity copy() {
   final copied = ActorEntity(
     name: name,
     tag: tag,

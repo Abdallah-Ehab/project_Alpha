@@ -17,7 +17,7 @@ class SimpleFlipNode extends NodeModel {
     this.flipY = false,
     super.position = Offset.zero,
   }) : super(
-          image: 'assets/icons/flip.png',
+          image: 'assets/icons/flip entity.png',
           color: Colors.deepPurple,
           width: 180,
           height: 180,
