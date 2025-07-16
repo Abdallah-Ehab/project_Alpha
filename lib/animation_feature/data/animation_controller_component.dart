@@ -1,6 +1,7 @@
 import 'package:scratch_clone/animation_feature/data/animation_track.dart';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/sound_feature/data/sound_controller_component.dart';
 
 class AnimationControllerComponent extends Component {
@@ -317,6 +318,29 @@ class Condition {
     );
   }
   bool execute(Entity entity) {
+    if(EntityManager().globalVariables[entityVariable] != null){
+      final secondOp = _parseValue(secondOperand);
+    switch (operator) {
+      case "==":
+        return EntityManager().globalVariables[entityVariable] == secondOp;
+
+      case ">":
+        return EntityManager().globalVariables[entityVariable] > secondOp;
+
+      case "<":
+        return EntityManager().globalVariables[entityVariable] < secondOp;
+
+      case ">=":
+        return EntityManager().globalVariables[entityVariable] >= secondOp;
+      case "<=":
+        return EntityManager().globalVariables[entityVariable] <= secondOp;
+      case "!=":
+        return EntityManager().globalVariables[entityVariable] != secondOp;
+      default:
+        return false;
+    }
+
+    }
     if (entity.variables[entityVariable] == null) return false;
     final secondOp = _parseValue(secondOperand);
     switch (operator) {

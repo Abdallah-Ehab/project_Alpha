@@ -14,6 +14,7 @@ import 'package:scratch_clone/node_feature/presentation/output_node_widgets/bran
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class BranchNode extends OutputNode {
+  NodeModel? _currentBranchNode;
   BranchNode({
     super.position = Offset.zero,
   }) : super(
@@ -31,41 +32,46 @@ class BranchNode extends OutputNode {
 
   @override
   Result execute([Entity? activeEntity, Duration? dt]) {
-    NodeModel? current = child;
 
-    while (current != null) {
-      final result = current.execute(activeEntity, dt);
+
+    _currentBranchNode ??= child;
+
+    while (_currentBranchNode != null) {
+      final result = _currentBranchNode!.execute(activeEntity, dt);
 
       if (result.errorMessage != null) {
         return Result.failure(errorMessage: result.errorMessage);
       }
 
-      // Handle wait node
-      if (current is WaitForNode &&
+      // Handle wait node - stay on current node
+      if (_currentBranchNode is WaitForNode &&
           result is Result<bool> &&
           result.result == false) {
-        return Result.success(result: true); // pause, don’t continue further
+        return Result.success(result: false); // Still waiting, don't advance
       }
 
       // Handle IfNode false branch
-      if (current is IfNode &&
+      if (_currentBranchNode is IfNode &&
           result is Result<bool> &&
           result.result == false) {
-        final elseNode = current.child;
+        final elseNode = _currentBranchNode!.child;
         if (elseNode is ElseNode) {
           final elseResult = elseNode.execute(activeEntity, dt);
           if (elseResult.errorMessage != null) {
             return Result.failure(errorMessage: elseResult.errorMessage);
           }
-          current = elseNode.child;
+          _currentBranchNode = elseNode.child;
           continue;
         }
       }
 
-      current = current.child;
+      _currentBranchNode = _currentBranchNode!.child;
     }
 
+    // Branch completed, reset for next iteration
+    _currentBranchNode = null;
     return Result.success(result: true); // Finished branch
+  
   }
 
   @override

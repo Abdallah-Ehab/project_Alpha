@@ -93,8 +93,8 @@ class EntityRenderer extends StatelessWidget {
               builder: (context, value, child) {
                 log('collider component width is ${colliderComponent.width}');
                 return Positioned(
-                  top: entity.position.dy + colliderComponent.position.dy,
-                  left: entity.position.dx + colliderComponent.position.dx,
+                  top: entity.position.dy + colliderComponent.offset.dy,
+                  left: entity.position.dx + colliderComponent.offset.dx,
                   child: ColliderWidget(
                     width: colliderComponent.width,
                     height: colliderComponent.height,

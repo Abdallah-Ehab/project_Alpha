@@ -34,6 +34,21 @@ class JoyStickControlPanelState extends State<JoyStickControlPanel> {
     super.dispose();
   }
 
+  bool _variableExists(String variableName, Entity? entity) {
+    if (widget.joyStickElement.allowGlobals) {
+      if (EntityManager().globalVariables.containsKey(variableName)) {
+        return true;
+      }
+    }
+        
+    // Then check entity variables
+    if (entity != null && entity.variables.containsKey(variableName)) {
+      return true;
+    }
+        
+    return false;
+  }
+
   void _submit() {
     final entityName = entityNameController.text;
     final xName = xNameController.text;
@@ -44,11 +59,13 @@ class JoyStickControlPanelState extends State<JoyStickControlPanel> {
       setState(() => errorMessage = "Entity '$entityName' not found.");
       return;
     }
-    if (!entity.variables.containsKey(xName)) {
+        
+    if (!_variableExists(xName, entity)) {
       setState(() => errorMessage = "Variable '$xName' not found.");
       return;
     }
-    if (!entity.variables.containsKey(yName)) {
+        
+    if (!_variableExists(yName, entity)) {
       setState(() => errorMessage = "Variable '$yName' not found.");
       return;
     }
@@ -77,6 +94,16 @@ class JoyStickControlPanelState extends State<JoyStickControlPanel> {
           TextField(
             controller: yNameController,
             decoration: const InputDecoration(labelText: 'Y Variable Name'),
+          ),
+          CheckboxListTile(
+            title: const Text('Allow Global Variables'),
+            value: widget.joyStickElement.allowGlobals,
+            onChanged: (bool? value) {
+              setState(() {
+                widget.joyStickElement.setAllowGlobals(value ?? false);
+              });
+            },
+            controlAffinity: ListTileControlAffinity.leading,
           ),
           if (errorMessage != null)
             Padding(

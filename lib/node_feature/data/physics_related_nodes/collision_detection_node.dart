@@ -30,13 +30,15 @@ class DetectCollisionNode extends InputNode {
     ];
   }
 
+
+
   void setTag(String newTag) {
     tag = newTag;
     notifyListeners();
   }
 
   @override
-  Result<bool> execute([Entity? activeEntity,Duration? dt]) {
+   Result<bool> execute([Entity? activeEntity,Duration? dt]) {
     if (activeEntity == null) {
       hasError = true;
       return Result.failure(errorMessage: "No active entity.");

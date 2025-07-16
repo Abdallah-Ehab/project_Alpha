@@ -25,7 +25,7 @@ class _PlayBackControlPanel extends State<PlayBackControlPanel>
 
     const fps = 12;
     final totalDuration = Duration(
-      milliseconds: ((track?.frames.length ?? 1) * (10000 ~/ fps)),
+      milliseconds: ((100) * (1000 ~/ fps)),
     );
     _controller = AnimationController(
       vsync: this,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -58,6 +60,8 @@ class SubtractNode extends InputNodeWithValue {
   Result execute([Entity? activeEntity, Duration? dt]) {
     final left = _getValueFromInput(1, activeEntity) ?? a;
     final right = _getValueFromInput(2, activeEntity) ?? b;
+    log('left is $left');
+    log('right is $right');
     final result = left - right;
     (connectionPoints[3] as ValueConnectionPoint).value = result;
     return Result.success(result: result);
@@ -69,6 +73,9 @@ class SubtractNode extends InputNodeWithValue {
     if (sourceNode == null) return null;
 
     final result = sourceNode.execute(entity);
+    if(result.result is List){
+      return result.result[cp.sourcePoint!.valueIndex];
+    }
     return (result.result is num) ? result.result.toDouble() : null;
   }
 

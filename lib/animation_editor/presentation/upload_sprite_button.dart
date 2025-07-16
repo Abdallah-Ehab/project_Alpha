@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:image/image.dart' as img;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +93,7 @@ class UploadSpriteButton extends StatelessWidget {
                           log('Creating UI Image directly...');
                           // Create UI Image directly without unnecessary conversions
                           final codec = await ui.instantiateImageCodec(bytes);
+                          
                           final frameInfo = await codec.getNextFrame();
                           final image = frameInfo.image;
 
@@ -103,18 +104,45 @@ class UploadSpriteButton extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => SpriteSheetSlicer(
                                 spriteSheet: image,
-                                onSpritesExtracted: (List<ui.Image> images) {
+                                onSpritesExtracted: (List<ui.Image> images) async {
                                   log('Sprites extracted: ${images.length}');
 
-                                  final frames = images
-                                      .map((img) => KeyFrame(
-                                            image: img,
-                                            sketches: [],
-                                            position: Offset.zero,
-                                            rotation: 0,
-                                            scale: 1.0,
-                                          ))
-                                      .toList();
+                                  final frames = <KeyFrame>[];
+                                  
+                                  // Convert each individual sprite to base64
+                                  for (final img in images) {
+                                    try {
+                                      // Convert ui.Image to bytes
+                                      final byteData = await img.toByteData(
+                                        format: ui.ImageByteFormat.png
+                                      );
+                                      
+                                      if (byteData != null) {
+                                        final imageBytes = byteData.buffer.asUint8List();
+                                        final base64Str = base64Encode(imageBytes);
+                                        
+                                        frames.add(KeyFrame(
+                                          image: img,
+                                          sketches: [],
+                                          position: Offset.zero,
+                                          rotation: 0,
+                                          scale: 1.0,
+                                          imageBase64: base64Str,
+                                        ));
+                                      }
+                                    } catch (e) {
+                                      log('Error converting sprite ${frames.length} to base64: $e');
+                                      // Add frame without base64 if conversion fails
+                                      frames.add(KeyFrame(
+                                        image: img,
+                                        sketches: [],
+                                        position: Offset.zero,
+                                        rotation: 0,
+                                        scale: 1.0,
+                                        imageBase64: '',
+                                      ));
+                                    }
+                                  }
 
                                   currentTrack.addMultipleFrames(frames);
 

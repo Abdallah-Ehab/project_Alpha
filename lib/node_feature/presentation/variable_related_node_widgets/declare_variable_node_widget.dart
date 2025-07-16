@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
 
 class DeclareVarableNodeWidget extends StatefulWidget {
@@ -34,6 +35,7 @@ class _DeclareVarableNodeWidget extends State<DeclareVarableNodeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final entityManager = context.read<EntityManager>();
     return SizedBox(
       width: widget.node.width,
       height: widget.node.height,
@@ -92,11 +94,14 @@ class _DeclareVarableNodeWidget extends State<DeclareVarableNodeWidget> {
           Positioned(
             top: 8,
             right: 8,
-            child: Consumer<Entity>(
-              builder: (context, entity, child) =>  IconButton(
-                icon: const Icon(Icons.check_circle, color: Colors.white),
-                onPressed: (){_confirmVariableDeclaration(context,entity);},
-                tooltip: "Create Variable",
+            child: ChangeNotifierProvider.value(
+              value: entityManager.activeEntity,
+              child: Consumer<Entity>(
+                builder: (context, entity, child) =>  IconButton(
+                  icon: const Icon(Icons.check_circle, color: Colors.white),
+                  onPressed: (){_confirmVariableDeclaration(context,entity);},
+                  tooltip: "Create Variable",
+                ),
               ),
             ),
           ),

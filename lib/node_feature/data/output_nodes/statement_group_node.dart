@@ -5,12 +5,14 @@ import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
+import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/presentation/output_node_widgets/statements_group_node_widget.dart';
 import 'package:scratch_clone/save_load_project_feature.dart/json_helpers.dart';
 
 class StatementGroupNode extends OutputNode {
   final List<NodeModel> statements;
   bool isHighlighted;
+   int _currentStatementIndex = 0;
   StatementGroupNode({
     this.isHighlighted = false,
     required this.statements,
@@ -41,16 +43,32 @@ class StatementGroupNode extends OutputNode {
   void _resize() {
     final double extraHeight = statements.length * 200;
     setHeight(100 + extraHeight);
+    notifyListeners();
   }
 
   @override
-  Result execute([Entity? activeEntity,Duration? dt]) {
-    for (final node in statements) {
-      final result = node.execute(activeEntity);
+  Result execute([Entity? activeEntity, Duration? dt]) {
+    while (_currentStatementIndex < statements.length) {
+      final node = statements[_currentStatementIndex];
+      final result = node.execute(activeEntity, dt);
+      
       if (result.errorMessage != null) {
         return Result.failure(errorMessage: result.errorMessage);
       }
+
+      // Handle wait node - stay on current statement
+      if (node is WaitForNode &&
+          result is Result<bool> &&
+          result.result == false) {
+        return Result.success(result: false); // Still waiting, don't advance
+      }
+
+      // Move to next statement
+      _currentStatementIndex++;
     }
+
+    // All statements completed, reset for next execution
+    _currentStatementIndex = 0;
     return Result.success(result: true);
   }
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:scratch_clone/component/component.dart';
@@ -6,12 +7,12 @@ import 'package:scratch_clone/entity/data/entity_manager.dart';
 import 'package:scratch_clone/physics_feature/data/rigid_body_component.dart';
 
 class ColliderComponent extends Component {
-  Offset position;
+  Offset offset; // Offset from entity position
   double width;
   double height;
 
   ColliderComponent({
-    this.position = Offset.zero,
+    this.offset = Offset.zero, // Renamed from position to offset for clarity
     this.width = 50,
     this.height = 50,
     super.isActive,
@@ -41,9 +42,6 @@ class ColliderComponent extends Component {
       if (_areRectsOverlapping(activeRect, otherRect)) {
         _handleCollision(activeEntity, other, activeRect, otherRect,
             activeRigidBody, otherRigidBody);
-      } else {
-        _handleGroundCheck(
-            activeEntity, activeRect, otherRect, activeRigidBody);
       }
     }
   }
@@ -244,30 +242,11 @@ class ColliderComponent extends Component {
     }
   }
 
-  void _handleGroundCheck(
-    Entity activeEntity,
-    Rect activeRect,
-    Rect otherRect,
-    RigidBodyComponent? activeRigidBody,
-  ) {
-    if (activeRigidBody != null && activeRigidBody.isGrounded) {
-      final groundRect = Rect.fromLTWH(
-        activeRect.left,
-        activeRect.bottom,
-        activeRect.width,
-        1,
-      );
-      if (!groundRect.overlaps(otherRect)) {
-        activeRigidBody.leaveGround();
-      }
-    }
-  }
-
-// Helper class to encapsulate collision overlap data
-
+  // Fixed getRect method - uses offset from entity position
   Rect getRect(Entity entity) {
-    final pos = entity.position;
-    return Rect.fromLTWH(pos.dx, pos.dy, width, height);
+    final entityPos = entity.position;
+    final colliderPos = entityPos + offset;
+    return Rect.fromLTWH(colliderPos.dx, colliderPos.dy, width, height);
   }
 
   void setWidth(double value) {
@@ -280,23 +259,23 @@ class ColliderComponent extends Component {
     notifyListeners();
   }
 
-  void setPosition(Offset value) {
-    position = value;
+  void setOffset(Offset value) {
+    offset = value;
     notifyListeners();
   }
 
   void setX(double x) {
-    position = Offset(x, position.dy);
+    offset = Offset(x, offset.dy);
     notifyListeners();
   }
 
   void setY(double y) {
-    position = Offset(position.dx, y);
+    offset = Offset(offset.dx, y);
     notifyListeners();
   }
 
   void move({double? x, double? y}) {
-    position += Offset(x ?? 0, y ?? 0);
+    offset += Offset(x ?? 0, y ?? 0);
     notifyListeners();
   }
 
@@ -310,17 +289,17 @@ class ColliderComponent extends Component {
     return {
       'type': 'collider_component',
       'isActive': isActive,
-      'position': {'dx': position.dx, 'dy': position.dy},
+      'offset': {'dx': offset.dx, 'dy': offset.dy},
       'width': width,
       'height': height,
     };
   }
 
   static ColliderComponent fromJson(Map<String, dynamic> json) {
-    final pos = json['position'] as Map<String, dynamic>;
+    final pos = json['offset'] as Map<String, dynamic>;
     return ColliderComponent(
       isActive: json['isActive'] as bool? ?? true,
-      position: Offset(
+      offset: Offset(
         (pos['dx'] as num).toDouble(),
         (pos['dy'] as num).toDouble(),
       ),
@@ -332,7 +311,7 @@ class ColliderComponent extends Component {
   @override
   ColliderComponent copy() {
     return ColliderComponent(
-      position: position,
+      offset: offset,
       width: width,
       height: height,
       isActive: isActive,

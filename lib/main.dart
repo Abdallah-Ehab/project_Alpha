@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/api_keys.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
+import 'package:scratch_clone/game_error.dart';
 import 'package:scratch_clone/game_state/game_state.dart';
 import 'package:scratch_clone/login_and_signup/presentation/cubit/authentacation_cubit.dart';
 import 'package:scratch_clone/login_and_signup/presentation/lottie-screen.dart';
@@ -27,6 +28,7 @@ class TestApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_)=> GameErrorManager()),
         ChangeNotifierProvider(create: (_) => GameState()),
         ChangeNotifierProvider(create: (_) => UiElementManager()),
         ChangeNotifierProvider(create: (_) => EntityManager()),

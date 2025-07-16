@@ -74,6 +74,16 @@ abstract class Entity with ChangeNotifier {
     notifyListeners();
   }
 
+  void setFlipX(bool flip){
+    this.isFlippedX = flip;
+    notifyListeners();
+  }
+
+  void setFlipY(bool flip){
+    this.isFlippedY = flip;
+    notifyListeners();
+  }
+
   void  flipY(){
     isFlippedY = !isFlippedY;
     notifyListeners();
@@ -102,9 +112,9 @@ abstract class Entity with ChangeNotifier {
 
   Map<String, dynamic> toJson();
 
-  void addComponent(Component component) {
-    if (component is ColliderComponent) {
-      component.position = Offset.zero;
+  void addComponent(Component component,{bool fromJson = false}) {
+    if (!fromJson && component is ColliderComponent) {
+      component.offset = Offset.zero;
       component.width = width;
       component.height = height;
     }

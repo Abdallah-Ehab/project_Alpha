@@ -28,12 +28,13 @@ class HoldButton extends UIButtonElement {
                 onTapUp: (_) => trigger(down: false),
                 onTapCancel: () => trigger(down: false),
                 child: Container(
-                  width: 50,
-                  height: 50,
+                  width: 30,
+                  height: 30,
                   decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.redAccent
-                ),)
+                  color: color
+                ),
+                  child: Center(child: Text(label ?? ''),),)
               )
             : GestureDetector(
                 onTap: () {

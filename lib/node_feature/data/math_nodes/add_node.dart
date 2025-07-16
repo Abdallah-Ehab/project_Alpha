@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
@@ -65,6 +67,9 @@ class AddNode extends InputNodeWithValue {
     final aVal = _getValueFromInput(1, activeEntity) ?? a;
     final bVal = _getValueFromInput(2, activeEntity) ?? b;
 
+    log('aVal is $aVal');
+    log('bVal is $bVal');
+
     final result = aVal + bVal;
 
     (connectionPoints[3] as ValueConnectionPoint).value = result;
@@ -80,6 +85,9 @@ class AddNode extends InputNodeWithValue {
     if (result.errorMessage != null || result.result == null) return null;
 
     final value = result.result;
+    if(result.result is List){
+      return result.result[cp.sourcePoint!.valueIndex];
+    }
     return value is num ? value.toDouble() : null;
   }
 

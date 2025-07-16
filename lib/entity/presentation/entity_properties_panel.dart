@@ -27,8 +27,6 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
   void initState() {
     super.initState();
     _initializeControllers();
-   
-    
   }
 
   void _initializeControllers() {
@@ -186,6 +184,56 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                         },
                       ),
                       const SizedBox(height: 16),
+
+                      // Flip Checkboxes
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: entity.isFlippedX,
+                                  onChanged: (bool? value) {
+                                    entity.setFlipX(value ?? false);
+                                  },
+                                  activeColor: Colors.blueAccent,
+                                ),
+                                const Text(
+                                  'Flip X',
+                                  style: TextStyle(
+                                    fontFamily: 'PressStart2P',
+                                    fontSize: 10,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: entity.isFlippedY,
+                                  onChanged: (bool? value) {
+                                    entity.setFlipY(value ?? false);
+                                  },
+                                  activeColor: Colors.blueAccent,
+                                ),
+                                const Text(
+                                  'Flip Y',
+                                  style: TextStyle(
+                                    fontFamily: 'PressStart2P',
+                                    fontSize: 10,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
                       Text(
                         'Select Layer',
                         style: const TextStyle(
@@ -256,9 +304,11 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                                               TextStyle(color: Colors.white)),
                                       content: SingleChildScrollView(
                                         child: ColorPicker(
-                                          pickerColor: (widget.entity as LightEntity).color,
+                                          pickerColor:
+                                              (widget.entity as LightEntity)
+                                                  .color,
                                           onColorChanged: (color) {
-                                           entity.setSelectedColor(color);
+                                            entity.setSelectedColor(color);
                                           },
                                           enableAlpha: false,
                                         ),
@@ -303,7 +353,7 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                               divisions: 50,
                               value: (widget.entity as LightEntity).intensity,
                               onChanged: (value) {
-                               entity.setLightIntensity(value);
+                                entity.setLightIntensity(value);
                               },
                               label: 'intensity',
                             ),
@@ -323,7 +373,7 @@ class EntityPropertiesWidgetState extends State<EntityPropertiesWidget> {
                               divisions: 200,
                               value: (widget.entity as LightEntity).radius,
                               onChanged: (value) {
-                               entity.setRadius(value);
+                                entity.setRadius(value);
                               },
                             ),
                           ],

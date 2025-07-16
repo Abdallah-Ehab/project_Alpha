@@ -55,6 +55,9 @@ class MultiplyNode extends InputNodeWithValue {
     if (source == null) return null;
 
     final result = source.execute(entity);
+    if(result.result is List){
+      return result.result[cp.sourcePoint!.valueIndex];
+    }
     return (result.result is num) ? result.result.toDouble() : null;
   }
 

@@ -32,4 +32,22 @@ Future<void> loadGame(EntityManager entityManager, String path) async {
       }
     }
   }
+
+
+  for (final prefab in entityManager.prefabs.values) {
+    final animComponent = prefab.getComponent<AnimationControllerComponent>();
+    if (animComponent == null) continue;
+
+    for (final track in animComponent.animationTracks.values) {
+      for (final frame in track.frames) {
+        if (frame.imageBase64 != null) {
+          try {
+            frame.image = await base64ToImage(frame.imageBase64!);
+          } catch (e) {
+            print("Failed to decode image: $e");
+          }
+        }
+      }
+    }
+  }
 }

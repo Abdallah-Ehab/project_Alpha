@@ -42,7 +42,7 @@ class ActorEntity extends Entity{
 
       for (final componentJson in componentListJson) {
         final component = Component.fromJson(componentJson as Map<String, dynamic>);
-        actor.addComponent(component); // Register the component in the map
+        actor.addComponent(component,fromJson: true);
       }
     }
   }

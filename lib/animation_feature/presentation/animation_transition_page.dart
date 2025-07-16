@@ -2,32 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scratch_clone/animation_feature/data/animation_controller_component.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/entity/data/entity_manager.dart';
 
 class AnimationTransitionsPage extends StatelessWidget {
   const AnimationTransitionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Entity>(builder: (context, entity, _) {
-      final animComp = entity.getComponent<AnimationControllerComponent>();
-      if (animComp == null) {
-        return const Center(child: Text("No animation component"));
-      }
-
-      return ChangeNotifierProvider.value(
-        value: animComp,
-        child: Consumer<AnimationControllerComponent>(
-            builder: (context, value, child) {
-          return ListView.builder(
-            itemCount: animComp.transitions.length,
-            itemBuilder: (context, index) {
-              final transition = animComp.transitions[index];
-              return _buildTransitionCard(context, animComp, transition, index);
-            },
-          );
-        }),
-      );
-    });
+    final entityManager = context.read<EntityManager>();
+    return ChangeNotifierProvider.value(
+      value: entityManager.activeEntity,
+      child: Consumer<Entity>(builder: (context, entity, _) {
+        final animComp = entity.getComponent<AnimationControllerComponent>();
+        if (animComp == null) {
+          return const Center(child: Text("No animation component"));
+        }
+      
+        return ChangeNotifierProvider.value(
+          value: animComp,
+          child: Consumer<AnimationControllerComponent>(
+              builder: (context, value, child) {
+            return ListView.builder(
+              itemCount: animComp.transitions.length,
+              itemBuilder: (context, index) {
+                final transition = animComp.transitions[index];
+                return _buildTransitionCard(context, animComp, transition, index);
+              },
+            );
+          }),
+        );
+      }),
+    );
 
     // ✨ Dual Floating Buttons: Visualize (top), Add (bottom)
   }
