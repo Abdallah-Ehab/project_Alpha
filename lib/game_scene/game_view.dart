@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -173,7 +175,7 @@ class _GameEntityRendererState extends State<GameEntityRenderer> {
           final collider = entity.getComponent<ColliderComponent>();
           final Offset colliderScreenPosition;
           if (collider != null) {
-            colliderScreenPosition = camera.worldToScreen(collider.position);
+            colliderScreenPosition = camera.worldToScreen(collider.offset);
           }
           return Positioned(
             left: screenPosition.dx,
@@ -213,7 +215,7 @@ class _GameEntityRendererState extends State<GameEntityRenderer> {
                 child: Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
-                    ..rotateZ(entity.rotation)
+                    ..rotateZ(entity.rotation * math.pi/180)
                     ..scale(
                       entity.isFlippedX ? -1.0 : 1.0, // Horizontal flip
                       entity.isFlippedY ? -1.0 : 1.0, // Vertical flip
@@ -316,8 +318,8 @@ class EntityContentRenderer extends StatelessWidget {
             child: Consumer<ColliderComponent>(
               builder: (context, value, child) {
                 return Positioned(
-                  top: value.position.dy,
-                  left: value.position.dx,
+                  top: value.offset.dy,
+                  left: value.offset.dx,
                   child: ColliderWidget(
                     width: value.width,
                     height: value.height,

@@ -47,8 +47,8 @@ class ColliderCardWidget extends StatelessWidget {
                          
                                 label: 'X',
                                 fieldKey: ValueKey('collider_x_${colliderComponent.hashCode}'),
-                                initialValue: colliderComponent.position.dx.toStringAsFixed(2),
-                                hintText: 'X position',
+                                initialValue: colliderComponent.offset.dx.toStringAsFixed(2),
+                                hintText: 'X offset',
                                 onChanged: (value) {
                                   final parsed = double.tryParse(value);
                                   if (parsed != null) {
@@ -63,8 +63,8 @@ class ColliderCardWidget extends StatelessWidget {
                          
                                 label: 'Y',
                                 fieldKey: ValueKey('collider_y_${colliderComponent.hashCode}'),
-                                initialValue: colliderComponent.position.dy.toStringAsFixed(2),
-                                hintText: 'Y position',
+                                initialValue: colliderComponent.offset.dy.toStringAsFixed(2),
+                                hintText: 'Y offset',
                                 onChanged: (value) {
                                   final parsed = double.tryParse(value);
                                   if (parsed != null) {

@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:scratch_clone/component/component.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
+import 'package:scratch_clone/game_error.dart';
 import 'package:scratch_clone/node_feature/data/connection_point_model.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/else_node.dart';
 import 'package:scratch_clone/node_feature/data/flow_control_nodes/if_node.dart';
 import 'package:scratch_clone/node_feature/data/node_model.dart';
 import 'package:scratch_clone/node_feature/data/node_types.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_for_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_towards_node.dart';
 import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/presentation/node_workspace_test.dart';
 
@@ -153,49 +156,69 @@ class NodeComponent extends Component {
   NodeModel? _current;
   @override
   void update(Duration dt, {required Entity activeEntity}) {
-    _current = startNode;
+  _current ??= startNode;
 
-    while (_current != null) {
-      log('${_current?.child} is child of $_current of id : ${_current?.id}');
+  while (_current != null) {
+    log('${_current?.child} is child of $_current of id : ${_current?.id}');
 
-      final result = _current!.execute(activeEntity, dt);
+    final result = _current!.execute(activeEntity, dt);
 
-      if (result.errorMessage != null) {
-        log("Execution error: ${result.errorMessage}");
-        break;
-      }
-      //for flow control
-      if (_current is IfNode &&
-          result is Result<bool> &&
-          result.result == false) {
-        final elseNode = _current!.child;
-        if (elseNode is ElseNode) {
-          final elseResult = elseNode.execute(activeEntity, dt);
-          if (elseResult.errorMessage != null) {
-            log("Else block error: ${elseResult.errorMessage}");
-            break;
-          }
-          _current = elseNode.child;
-          continue;
-        }
-      }
-
-      // WaitForNode: pause execution if result is false
-      if (_current is WaitForNode &&
-          result is Result<bool> &&
-          result.result == false) {
-        break;
-      }
-
-      _current = _current!.child;
+    if (result.errorMessage != null) {
+      GameErrorManager().reportError(result.errorMessage!, node: _current);
+      break;
     }
 
-    notifyListeners();
+    // Handle IfNode flow control
+    if (_current is IfNode &&
+        result is Result<bool> &&
+        result.result == false) {
+      final elseNode = _current!.child;
+      if (elseNode is ElseNode) {
+        final elseResult = elseNode.execute(activeEntity, dt);
+        if (elseResult.errorMessage != null) {
+          log("Else block error: ${elseResult.errorMessage}");
+          break;
+        }
+        _current = elseNode.child;
+        continue;
+      }
+    }
+
+    // Check if current node is still in progress
+    if (result is Result<bool> &&
+        result.result == false &&
+        (_current is WaitForNode || _current is MoveForSecondsNode || _current is MoveTowardsNode)) {
+      break; // Stay on the same node, still in progress
+    }
+
+    // Node completed successfully, move to next node
+    if (result is Result<bool> && result.result == true) {
+      log('Node ${_current.runtimeType} completed, moving to next node');
+      
+      // Reset the completed node for potential future use
+      _current!.reset();
+      
+      // Move to the next node
+      _current = _current!.child;
+      
+      // IMPORTANT: Break here to allow the next node to initialize on the next frame
+      // This prevents the while loop from immediately executing the next node
+      // before it has a chance to set up its initial state
+      break;
+    }
+
+    // For other node types that might return different results
+    _current = _current!.child;
   }
 
+  notifyListeners();
+}
   @override
   void reset() {
     _current = startNode;
+    for(final node in workspaceNodes){
+      node.reset();
+    }
     notifyListeners();
   }
 

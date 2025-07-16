@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:scratch_clone/core/result.dart';
 import 'package:scratch_clone/entity/data/entity.dart';
 import 'package:scratch_clone/entity/data/entity_manager.dart';
@@ -19,6 +20,8 @@ class JoyStickElement extends UIElement with ChangeNotifier {
   double yValue;
   String xName;
   String yName; 
+  bool allowGlobals;
+  
   JoyStickElement({
     required super.alignment,
     super.type = UIElementType.joystick,  
@@ -27,28 +30,40 @@ class JoyStickElement extends UIElement with ChangeNotifier {
     this.yValue = 0,
     this.xName = "x",
     this.yName = "y",
+    this.allowGlobals = false,
   });
   
-  Result<String> control(double xValue,double yValue,)
-  {
-    if(entityName != null)
-    {
+  void _setVariableValue(String variableName, double value, Entity? entity) {
+    if (allowGlobals) {
+      // Check global variables first (favor global over entity)
+      if (EntityManager().globalVariables.containsKey(variableName)) {
+        EntityManager().setGlobalVariable(variableName, value);
+        return;
+      }
+    }
+    
+    // Then check entity variables
+    if (entity != null && entity.variables.containsKey(variableName)) {
+      entity.setVariableXToValueY(variableName, value);
+    }
+  }
+  
+  Result<String> control(double xValue, double yValue) {
+    if (entityName != null) {
+      Entity? entity = EntityManager().getActorByName(entityName!);
+      if (entity == null) {
+        return Result.failure(errorMessage: "entity is null");
+      }
       
-    Entity? entity = EntityManager().getActorByName(entityName!);
-    if(entity == null){
-      return Result.failure(errorMessage: "entity is null");
-    }
-      if(entity.variables.containsKey(xName)){
-      entity.setVariableXToValueY(xName, xValue);
-    }
-    if(entity.variables.containsKey(yName)){
-      entity.setVariableXToValueY(yName, yValue);
-    }
-    }
-    else{
+      // Set X variable
+      _setVariableValue(xName, xValue, entity);
+      
+      // Set Y variable
+      _setVariableValue(yName, yValue, entity);
+    } else {
       return Result.failure(errorMessage: "entityName is null");
     }
-    return Result.success(result:"xValue is $xValue and yValue is $yValue");
+    return Result.success(result: "xValue is $xValue and yValue is $yValue");
   }
   
   void setEntityName(String name) {
@@ -60,14 +75,20 @@ class JoyStickElement extends UIElement with ChangeNotifier {
     xName = name;
     notifyListeners();
   }
+  
   void setYName(String name) {
     yName = name;
     notifyListeners();
   }
   
+  void setAllowGlobals(bool value) {
+    allowGlobals = value;
+    notifyListeners();
+  }
+  
   @override
   Widget buildUIElementController() {
-    return JoyStickControlPanel(joyStickElement: this,);
+    return ChangeNotifierProvider.value(value: this,child: JoyStickControlPanel(joyStickElement: this,));
   }
   
   @override
@@ -84,6 +105,7 @@ class JoyStickElement extends UIElement with ChangeNotifier {
       'yValue': yValue,
       'xName': xName,
       'yName': yName,
+      'allowGlobals': allowGlobals,
     };
   }
 
@@ -95,7 +117,7 @@ class JoyStickElement extends UIElement with ChangeNotifier {
       yValue: (json['yValue'] ?? 0).toDouble(),
       xName: json['xName'] ?? "x",
       yName: json['yName'] ?? "y",
+      allowGlobals: json['allowGlobals'] ?? false,
     );
   }
-
 }

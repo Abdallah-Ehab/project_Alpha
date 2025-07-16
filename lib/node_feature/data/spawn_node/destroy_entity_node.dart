@@ -30,7 +30,7 @@ class DestroyEntityNode extends NodeModel {
       return Result.failure(errorMessage: "No active entity to destroy.");
     }
 
-    EntityManager().removeEntityLater(activeEntity);
+    EntityManager().destroyEntity(activeEntity);
     return Result.success(result: "${activeEntity.name} will be destroyed");
   }
 

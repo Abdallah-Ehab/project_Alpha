@@ -70,8 +70,7 @@ class _ComponentSelectionDialogState extends State<ComponentSelectionDialog> {
     'Collider',
     'NodeComponent',
     'soundComponent',
-    'rigidBodyComponent',
-    'PoseDetectionComponent'
+    'rigidBodyComponent'
   ];
 
   @override

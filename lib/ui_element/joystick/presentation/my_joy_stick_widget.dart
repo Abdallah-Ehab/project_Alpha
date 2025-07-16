@@ -14,14 +14,25 @@ class MyJoyStickWidget extends StatelessWidget {
     return Consumer<GameState>(builder: (context, value, child) {
       final isPlaying = value.isPlaying;
       if (isPlaying) {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Joystick(
-          includeInitialAnimation: false,
-          listener: (details) {
-            joyStickElement.control(details.x, details.y);
-          },
+      return Joystick(
+        stick: JoystickStick(
+          decoration: JoystickStickDecoration(
+            color: Colors.black54,
+            shadowColor: Colors.blueGrey
+          ),
         ),
+        base : JoystickBase(
+          decoration: JoystickBaseDecoration(
+            color: Colors.transparent,
+            middleCircleColor: Colors.transparent,
+            drawOuterCircle: false,
+            drawInnerCircle: false,
+          ),
+        ),
+        includeInitialAnimation: false,
+        listener: (details) {
+          joyStickElement.control(details.x, details.y);
+        },
       );
     } else {
       return GestureDetector(
@@ -31,7 +42,15 @@ class MyJoyStickWidget extends StatelessWidget {
             builder: (context) => joyStickElement.buildUIElementController(),
           );
         },
-        child: const JoystickStick(), // Assuming JoystickStick is your placeholder widget
+        child:  Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: JoystickStick(
+            decoration: JoystickStickDecoration(
+              shadowColor: Colors.blueGrey,
+                color: Colors.black54
+              ),
+          ),
+        ), // Assuming JoystickStick is your placeholder widget
       );
     }
     },);

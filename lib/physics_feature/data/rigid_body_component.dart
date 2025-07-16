@@ -231,8 +231,7 @@ class RigidBodyComponent extends Component {
 
 
 
-  void checkIfGrounded(Entity entity) {
-  
+ void checkIfGrounded(Entity entity) {
   final collider = entity.getComponent<ColliderComponent>();
   if (collider == null) return;
 
@@ -242,6 +241,10 @@ class RigidBodyComponent extends Component {
       .values
       .any((other) {
     if (other == entity) return false;
+    
+    // Add this layer check!
+    if (entity.layerNumber != other.layerNumber) return false;
+    
     final otherCollider = other.getComponent<ColliderComponent>();
     if (otherCollider == null) return false;
     final b = otherCollider.getRect(other);
@@ -257,7 +260,4 @@ class RigidBodyComponent extends Component {
     log('Iam flying');
   }
 }
-
-  
-  
 }

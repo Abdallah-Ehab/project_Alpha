@@ -17,7 +17,9 @@ import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_nod
 import 'package:scratch_clone/node_feature/data/physics_related_nodes/collision_detection_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/flip_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_for_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_towards_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/destroy_entity_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node.dart';
@@ -25,7 +27,9 @@ import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_positio
 import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_list_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/decrement_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/get_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/incerement_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/node_icon_widget.dart';
 
@@ -57,10 +61,11 @@ class _NodeDeckState extends State<NodeDeck> with TickerProviderStateMixin {
   final Map<NodeModel, String> playerTransformNodes = {
     TeleportNode(): "TELEPORT NODE",
     MoveNode(): "MOVE NODE",
+    MoveForSecondsNode() : 'MOVE FOR NODE',
     ApplyForceNode(): "APPLY FORCE NODE",
     SimpleFlipNode(): "FLIP NODE",
     WaitForNode(): "WAIT FOR NODE",
-    
+    MoveTowardsNode() : "MOVE TOWARDS"
   };
 
   final Map<NodeModel, String> variableNodes = {
@@ -82,6 +87,8 @@ class _NodeDeckState extends State<NodeDeck> with TickerProviderStateMixin {
     SubtractNode(): "SUBTRACT NODE",
     MultiplyNode(): "MULTIPLY NODE",
     DivideNode(): "DIVIDE NODE",
+    IncrementVariableNode(): 'INCREMENT NODE',
+    DecrementVariableNode() : 'DECREMENT NODE'
   };
 
   @override

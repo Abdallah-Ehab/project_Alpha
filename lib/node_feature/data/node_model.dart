@@ -13,14 +13,20 @@ import 'package:scratch_clone/node_feature/data/node_types.dart';
 import 'package:scratch_clone/node_feature/data/object_property_nodes/get_property_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/branch_node.dart';
 import 'package:scratch_clone/node_feature/data/output_nodes/statement_group_node.dart';
+import 'package:scratch_clone/node_feature/data/physics_related_nodes/collision_detection_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/apply_force_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/flip_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_for_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_node.dart';
+import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/move_towards_node.dart';
 import 'package:scratch_clone/node_feature/data/player_transform_control_nodes/teleport_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/destroy_entity_node.dart';
 import 'package:scratch_clone/node_feature/data/spawn_node/spawn_node_at_position.dart';
 import 'package:scratch_clone/node_feature/data/time_related_nodes/wait_for_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/declare_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/decrement_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/get_variable_node.dart';
+import 'package:scratch_clone/node_feature/data/variable_related_nodes/incerement_variable_node.dart';
 import 'package:scratch_clone/node_feature/data/variable_related_nodes/set_variable_node.dart';
 import 'package:scratch_clone/node_feature/presentation/start_node_widget.dart';
 import 'package:uuid/uuid.dart';
@@ -126,9 +132,25 @@ abstract class NodeModel with ChangeNotifier {
       return MultiplyNode.fromJson(json);
       case 'DestroyEntityNode':
       return DestroyEntityNode.fromJson(json);
+      case 'DetectCollisionNode':
+      return DetectCollisionNode.fromJson(json);
+      case 'IncrementVariableNode':
+      return IncrementVariableNode.fromJson(json);
+      case 'DecrementVariableNode':
+      return DecrementVariableNode.fromJson(json);
+      case 'MoveForSecondsNode':
+      return MoveForSecondsNode.fromJson(json);
+      case 'SimpleFlipNode':
+      return SimpleFlipNode.fromJson(json);
+      case 'MoveTowardsNode':
+      return MoveTowardsNode.fromJson(json);
       default:
         throw UnimplementedError('Unknown NodeModel type: $type');
     }
+  }
+
+  void reset(){
+    return;
   }
 
   NodeModel copy();

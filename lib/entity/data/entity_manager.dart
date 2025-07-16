@@ -48,6 +48,11 @@ class EntityManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setGlobalVariable(String name,dynamic value){
+    globalVariables[name] = value;
+    notifyListeners();
+  }
+
   void addPrefabFromDrawerAtPosition(String name, Offset position){
     final prefab = prefabs[name];
     if (prefab == null) return;
@@ -456,6 +461,7 @@ class EntityManager extends ChangeNotifier {
         rotation: 0,
         zoom: 1.0,
         isEditorCamera: true,
+        isActive: true,
       );
       _entities[EntityType.cameras] = {"mainCamera": fallbackCamera};
       _activeCamera = fallbackCamera;

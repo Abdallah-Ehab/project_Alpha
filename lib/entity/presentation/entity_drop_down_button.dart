@@ -31,12 +31,15 @@ class EntitySelectorArrows extends StatelessWidget {
                 }
               : null, // disabled at start
         ),
-        Text(
-          activeEntity.name,
-          style: const TextStyle(
-            fontFamily: 'PressStart2P',
-            fontSize: 14,
-            color: Colors.white,
+        ChangeNotifierProvider.value(
+          value: entityManager,
+          child: Text(
+            activeEntity.name,
+            style: const TextStyle(
+              fontFamily: 'PressStart2P',
+              fontSize: 14,
+              color: Colors.white,
+            ),
           ),
         ),
         IconButton(

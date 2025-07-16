@@ -7,6 +7,9 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
   String? entityName;
   String variableName;
   dynamic valueToSet;
+  String? label;
+  Color? color;
+  bool allowGlobals;
 
   UIButtonElement({
     super.type = UIElementType.button,
@@ -14,16 +17,30 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
     this.variableName = '',
     this.valueToSet,
     super.alignment = Alignment.centerLeft,
+    this.allowGlobals = false,
   });
 
   void trigger({required bool down});
 
   void setVariable(bool value) {
     if (entityName == null) return;
+    
+    // Check global variables first if allowed
+    if (allowGlobals && EntityManager().globalVariables.containsKey(variableName)) {
+      EntityManager().setGlobalVariable(variableName, value);
+      return;
+    }
+    
+    // Then check entity variables
     final entity = EntityManager().getActorByName(entityName!);
     if (entity == null) return;
     if (!entity.variables.containsKey(variableName)) return;
     entity.setVariableXToValueY(variableName, value);
+  }
+
+  void setAllowGlobals(bool value) {
+    allowGlobals = value;
+    notifyListeners();
   }
 
   @override
@@ -31,7 +48,7 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
 
   @override
   String toString() =>
-      'UIButtonElement(entityName: $entityName, variableName: $variableName, valueToSet: $valueToSet)';
+      'UIButtonElement(entityName: $entityName, variableName: $variableName, valueToSet: $valueToSet, allowGlobals: $allowGlobals)';
 
   @override
   bool operator ==(covariant UIButtonElement other) {
@@ -39,38 +56,59 @@ abstract class UIButtonElement extends UIElement with ChangeNotifier {
 
     return other.entityName == entityName &&
         other.variableName == variableName &&
-        other.valueToSet == valueToSet;
+        other.valueToSet == valueToSet &&
+        other.allowGlobals == allowGlobals;
   }
 
- bool _onCooldown = false;
+  bool _onCooldown = false;
 
-void triggerOnce({
-  Duration activeDuration = const Duration(milliseconds: 100),
-  Duration cooldown = const Duration(milliseconds: 300),
-}) {
-  if (_onCooldown || entityName == null) return;
+  void triggerOnce({
+    Duration activeDuration = const Duration(milliseconds: 200),
+    Duration cooldown = const Duration(milliseconds: 300),
+  }) {
+    if (_onCooldown || entityName == null) return;
 
-  final entity = EntityManager().getActorByName(entityName!);
-  if (entity == null) return;
-  if (!entity.variables.containsKey(variableName)) return;
+    // Check global variables first if allowed
+    if (allowGlobals && EntityManager().globalVariables.containsKey(variableName)) {
+      EntityManager().setGlobalVariable(variableName, true);
+      _onCooldown = true;
 
-  // Set to true
-  entity.setVariableXToValueY(variableName, true);
-  _onCooldown = true;
+      // Reset after activeDuration
+      Future.delayed(activeDuration, () {
+        EntityManager().setGlobalVariable(variableName, false);
+      });
 
-  // Reset after activeDuration
-  Future.delayed(activeDuration, () {
-    entity.setVariableXToValueY(variableName, false);
-  });
+      // Cooldown reset
+      Future.delayed(cooldown, () {
+        _onCooldown = false;
+      });
+      return;
+    }
 
-  // Cooldown reset
-  Future.delayed(cooldown, () {
-    _onCooldown = false;
-  });
-}
+    // Then check entity variables
+    final entity = EntityManager().getActorByName(entityName!);
+    if (entity == null) return;
+    if (!entity.variables.containsKey(variableName)) return;
 
+    // Set to true
+    entity.setVariableXToValueY(variableName, true);
+    _onCooldown = true;
+
+    // Reset after activeDuration
+    Future.delayed(activeDuration, () {
+      entity.setVariableXToValueY(variableName, false);
+    });
+
+    // Cooldown reset
+    Future.delayed(cooldown, () {
+      _onCooldown = false;
+    });
+  }
 
   @override
   int get hashCode =>
-      entityName.hashCode ^ variableName.hashCode ^ valueToSet.hashCode;
+      entityName.hashCode ^ 
+      variableName.hashCode ^ 
+      valueToSet.hashCode ^ 
+      allowGlobals.hashCode;
 }

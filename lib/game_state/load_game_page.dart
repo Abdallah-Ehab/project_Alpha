@@ -43,15 +43,6 @@ class _GameLoaderPageState extends State<GameLoaderPage> {
       entityManager.fromJson(gameJson);
       await _restoreAnimationImages(entityManager);
 
-      if(mounted){
-        if(gameJson['release'] == true){
-          Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const GameView()),
-        );
-        }
-      }
-
       // Go to game view
       if (mounted) {
         Navigator.pushReplacement(
